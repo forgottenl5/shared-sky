@@ -1,0 +1,16 @@
+| Arm | runs | cross wide | cross close | wide per hour (per run) | per 1,000 km² per hour | pairs (wide) |
+|---|---|---|---|---|---|---|
+| A0 | 3 | 133 | 61 | 22.2 | 3.46 | {'amazon-zipline': 106, 'wing-zipline': 3, 'amazon-wing': 24} |
+| T | 3 | 98 | 23 | 16.3 | 2.55 | {'amazon-zipline': 63, 'amazon-wing': 32, 'wing-zipline': 3} |
+| R | 3 | 33 | 8 | 5.5 | 0.86 | {'amazon-zipline': 11, 'wing-zipline': 3, 'amazon-wing': 19} |
+| A2 | 3 | 32 | 3 | 5.3 | 0.83 | {'amazon-zipline': 15, 'wing-zipline': 11, 'amazon-wing': 6} |
+A2 cut vs A0: wide 76 %, close 95 %
+A2 cut vs T: wide 67 %, close 87 %
+A2 cut vs R: wide 3 %, close 62 %
+| Prediction | Result | Verdict |
+|---|---|---|
+| F1 Amazon in >= 60 % of A0 wide | 98 % | **PASS** |
+| F2 A2 cut vs A0 >= 45 % | 76 % | **PASS** |
+| F3 A2 cut vs R <= 50 % | 3 % | **PASS** |
+| F4 A2 cut vs T >= 40 % | 67 % | **PASS** |
+Runs read: 12 (expected 12).

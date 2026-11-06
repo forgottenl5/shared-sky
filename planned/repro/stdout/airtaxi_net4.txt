@@ -1,0 +1,9 @@
+FAIL A1 E*(v5) - E*(NET1): AFW-DFWc -0.2, AFW-TOY -0.0, DFWc-TOY +0.0, DFWc-49T -0.0, IAH-HOU -8.6, IAH-EFD -7.2
+PASS A2 highest AFW-TOY (44.5), lowest DFWc-TOY (20.0)
+PASS B1 DFW U100 median fleet: 12/h 12.0 (10-14), 24/h 18.0 (18-20), 48/h 36.0 (32-36)
+PASS B2 seeds needing more than 14 at 24/h: 10 of 10
+PASS B3 U100 infeasible pairs ['GLS-IAH', 'GLS-SGR'], share 0.303; U144 []
+PASS B4 HOU median fleet U100 / U144: 6/h 8.0 / 12.0, 12/h 11.0 / 15.0, 24/h 16.0 / 24.0
+PASS B5 DFW 24/h empty repositioning share 0.205
+6 of 7 passed
+wrote planned/airtaxi_net4_results_table.md

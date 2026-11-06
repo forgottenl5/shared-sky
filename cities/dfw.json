@@ -1,0 +1,72 @@
+{
+ "name": "dfw",
+ "label": "Dallas-Fort Worth",
+ "source": "Amazon's DFW sites from its final Texas EA (TEXAS_FILINGS_2026-10-23.md), geocoded with OpenStreetMap Nominatim (results pasted by the founder); Wing's nests and Zipline's sites at the DFW filing caps, placed uniformly at random in the counted square. Zipline DFW rate: 400 per site per day over 15 h (DFW EA).",
+ "cfg": {
+  "half": 57000,
+  "zone": 40000,
+  "warm": 3600,
+  "meas": 7200
+ },
+ "wind": "data/openmeteo_dfw_2025.json",
+ "fixed": {
+  "op": "amazon",
+  "sites": [
+   [
+    "STX8",
+    32.9886042,
+    -96.6617927,
+    "OSM, 3051 Research Dr, Richardson (founder, 22 Oct 2026)"
+   ],
+   [
+    "STX2",
+    32.9434771,
+    -96.909816,
+    "OSM way \"Amazon STX2\", 1625 Hutton Dr, Carrollton"
+   ],
+   [
+    "STX3",
+    32.752978,
+    -96.8895253,
+    "OSM way \"Amazon VTX3\" at 4445 Rock Quarry Rd (the EA address; OSM names it VTX3)"
+   ],
+   [
+    "DAL3",
+    32.7557845,
+    -96.9042345,
+    "OSM way \"Amazon DAL3\", 1301 Chalk Hill Rd"
+   ],
+   [
+    "DFW7",
+    32.9705254,
+    -97.3357107,
+    "OSM way \"Amazon Fulfillment Center DFW7\", 700 Westport Pkwy, Haslet"
+   ],
+   [
+    "FTW4",
+    33.0091417,
+    -97.2952151,
+    "OSM way \"Amazon Fulfilment Center\", 15201 Heritage Pkwy, Fort Worth"
+   ]
+  ],
+  "excluded": [
+   "IAH1 (9155 Southlink Dr, Dallas 75241): Nominatim returned nothing for two queries (23 Oct 2026)"
+  ]
+ },
+ "random": [
+  {
+   "op": "wing",
+   "n": 75,
+   "rateKey": true
+  },
+  {
+   "op": "zipline",
+   "n": 75,
+   "rate": {
+    "perDay": 400,
+    "hours": 15
+   }
+  }
+ ],
+ "rngOffset": 31337
+}

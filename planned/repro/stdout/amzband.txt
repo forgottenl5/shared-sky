@@ -1,0 +1,8 @@
+T runs 6 (expected 6): wide 582, close 172; pairs {'amazon-zipline': 405, 'amazon-wing': 135, 'wing-zipline': 42}
+A2 runs 6: wide 146, close 28
+A2 cut vs T: wide 75 %, close 84 %
+| Prediction | Result | Verdict |
+|---|---|---|
+| B1 T wide in 400–800 | 582 | **PASS** |
+| B2 A2 cut vs T >= 65 % | 75 % | **PASS** |
+| B3 Amazon–Zipline largest pair in T | amazon-zipline | **PASS** |

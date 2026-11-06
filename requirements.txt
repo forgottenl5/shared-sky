@@ -1,0 +1,3 @@
+# Python analysis scripts (python 3.10+). The engine and runners need only Node.js (tested with v22); no npm packages.
+numpy
+scipy

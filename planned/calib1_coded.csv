@@ -1,0 +1,354 @@
+study,pid,kind,outcome,side,narrow,domain,date,text
+HOUSTON1,P1,bound,fail,unclear,no,drone,2026-10-22,Zipline-Amazon inbound over 50 % of cross-operator close passes
+HOUSTON1,P3,band,fail,unclear,no,drone,2026-10-22,Wing-Zipline and Amazon-Zipline encounters grow x2.0-3.0 from S1 to S2
+VALLOC2,W1,bound,pass,,,drone,2026-10-22,Free spread cuts cross-operator meetings by less than 50 %
+VALLOC2,W2,bound,pass,,,drone,2026-10-22,Fixed allocation has at most half the meetings of free spread
+FAIR,G1,bound,pass,,,drone,2026-10-22,First-filed asymmetry ratio at least 3 at 4 and 3 km
+FAIR,G2,bound,fail,worse,no,drone,2026-10-22,Amazon in place cuts delayed share 50 % or more; ratio at most 2
+FAIR,G3,band,pass,,,drone,2026-10-22,Amazon-first total delay within 25 % of first-filed
+FAIR,G4,bound,pass,,,drone,2026-10-22,Rotating order keeps asymmetry ratio at least 3
+NFZ,N1,bound,pass,,,drone,2026-10-22,Uniform fraction below 0.08 at every [street withheld] point
+NFZ,N2,bound,pass,,,drone,2026-10-22,Some zone radius gives at least 3x uniform fraction
+NFZ,N3,bound,pass,,,drone,2026-10-22,No radius brings any point to observed 0.40
+DEVIATE,C1,order,fail,,no,drone,2026-10-22,Emergency landing causes more cross meetings per deviation than hold
+DEVIATE,C2,bound,fail,unclear,no,drone,2026-10-22,Sharing removes under 30 % of landing cross meetings
+DEVIATE,C3,bound,fail,better,no,drone,2026-10-22,Sharing removes under 50 % of hold cross meetings
+OUTAGE,O1,bound,pass,,,drone,2026-10-22,Filed heights give at least 3x wide meetings per held drone; at least 20
+OUTAGE,O2,band,pass,,,drone,2026-10-22,Area outage meetings within 0.5-2x of isolated random holds
+OUTAGE,O3,bound,fail,better,no,drone,2026-10-22,Random-phase holds at least 3x as risky as cruise-only holds
+PRELAUNCH,P1,bound,pass,,,drone,2026-10-23,B(61;111) has at most 45 % of B(61;105) wide meetings
+PRELAUNCH,P2,bound,pass,,,drone,2026-10-23,B(69;122) has at most 30 % of B(61;105) wide meetings
+PRELAUNCH,P3,bound,pass,,,drone,2026-10-23,Allocation wide cut against B(69;122) below 50 %
+PRELAUNCH,P4,bound,pass,,,drone,2026-10-23,Moving Amazon outbound 61 to 69 m changes Wing-Amazon meetings under 25 %
+PRELAUNCH,E1,bound,pass,,,drone,2026-10-23,Allocation wide cut at least 65 % at 3 m height error
+PRELAUNCH,E2,bound,pass,,,drone,2026-10-23,Allocation wide cut at least 50 % at 5 m height error
+PRELAUNCH,L1,bound,pass,,,drone,2026-10-23,4 km pooled cut at least 70 %; 10th percentile at least 50 %
+PRELAUNCH,L2,bound,pass,,,drone,2026-10-23,3 km 15-seed pooled cut at least 70 %
+PRELAUNCH,L3,bound,fail,better,no,drone,2026-10-23,6 km pooled wide cut below 60 %
+PRELAUNCH,L4,band,pass,,,drone,2026-10-23,Each box layout cut within 10 points of default
+HOUREAL,G1,bound,pass,,,drone,2026-10-23,Amazon in at least 70 % of filed-height wide meetings
+HOUREAL,G2,bound,pass,,,drone,2026-10-23,Allocation cuts filed-height wide meetings by at least 65 %
+HOUREAL,G3,bound,pass,,,drone,2026-10-23,Allocation cuts reported-heights wide meetings by at most 50 %
+HOUREAL,G4,bound,pass,,,drone,2026-10-23,Allocation cuts Texas-band wide meetings by at least 55 %
+AMZSRC,Q1,bound,pass,,,drone,2026-10-24,Sharing out cuts S1 wide meetings by at least 55 %
+AMZSRC,Q2,bound,pass,,,drone,2026-10-24,Sharing out cuts S2 wide meetings by at least 65 %
+AMZSRC,Q3,bound,pass,,,drone,2026-10-24,Amazon-Zipline at least 50 % of S2 wide meetings
+BUILDOUT+DFWBUILD,B1,bound,fail,better,no,drone,2026-10-24,Under 1 close call an hour today; at least 10 at mid
+BUILDOUT+DFWBUILD,B2,bound,pass,,,drone,2026-10-24,Sharing out cuts close calls by at least 65 % at mid and full
+BUILDOUT+DFWBUILD,B3,bound,fail,worse,no,drone,2026-10-24,Plus-minus 30 s check removes at least 80 %; 5 s at most 30 %
+BUILDOUT+DFWBUILD,B4,bound,pass,,,drone,2026-10-24,Sharing out at most halves delayed share under 30 s check
+BUILDOUT+DFWBUILD,B5,bound,pass,,,drone,2026-10-24,Amazon-Zipline at least 50 % of close calls at mid and full
+BUILDOUT+DFWBUILD,D1,band,pass,,,drone,2026-10-24,DFW full Omaha profile gives 15-30 close calls an hour
+BUILDOUT+DFWBUILD,D2,bound,pass,,,drone,2026-10-24,DFW sharing out cuts at least 65 % at mid and full
+BUILDOUT+DFWBUILD,D3,bound,pass,,,drone,2026-10-24,DFW Amazon-Zipline at least 50 % of close calls at full
+BUILDOUT+DFWBUILD,D4,bound,pass,,,drone,2026-10-24,DFW 30 s check in typical wind removes under 80 %
+BUILDOUT+DFWBUILD,D5,bound,pass,,,drone,2026-10-24,DFW mid at most 3.2 close calls an hour
+PADS,F1,bound,pass,,,drone,2026-10-24,Fixed 30 m pads give at most half the random-pad meetings
+PADS,F2,order,pass,,,drone,2026-10-24,Near-site meetings fall as pad spacing grows 10 to 60 m
+PADS,F3,bound,fail,worse,no,drone,2026-10-24,Mean pad wait 30 s or less for Wing and Zipline
+PADS,F4,bound,fail,unclear,no,drone,2026-10-24,At least half of random-pad meetings are pad-level
+TODAYVOL,T1_dfw,bound,pass,,,drone,2026-10-25,DFW Amazon at 20 % volume gives at most 50 % of cap meetings
+TODAYVOL,T2_dfw,band,pass,,,drone,2026-10-25,DFW Wing-Zipline meetings same at cap and 20 % within 15 %
+TODAYVOL,T3_dfw,bound,pass,,,drone,2026-10-25,DFW sharing out still cuts at least 50 % at 20 % volume
+TODAYVOL,T4_dfw,bound,fail,unclear,no,drone,2026-10-25,DFW Amazon pairs under 50 % of meetings at 20 % volume
+TODAYVOL,T5_dfw,bound,pass,,,drone,2026-10-25,DFW mid stage at most 1.5 meetings an hour at 20 %
+TODAYVOL,T1_houston,bound,pass,,,drone,2026-10-25,Houston Amazon at 20 % volume gives at most 50 % of cap meetings
+TODAYVOL,T2_houston,band,fail,unclear,no,drone,2026-10-25,Houston Wing-Zipline meetings same at cap and 20 % within 15 %
+TODAYVOL,T3_houston,bound,pass,,,drone,2026-10-25,Houston sharing out still cuts at least 50 % at 20 % volume
+TODAYVOL,T4_houston,bound,fail,unclear,no,drone,2026-10-25,Houston Amazon pairs under 50 % of meetings at 20 % volume
+TODAYVOL,T5_houston,bound,pass,,,drone,2026-10-25,Houston mid stage at most 3 meetings an hour at 20 %
+COORD1,C1,bound,pass,,,drone,2026-10-26,Volume check V2 cuts flown conflicts by at least 90 %
+COORD1,C2,bound,pass,,,drone,2026-10-26,Point check leaves at least 25 % of conflicts in wind
+COORD1,C3,bound,fail,worse,no,drone,2026-10-26,V2 with shared heights delays at most 5 % of flights
+COORD1,C4,bound,pass,,,drone,2026-10-26,V3 delays at least 15 % in Houston; A0/A2 ratio at most 1.3
+COORD1,C5,bound,fail,worse,no,drone,2026-10-26,V1 at least 20 % leave windows; V2 at most 10 %
+COORD1,C6,bound,pass,,,drone,2026-10-26,V2 leaves at most 10 % of tight conflicts
+VERTIPORT1,V1,band,pass,,,taxi,2026-10-27,Fig. 14 pad use within 10 points in at least 7 of 8
+VERTIPORT1,V2,band,pass,,,taxi,2026-10-27,Fig. 15 pad use within 10 points in at least 7 of 8
+VERTIPORT1,V3,band,pass,,,taxi,2026-10-27,Saturation at 5 plus-minus 1 and 8 plus-minus 1 stands
+VERTIPORT1,V4,band,pass,,,taxi,2026-10-27,Operations within 2 of published values in 80 % of 45 points
+VERTIPORT1,V5,bound,pass,,,taxi,2026-10-27,Engine never exceeds published use by more than 5 points
+ACCESS1,P1,band,pass,,,taxi,2026-10-27,Share of jobs saving time between 0.1 % and 3 % in both metros
+ACCESS1,P2,bound,pass,,,taxi,2026-10-27,Off-peak share less than half of peak share
+ACCESS1,P3,bound,pass,,,taxi,2026-10-27,Processing 10 min gives more than twice the 20 min share
+ACCESS1,P4,order,pass,,,taxi,2026-10-27,DFW share larger than Houston share
+ACCESS1,P5,bound,pass,,,taxi,2026-10-27,Beneficiaries median commute at least twice that of all jobs
+ACCESS1,P6,bound,fail,unclear,no,taxi,2026-10-27,Beneficiaries high-income share at least 10 points above all jobs
+ACCESS1,P7,band,fail,better,no,taxi,2026-10-27,Residents within 30 min of a site 35-75 % DFW; 25-65 % Houston
+ACCESS1,P8,bound,fail,unclear,no,taxi,2026-10-27,Top three site pairs hold at least half of beneficiaries
+UNCERT1,U1,bound,pass,,,taxi,2026-10-27,Access share 95th/5th percentile ratio at least 5 in both metros
+UNCERT1,U2,order,fail,,no,taxi,2026-10-27,Access leg speed has the largest correlation with access share
+UNCERT1,U3,bound,pass,,,taxi,2026-10-27,Registered access point lies above 75th percentile of draws
+UNCERT1,U4,bound,pass,,,taxi,2026-10-27,Fleet 95th/5th ratio at most 1.6 at r = 3
+UNCERT1,U5,order,pass,,,taxi,2026-10-27,Charging rate has the largest correlation with required fleet
+UNCERT1,U6,band,pass,,,taxi,2026-10-27,Reference fleet within 5th to 95th percentile of draws
+RTHREP,H1,bound,pass,,,drone,2026-10-23,Return at 120 m at least 5x riskier than own height
+RTHREP,H2,bound,fail,better,no,drone,2026-10-23,Return-at-120 m rate at least the allocation rate of 1.54
+ARRIVE,P1,bound,fail,worse,no,drone,2026-10-24,Shared 20 s slot cuts near-site meetings by at least 80 %
+ARRIVE,P2,order,fail,,no,drone,2026-10-24,Separate slots cut less than a shared slot
+ARRIVE,P3,bound,pass,,,drone,2026-10-24,Amazon at 2x with shared slot has mean wait above 600 s
+ARRIVE,P4,bound,fail,worse,yes,drone,2026-10-24,120 m pads plus 10 s slot cut at least 90 % with waits under 60 s
+AIRTAXI_NET3,F1,bound,pass,,,taxi,2026-10-27,Old aircraft on v3 need no more aircraft than NET2 in 6 of 8 cells
+AIRTAXI_NET3,F2,bound,pass,,,taxi,2026-10-27,Landings below reserve at most 5 % where pad criterion met
+AIRTAXI_NET3,F3,bound,pass,,,taxi,2026-10-27,U60 needs at least as many aircraft; 1.25x in Houston r = 3
+AIRTAXI_NET3,F4,band,pass,,,taxi,2026-10-27,U160 fleet within one step of old fleet everywhere
+AIRTAXI_NET3,F5,order,pass,,,taxi,2026-10-27,30-minute reserve needs no fewer aircraft than 20-minute
+AIRTAXI_POWER1,P1,band,pass,,,taxi,2026-10-28,DFW 24 trips/h busiest site peak between 0.3 MW and 1.2 MW
+AIRTAXI_POWER1,P2,bound,pass,,,taxi,2026-10-28,DFW 48 trips/h busiest site above 0.9 MW in 8 of 10 seeds
+AIRTAXI_POWER1,P3,order,pass,,,taxi,2026-10-28,Busiest site is DFW Airport and IAH in at least 7 of 10 seeds
+AIRTAXI_POWER1,P4,bound,pass,,,taxi,2026-10-28,Archer DFW 48 trips/h busiest site peak at least 1.5 MW
+AIRTAXI_POWER1,P5,band,pass,,,taxi,2026-10-28,DFW 24 trips/h busiest site uses 1.5-6 MWh over 12 hours
+SEEDS2,S1,band,pass,,,method,2026-10-28,Delayed share Houston 15-24 %; DFW 13-21 % with shared heights
+SEEDS2,S2,bound,pass,,,method,2026-10-28,Plan sharing cuts flown conflicts by at least 93 % in both metros
+SEEDS2,S3,band,pass,,,method,2026-10-28,A0/A2 delayed-share ratio 1.6-2.5 in both metros
+SEEDS2,S4,band,pass,,,method,2026-10-28,Mean delay of delayed flights 4-8 minutes
+AIRTAXI_ENC1,X1,claim,pass,,,taxi,2026-10-29,Every setup has at least one en-route near-midair proximity
+AIRTAXI_ENC1,X2,band,pass,,,taxi,2026-10-29,En-route encounters at middle level DFW 6-20; Houston 4-14 an hour
+AIRTAXI_ENC1,X3,band,pass,,,taxi,2026-10-29,Top-to-bottom level encounter ratio between 8 and 24
+AIRTAXI_ENC1,X4,band,pass,,,taxi,2026-10-29,Terminal encounters 0.5 to 3 times en-route encounters
+AIRTAXI_ENC1,X5,bound,fail,worse,no,taxi,2026-10-29,One height per direction cuts en-route encounters at least 80 %
+AIRTAXI_ENC1,X6,bound,pass,,,taxi,2026-10-29,Height rule cuts terminal encounters by less than 50 %
+AIRTAXI_NOISEWIND1,P1,bound,pass,,,taxi,2026-10-29,No off-site cell reaches DNL 65 in any run
+AIRTAXI_NOISEWIND1,P2,bound,fail,better,no,taxi,2026-10-29,Peak off-site DNL differs by less than 1.5 dB between modes
+AIRTAXI_NOISEWIND1,P3,bound,pass,,,taxi,2026-10-29,People with 10 loud flights differ by over 20 % in 3 of 6
+AIRTAXI_NOISEWIND1,P4,bound,pass,,,taxi,2026-10-29,Nobody lives at DNL 55 or above in wind mode
+AIRTAXI_NOISEWIND1,P5,order,pass,,,taxi,2026-10-29,Wind mode has more off-site cells with loud flights than line mode
+HOUSTON2,Q1,band,pass,,,drone,2026-10-22,Cross-operator meetings grow with density; log-log slope 1.6-2.4
+HOUSTON2,Q2,bound,pass,,,drone,2026-10-22,More than 10 cross-operator meetings per hour at 2 km spacing
+HOUSTON2,Q3,bound,fail,unclear,no,drone,2026-10-22,Amazon in over half of meetings at 9 km; under half at 2 km
+ROBUST,R1,bound,pass,,,drone,2026-10-22,A2 cuts meetings at least 70 % at vertical <=10 m thresholds
+ROBUST,R2,bound,fail,better,no,drone,2026-10-22,A2 cut under 50 % at 15 m and under 30 % at 20 m
+ROBUST,R3,bound,pass,,,drone,2026-10-22,At peak x1.5 A2 still cuts at least 75 %
+ROBUST,R4,bound,fail,worse,no,drone,2026-10-22,DFW mix: Amazon in 60 % of meetings; A2 cuts at least 60 %
+VRATE,H1,bound,fail,worse,no,drone,2026-10-22,V2 cuts Amazon delayed share by at least 50 %
+VRATE,H2,bound,fail,worse,no,drone,2026-10-22,V2 asymmetry ratio at most 3
+VRATE,H3,band,fail,worse,no,drone,2026-10-22,Share ratio within 0.7-1.3 of crossing-time ratio
+VOL,Q1,band,pass,,,drone,2026-10-22,H60/H30 delayed flights between 1.6 and 2.5
+VOL,Q2,bound,fail,better,yes,drone,2026-10-22,T15/H30 delayed flights at least 2
+VOL,Q3,bound,pass,,,drone,2026-10-22,V20/H30 delayed flights at least 3 at d=3
+VOL,Q4,order,pass,,,drone,2026-10-22,Delayed flights rise strictly H15<H30<H60<H90
+DEVA0,D1,bound,pass,,,drone,2026-10-22,F-HOLD at least 10 wide meetings and 5x A2 per deviation
+DEVA0,D2,bound,pass,,,drone,2026-10-22,F-LAND at most 10 cross-operator wide meetings
+COUNTFIX,U1,bound,pass,,,method,2026-10-23,A2 still cuts wide at least 65 % and close at least 80 %
+COUNTFIX,U2,bound,pass,,,method,2026-10-23,After plan check wide meetings at most 2 % of A2 unchecked
+COUNTFIX,U3,bound,pass,,,method,2026-10-23,A0 holds at least 5x A2; at least 30 meetings; A2 rate 0.1-2 per 100
+COUNTFIX,U4,bound,pass,,,method,2026-10-23,RTH-120 at least 5x RTH-OWN with at least 30 meetings
+PRELAUNCH2,Q1,bound,pass,,,drone,2026-10-23,A0 wide meetings per 100 holds at least 3x R
+PRELAUNCH2,Q2,bound,pass,,,drone,2026-10-23,R rate per 100 holds under 3x A2
+PRELAUNCH2,Q3,bound,pass,,,drone,2026-10-23,R plan-check delayed flights at most 50 % of A0
+PRELAUNCH2,Q4,bound,pass,,,drone,2026-10-23,R meetings per 100 held drones in outages under 3x A2
+DFWREAL,F1,bound,pass,,,drone,2026-10-23,Amazon in at least 60 % of A0 cross-company meetings
+DFWREAL,F2,bound,pass,,,drone,2026-10-23,A2 cuts A0 wide meetings at least 45 %
+DFWREAL,F3,bound,pass,,,drone,2026-10-23,A2 cuts R wide meetings at most 50 %
+DFWREAL,F4,bound,pass,,,drone,2026-10-23,A2 cuts T wide meetings at least 40 %
+CORRIDOR,RC1,bound,pass,,,drone,2026-10-24,Aimed K=4 D=2 km corridor fraction at least 0.20
+CORRIDOR,RC2,bound,pass,,,drone,2026-10-24,No aimed configuration with K>=3 reaches 0.40
+CORRIDOR,RC3,bound,pass,,,drone,2026-10-24,Random orientation K=4 mean fraction at most 0.10
+CORRIDOR,RB1,bound,pass,,,drone,2026-10-24,A2 cuts A0 wide meetings at least 65 % with corridors
+CORRIDOR,RB2,band,pass,,,drone,2026-10-24,A0 meetings with corridors 0.7-1.3 x straight
+CORRIDOR,RB3,bound,pass,,,drone,2026-10-24,A2 cuts R wide meetings at most 50 %
+SEEDS,S-B1,bound,pass,,,drone,2026-10-24,Mid stage below 10 close calls an hour
+SEEDS,S-B2,bound,pass,,,drone,2026-10-24,Sharing out cuts at least 65 % at mid and full
+SEEDS,S-B3,bound,pass,,,drone,2026-10-24,Full stage wind check removes under 80 %
+SEEDS,S-B4,bound,pass,,,drone,2026-10-24,Delayed share with sharing out at most half of A0
+SEEDS,S-F,bound,pass,,,drone,2026-10-24,DFW: Amazon share >=60 %; cuts vs A0 >=45 %; vs R <=50 %; vs T >=40 %
+DFWBAD+DFWPROC,B1,bound,pass,,,drone,2026-10-25,DFW hover A0 vs A2 per event at least 4x
+DFWBAD+DFWPROC,B2,bound,pass,,,drone,2026-10-25,DFW hover A0 vs R per event at least 3x
+DFWBAD+DFWPROC,B3,bound,pass,,,drone,2026-10-25,Return home A2: rth-120 vs rth-own at least 5x
+DFWBAD+DFWPROC,B4,bound,pass,,,drone,2026-10-25,Return home R: rth-120 vs rth-own at least 4x
+DFWBAD+DFWPROC,B5,bound,pass,,,drone,2026-10-25,Area hold A0 vs A2 per held drone at least 3x
+DFWBAD+DFWPROC,B6,bound,pass,,,drone,2026-10-25,Hover A0 close calls per 100 below Houston 3.93
+DFWBAD+DFWPROC,C1,band,pass,,,drone,2026-10-25,A2 delayed share 0.5-3 % at d 3 and d 4
+DFWBAD+DFWPROC,C2,bound,pass,,,drone,2026-10-25,A0 delayed flights at least 2.5x A2
+DFWBAD+DFWPROC,C3,order,pass,,,drone,2026-10-25,Amazon has the highest delayed share under A2
+DFWBAD+DFWPROC,C4,bound,fail,worse,no,drone,2026-10-25,Sharing-out cut at least 65 % at each of d 2; 3; 4
+DFWBAD+DFWPROC,C5,bound,fail,worse,no,drone,2026-10-25,Cut at d 2 within 10 points of cut at d 4
+HEADLINE2,H1,band,pass,,,drone,2026-10-25,Houston cut vs S1 60-80 % with interval under 25 points
+HEADLINE2,H2,band,pass,,,drone,2026-10-25,DFW cut vs S1 55-80 %
+HEADLINE2,H3,bound,fail,better,no,drone,2026-10-25,At 15 m vertical cut vs S1 below 50 % in both metros
+HEADLINE2,H4,bound,pass,,,drone,2026-10-25,Bounding window changes A0 counts under 10 %
+HEADLINE2,H5,band,pass,,,drone,2026-10-25,Cut vs R at 10 m 15-45 % in both metros
+COORD2,G1,bound,fail,worse,no,drone,2026-10-27,G20 delays at most 7 % of flights and half of A2
+COORD2,G2,band,fail,worse,no,drone,2026-10-27,Amazon delayed 30-60 % of the time under G20
+COORD2,G3,bound,fail,worse,no,drone,2026-10-27,Wing and Zipline each delayed at most 5 % under G20
+COORD2,G4,bound,pass,,,drone,2026-10-27,Flown planned conflicts under G20+V2 at most 0.5 per hour
+COORD2,G5,band,pass,,,drone,2026-10-27,Leaving-window share within 3 points of A2
+COORD2,G6,order,fail,,no,drone,2026-10-27,With no coordination G20 has no more conflicts than A2
+LAYER1,P1,bound,pass,,,drone,2026-10-27,WAZ wide conflicts at most 0.75 x A2
+LAYER1,P2,band,pass,,,drone,2026-10-27,A2u wide conflicts within 20 % of A2
+LAYER1,P3,bound,pass,,,drone,2026-10-27,WAZ Amazon-Zipline conflicts at most 0.5 x A2
+LAYER1,P4,band,pass,,,drone,2026-10-27,WAZ Wing-Zipline conflicts within 25 % of A2
+LAYER1,P5,bound,fail,worse,no,drone,2026-10-27,WAZ delayed share at most 0.8 x A2
+LAYER1,P6,order,fail,,no,drone,2026-10-27,AWZ wide conflicts exceed WAZ
+LAYER1,P7,order,fail,,no,drone,2026-10-27,Arm with fewest conflicts has lowest delayed share
+STANDS1,S1,band,fail,unclear,no,taxi,2026-10-27,v4 matches NET3 within 2 points served share and 60 s wait
+STANDS1,S2,bound,fail,worse,no,taxi,2026-10-27,NET1 stands meet criterion in at least 6 of 10 seeds at r 1.5 and 3
+STANDS1,S3,bound,pass,,,taxi,2026-10-27,Same stands meet in at most 4 of 10 seeds at r 12
+STANDS1,S4,bound,pass,,,taxi,2026-10-27,Stands needed at least fleet per site plus 2
+STANDS1,S5,bound,fail,worse,no,taxi,2026-10-27,Stands needed at most fleet per site plus 6
+STANDS1,S6,claim,pass,,,taxi,2026-10-27,Hub site has the longest 95th percentile arrival hold
+AMZBAND,B1,band,pass,,,drone,2026-10-23,Texas band has 400-800 cross-operator wide meetings
+AMZBAND,B2,bound,pass,,,drone,2026-10-23,A2 cuts T wide meetings at least 65 %
+AMZBAND,B3,order,pass,,,drone,2026-10-23,Amazon-Zipline is the largest pair in T
+AMZSRC_DFW,Q1,bound,pass,,,drone,2026-10-24,Sharing out cuts S1 at least 55 %
+AMZSRC_DFW,Q2,bound,pass,,,drone,2026-10-24,Sharing out cuts S2 at least 65 %
+AMZSRC_DFW,Q3,bound,pass,,,drone,2026-10-24,Amazon-Zipline at least 50 % of S2 close calls
+AIRTAXI_NET1,P1 AFW-TOY,band,pass,,,taxi,2026-10-26,Peak E* AFW-TOY 33-48 min
+AIRTAXI_NET1,P1 AFW-DFW,band,pass,,,taxi,2026-10-26,Peak E* AFW-DFW 22-37 min
+AIRTAXI_NET1,P1 DFW-49T,band,pass,,,taxi,2026-10-26,Peak E* DFW-49T 18-32 min
+AIRTAXI_NET1,P1 IAH-EFD,band,pass,,,taxi,2026-10-26,Peak E* IAH-EFD 22-35 min
+AIRTAXI_NET1,P1 IAH-HOU,band,pass,,,taxi,2026-10-26,Peak E* IAH-HOU 21-35 min
+AIRTAXI_NET1,P1 DFW-TOY,band,pass,,,taxi,2026-10-26,Peak E* DFW-TOY 11-24 min
+AIRTAXI_NET1,P2,order,pass,,,taxi,2026-10-26,AFW-TOY highest peak E* and DFW-TOY lowest
+AIRTAXI_NET1,P3,band,pass,,,taxi,2026-10-26,Noon E* below peak E* by 3-20 min on all routes
+AIRTAXI_NET1,P4 DFW,band,pass,,,taxi,2026-10-26,Required fleet DFW 6-11
+AIRTAXI_NET1,P4 HOU,band,pass,,,taxi,2026-10-26,Required fleet Houston 4-8
+AIRTAXI_NET1,P5,bound,pass,,,taxi,2026-10-26,Slow charging needs at least 1.3x base fleet in one metro
+AIRTAXI_NET1,P6,bound,pass,,,taxi,2026-10-26,U=60 needs at least 1.2x U=150 fleet in one metro
+AIRTAXI_NET1,P7,bound,fail,unclear,no,taxi,2026-10-26,Fleet at r=3 at least 2.5x fleet at r=0.5 in both metros
+AIRTAXI_NET1,P8,order,pass,,,taxi,2026-10-26,At E=40 air beats driving at peak on AFW-TOY only
+AIRTAXI_NOISE1,N1,bound,pass,,,taxi,2026-10-26,No off-site DNL 65; highest off-site DNL below 60
+AIRTAXI_NOISE1,N2,bound,pass,,,taxi,2026-10-26,Cruise never heard at 55 dBA; reach at most 3 km
+AIRTAXI_NOISE1,N3,band,fail,worse,no,taxi,2026-10-26,N55 1 km out 20-80 DFW and 10-60 IAH
+AIRTAXI_NOISE1,N4,band,pass,,,taxi,2026-10-26,Area N55>=10 is 2-12 km2 DFW and 1-8 km2 Houston
+AIRTAXI_NOISE1,N5,band,pass,,,taxi,2026-10-26,Area grows 1.0-1.6x from r=1.5 to r=6
+AIRTAXI_NOISE1,N6,bound,pass,,,taxi,2026-10-26,With +5 dB reach at most 5 km and DNL still under 65
+AIRTAXI_NOISE2,P1,bound,pass,,,taxi,2026-10-28,No off-site cell reaches DNL 65 in any run
+AIRTAXI_NOISE2,P2,band,fail,better,yes,taxi,2026-10-28,D16 raises peak DNL over D12 by 0.5-1.0 dB
+AIRTAXI_NOISE2,P3,band,fail,better,yes,taxi,2026-10-28,D18 raises peak DNL over D12 by 2.8-3.8 dB
+AIRTAXI_NOISE2,P4,band,pass,,,taxi,2026-10-28,People with 10+ loud flights 3000-40000 DFW; 1000-25000 Houston
+AIRTAXI_NOISE2,P5,bound,fail,better,no,taxi,2026-10-28,Some people live at DNL 55 or more in D18 each metro
+CAPS1,Q1,band,pass,,,drone,2026-10-28,Capped Wing 15-40 % and Zipline 6-25 % of uncapped flights
+CAPS1,Q2,band,pass,,,drone,2026-10-28,S1 planned conflicts fall 60-95 % with caps
+CAPS1,Q3,band,pass,,,drone,2026-10-28,Sharing out cuts vs best-sourced Amazon 50-90 %
+CAPS1,Q4,bound,pass,,,drone,2026-10-28,Amazon pairs at least 60 % of capped S1 conflicts
+AIRTAXI_ROUTE1,P1 AFW-DFW,band,pass,,,taxi,2026-10-29,Peak E* at f=1.15 lower by 0.7-2.1 min on AFW-DFW
+AIRTAXI_ROUTE1,P1 AFW-TOY,band,pass,,,taxi,2026-10-29,Peak E* at f=1.15 lower by 0.7-2.1 min on AFW-TOY
+AIRTAXI_ROUTE1,P1 DFW-TOY,band,pass,,,taxi,2026-10-29,Peak E* at f=1.15 lower by 0.7-2.1 min on DFW-TOY
+AIRTAXI_ROUTE1,P1 DFW-49T,band,pass,,,taxi,2026-10-29,Peak E* at f=1.15 lower by 0.7-2.1 min on DFW-49T
+AIRTAXI_ROUTE1,P1 IAH-HOU,band,pass,,,taxi,2026-10-29,Peak E* at f=1.15 lower by 0.7-2.1 min on IAH-HOU
+AIRTAXI_ROUTE1,P1 IAH-EFD,band,pass,,,taxi,2026-10-29,Peak E* at f=1.15 lower by 0.7-2.1 min on IAH-EFD
+AIRTAXI_ROUTE1,P2 AFW-DFW,band,pass,,,taxi,2026-10-29,Peak E* at f=1.30 lower by 1.4-4.2 min on AFW-DFW
+AIRTAXI_ROUTE1,P2 AFW-TOY,band,pass,,,taxi,2026-10-29,Peak E* at f=1.30 lower by 1.4-4.2 min on AFW-TOY
+AIRTAXI_ROUTE1,P2 DFW-TOY,band,pass,,,taxi,2026-10-29,Peak E* at f=1.30 lower by 1.4-4.2 min on DFW-TOY
+AIRTAXI_ROUTE1,P2 DFW-49T,band,pass,,,taxi,2026-10-29,Peak E* at f=1.30 lower by 1.4-4.2 min on DFW-49T
+AIRTAXI_ROUTE1,P2 IAH-HOU,band,pass,,,taxi,2026-10-29,Peak E* at f=1.30 lower by 1.4-4.2 min on IAH-HOU
+AIRTAXI_ROUTE1,P2 IAH-EFD,band,pass,,,taxi,2026-10-29,Peak E* at f=1.30 lower by 1.4-4.2 min on IAH-EFD
+AIRTAXI_ROUTE1,P3,order,pass,,,taxi,2026-10-29,Route order by peak E* same at f=1.00 and 1.15
+AIRTAXI_ROUTE1,P4,order,pass,,,taxi,2026-10-29,At E=40 air beats driving at peak on AFW-TOY only
+AIRTAXI_ROUTE1,P5,band,pass,,,taxi,2026-10-29,Required fleet at f=1.15 within one aircraft of f=1.00
+AIRTAXI_ROUTE1,P6 AFW-DFW,band,pass,,,taxi,2026-10-29,f=1.00 peak E* within 1.0 min of NET1 on AFW-DFW
+AIRTAXI_ROUTE1,P6 AFW-TOY,band,pass,,,taxi,2026-10-29,f=1.00 peak E* within 1.0 min of NET1 on AFW-TOY
+AIRTAXI_ROUTE1,P6 DFW-TOY,band,pass,,,taxi,2026-10-29,f=1.00 peak E* within 1.0 min of NET1 on DFW-TOY
+AIRTAXI_ROUTE1,P6 DFW-49T,band,pass,,,taxi,2026-10-29,f=1.00 peak E* within 1.0 min of NET1 on DFW-49T
+AIRTAXI_ROUTE1,P6 IAH-HOU,band,pass,,,taxi,2026-10-29,f=1.00 peak E* within 1.0 min of NET1 on IAH-HOU
+AIRTAXI_ROUTE1,P6 IAH-EFD,band,pass,,,taxi,2026-10-29,f=1.00 peak E* within 1.0 min of NET1 on IAH-EFD
+VALLOC,V1,bound,pass,,,drone,2026-10-22,Amazon top-of-band returns cut cross-operator meetings by at least 60 % at 4 and 3 km
+VALLOC,V2,bound,pass,,,drone,2026-10-22,Full height allocation cuts cross-operator meetings by at least 80 % at 4 and 3 km
+VALLOC,V3,bound,pass,,,drone,2026-10-22,At least 80 % of remaining A2 meetings involve a climbing or descending aircraft
+PROC,B2,bound,pass,,,drone,2026-10-22,Plan check cuts cross-operator meetings by at least 90 % at every density
+PROC,B3,bound,pass,,,drone,2026-10-22,Plan check delays at most 5 % of flights at d=4 and 15 % at d=2
+FLEET,E1,band,fail,worse,no,drone,2026-10-22,Unequal fleets: each side bears 35-65 % of each pair delays
+FLEET,E2,bound,fail,worse,yes,drone,2026-10-22,Equal fleets: delay asymmetry ratio at most 2 at d=3 and 4
+FLEET,E3,bound,pass,,,drone,2026-10-22,Equal-fleet ratio at most half of unequal-fleet ratio
+STRESS,R1,bound,fail,better,yes,drone,2026-10-22,Surge window delayed share at least 2x baseline at d=4 and 3
+STRESS,R2,bound,pass,,,drone,2026-10-22,After-surge delayed share at most 1.5x baseline; no lasting backlog
+STRESS,R3,bound,fail,better,no,drone,2026-10-22,Rerouted flights delayed at least 2x as often as other window flights
+RTH,G1,bound,pass,,,drone,2026-10-22,Return-to-home at 120 m causes at least 5x more meetings than own height; at least 10
+RTH,G2,bound,pass,,,drone,2026-10-22,Return at own height causes at most 1 meeting per 100 deviations
+RTH,G3,bound,fail,worse,no,drone,2026-10-22,Outage with filed heights causes at least 5x meetings of allocated heights; at least 10
+WINGFIX,W1,bound,pass,,,drone,2026-10-23,Allocation cuts cross-operator meetings at least 65 % wide and 80 % close at every Wing level
+WINGFIX,W2,order,pass,,,drone,2026-10-23,Wing-Amazon meetings highest with Wing at 61 m among fixed levels
+HOUTODAY,D1,bound,pass,,,drone,2026-10-23,Amazon-Zipline wide meetings are zero in all 240 runs
+HOUTODAY,D2,bound,fail,unclear,no,drone,2026-10-23,Wing-Amazon is at least 60 % of filed-height cross-company meetings at cap
+HOUTODAY,D3,bound,pass,,,drone,2026-10-23,Allocation cuts reported-height meetings by at least 50 % at cap
+HOUTODAY,D4,bound,fail,worse,no,drone,2026-10-23,Allocation cuts filed-height meetings by at least 50 % at cap
+HOUTODAY,D5,bound,pass,,,drone,2026-10-23,Filed-height meetings per hour at most 10 % of full build-out rate
+HOUTODAY,D6,bound,pass,,,drone,2026-10-23,At 20 % volume meetings per hour at most 10 % of cap
+CENSUS,C1,bound,pass,,,drone,2026-10-23,Under Census customers allocation cuts filed-height meetings by at least 65 %
+CENSUS,C2,bound,pass,,,drone,2026-10-23,Under Census customers allocation cuts reported-height meetings by at most 50 %
+CENSUS,C3,band,pass,,,drone,2026-10-23,Filed-height meetings under Census are 0.7-1.3x uniform
+CENSUS,C4,band,pass,,,drone,2026-10-23,With airport rule the allocation cut is within 10 points of the Census cut
+CENSUS,C5,bound,pass,,,drone,2026-10-23,Under airport rule fewer than 15 % of Amazon customer draws rejected
+WIND+WIND20,W1,band,pass,,,drone,2026-10-24,Allocation cut under p90 wind within 5 points of still-air cut
+WIND+WIND20,W2,bound,pass,,,drone,2026-10-24,Still-air plan check in median wind leaves at least 50 % of meetings
+WIND+WIND20,W3,order,pass,,,drone,2026-10-24,After-check meetings rise with wind p50 < p90 < p99
+WIND+WIND20,Wn1_HOU,band,pass,,,drone,2026-10-24,Houston: allocation cut in each wind band within 5 points of still air
+WIND+WIND20,Wn2_HOU,bound,pass,,,drone,2026-10-24,Houston: median-band still-air check leaves at least 50 % of meetings
+WIND+WIND20,Wn3_HOU,bound,pass,,,drone,2026-10-24,Houston: check leaves at least 30 % in at least 18 of 20 median hours
+WIND+WIND20,Wn1_DFW,band,fail,worse,no,drone,2026-10-24,DFW: allocation cut in each wind band within 5 points of still air
+WIND+WIND20,Wn2_DFW,bound,pass,,,drone,2026-10-24,DFW: median-band still-air check leaves at least 50 % of meetings
+WIND+WIND20,Wn3_DFW,bound,pass,,,drone,2026-10-24,DFW: check leaves at least 30 % in at least 18 of 20 median hours
+REALSITES,R1,band,pass,,,drone,2026-10-24,Houston full Omaha profile is 0.7-1.5x the random-site value
+REALSITES,R2,bound,pass,,,drone,2026-10-24,Allocation cuts Omaha close calls by at least 65 % at mid and full in both metros
+REALSITES,R3,bound,pass,,,drone,2026-10-24,Allocation cuts best-sourced close calls by at least 55 % at full in both metros
+REALSITES,R4,band,pass,,,drone,2026-10-24,DFW full Omaha profile is 0.7-1.5x the random-site value
+REALSITES,R5,order,fail,,no,drone,2026-10-24,Houston mid: real sites give at least as many close calls as random sites
+VTXPAD,V1,band,pass,,,drone,2026-10-25,Median passes per hour within 1 km of Toyota HQ is 5-40
+VTXPAD,V2,band,pass,,,drone,2026-10-25,Median passes per hour within 300 m is 1-12
+VTXPAD,V3,bound,pass,,,drone,2026-10-25,Amazon passes at Toyota HQ are zero in every seed and stage
+VTXPAD,V4,bound,pass,,,drone,2026-10-25,Early-stage median at 1 km is at most 25 % of full-stage median
+AIRTAXI1,P1,band,pass,,,taxi,2026-10-26,Toyota full: well-clear encounters per movement 0.1-3 and NMAC 0.005-0.3
+AIRTAXI1,P2,bound,pass,,,taxi,2026-10-26,Houston heliport today: NMAC per movement at most 0.02 and well clear at most 0.2
+AIRTAXI1,P3,bound,pass,,,taxi,2026-10-26,Heliport full-stage well clear per movement at least 5x today
+AIRTAXI1,P4,bound,pass,,,taxi,2026-10-26,No-drone circles remove at least 70 % (1 km) and 95 % (2 km) of NMAC
+AIRTAXI1,P5,bound,pass,,,taxi,2026-10-26,Yielding removes at least 95 % of encounters with at most 2 flights delayed per movement
+AIRTAXI1,P6,bound,pass,,,taxi,2026-10-26,6:1 climb gives at least 15 % fewer well-clear encounters than 8:1
+DENS1,D1,band,fail,unclear,yes,drone,2026-10-27,Uncoordinated conflict growth exponent between 1.7 and 2.3 in all four cells
+DENS1,D2,bound,fail,better,no,drone,2026-10-27,V2 delayed share at double demand at least 2x its value at base demand
+DENS1,D3,order,pass,,,drone,2026-10-27,Gap-sized layers have lower delayed share than A2 at every demand level
+DENS1,D4,bound,fail,better,no,drone,2026-10-27,Houston A2 cancelled share at double demand at least 3 %
+DENS1,D5,order,pass,,,drone,2026-10-27,Mean delay of delayed flights rises with demand at every step
+DENS1,D6,bound,pass,,,drone,2026-10-27,Flown planned conflicts under V2 at most 1 per hour at double demand
+LAYER2,Q1,bound,pass,,,drone,2026-10-27,Zipline-on-top plus 5 m blocks delayed share at most 0.7x A2 with 5 m blocks
+LAYER2,Q2,bound,pass,,,drone,2026-10-27,A2 with 5 m blocks delayed share at most 0.6x A2 with 10 m blocks
+LAYER2,Q3,bound,pass,,,drone,2026-10-27,Amazon delayed share under new design at most 0.5x today
+LAYER2,Q4,order,pass,,,drone,2026-10-27,Flown wide conflicts under new design no more than under today check
+LAYER2,Q5,bound,pass,,,drone,2026-10-27,New design still removes at least 85 % of uncoordinated flown conflicts
+LAYER2,Q6,bound,pass,,,drone,2026-10-27,Cancelled share under new design at most 0.5 %
+PADRULE1,R1,bound,pass,,,taxi,2026-10-27,Slot rule with unlimited stands meets criterion in at least 8 of 10 seeds
+PADRULE1,R2,bound,pass,,,taxi,2026-10-27,Confirm rule with three spare stands meets in at least 8 of 10 seeds
+PADRULE1,R3,order,pass,,,taxi,2026-10-27,Confirm median wait higher than slot in at least 6 of 8 cells
+PADRULE1,R4,bound,pass,,,taxi,2026-10-27,Confirm records stand swaps in at least 30 % of seeds at r=3
+PADRULE1,R5,bound,pass,,,taxi,2026-10-27,Slot with 10 stands and 4 pads meets in at least 8 of 10 seeds at r=6
+PADRULE1,R6,bound,fail,worse,no,taxi,2026-10-27,Confirm runs leave no aircraft still waiting to take off at end
+RICHPOP,RP1,bound,pass,,,drone,2026-10-23,With no zone population-weighted overflight fraction below 0.08
+RICHPOP,RP2,bound,pass,,,drone,2026-10-23,No arm reaches an overflight fraction of 0.40
+RICHPOP,RP3,bound,fail,better,no,drone,2026-10-23,Population weighting raises no-zone fraction to at least 1.2x uniform
+SITECAP,S1,band,pass,,,drone,2026-10-24,Near-site meetings grow with rate with log-log slope 1.5-2.5
+SITECAP,S2,bound,pass,,,drone,2026-10-24,At 4x traffic 120 m pads cut near-site meetings by at least 50 %
+SITECAP,S3,bound,pass,,,drone,2026-10-24,Amazon 4x: 20 s spacing mean wait above 600 s; 10 s spacing 60 s or less
+SITECAP,S4,bound,pass,,,drone,2026-10-24,At 2x departure spacing alone gives under 80 % cut for every operator
+AIRTAXI_NET2,Q1a,bound,fail,worse,no,taxi,2026-10-26,Light load: busiest site p95 arrival hold at most 2 min
+AIRTAXI_NET2,Q1b,bound,pass,,,taxi,2026-10-26,Heavy load one pad: busiest site p95 arrival hold above 2 min
+AIRTAXI_NET2,Q2_DFW_1.5,band,fail,worse,no,taxi,2026-10-26,Pads needed at 90 s occupancy for DFW r=1.5
+AIRTAXI_NET2,Q2_DFW_3,band,pass,,,taxi,2026-10-26,Pads needed at 90 s occupancy for DFW r=3
+AIRTAXI_NET2,Q2_DFW_6,band,fail,worse,no,taxi,2026-10-26,Pads needed at 90 s occupancy for DFW r=6
+AIRTAXI_NET2,Q2_DFW_12,band,fail,worse,no,taxi,2026-10-26,Pads needed at 90 s occupancy for DFW r=12
+AIRTAXI_NET2,Q2_HOU_1.5,band,fail,worse,no,taxi,2026-10-26,Pads needed at 90 s occupancy for HOU r=1.5
+AIRTAXI_NET2,Q2_HOU_3,band,fail,worse,no,taxi,2026-10-26,Pads needed at 90 s occupancy for HOU r=3
+AIRTAXI_NET2,Q2_HOU_6,band,fail,worse,no,taxi,2026-10-26,Pads needed at 90 s occupancy for HOU r=6
+AIRTAXI_NET2,Q2_HOU_12,band,fail,worse,no,taxi,2026-10-26,Pads needed at 90 s occupancy for HOU r=12
+AIRTAXI_NET2,Q3,bound,pass,,,taxi,2026-10-26,At 180 s pads needed at least one step higher than at 90 s
+AIRTAXI_NET2,Q4,bound,pass,,,taxi,2026-10-26,Busiest-site stands at most 6 at r=1.5; at least 12 at DFW r=12
+AIRTAXI_NET2,Q5,bound,pass,,,taxi,2026-10-26,Slow-charging required fleet at r=1.5 no more than NET1 value
+AIRTAXI_NET2,Q6,band,pass,,,taxi,2026-10-26,Repositioning flights are 2-25 % of all flights at r=1.5
+AIRTAXI_NET4,A1,bound,fail,unclear,no,taxi,2026-10-28,Break-even on engine v5 within 1.0 minute of NET1 on all six routes
+AIRTAXI_NET4,A2,order,pass,,,taxi,2026-10-28,Break-even ranking holds: AFW-TOY highest and DFW-TOY lowest
+AIRTAXI_NET4,B1,band,pass,,,taxi,2026-10-28,DFW fleet needed 10-18; 18-30; 34-56 at 12; 24; 48 trips per hour
+AIRTAXI_NET4,B2,bound,pass,,,taxi,2026-10-28,Archer network needs more aircraft than 7-site network in at least 8 of 10 seeds
+AIRTAXI_NET4,B3,band,pass,,,taxi,2026-10-28,Only Galveston pairs infeasible at U100; 28-32 % of Houston requests unflyable
+AIRTAXI_NET4,B4,band,pass,,,taxi,2026-10-28,Houston fleet 4-9; 7-14; 12-24 at 6; 12; 24 trips; U144 needs more
+AIRTAXI_NET4,B5,bound,pass,,,taxi,2026-10-28,Empty repositioning flights at least 15 % of DFW flights at 24 trips per hour
+CORR2,C1,band,pass,,,drone,2026-10-28,With corridors allocation cuts conflicts against best-sourced Amazon by 55-85 %
+CORR2,C2,band,pass,,,drone,2026-10-28,Corridor cut within 10 points of straight-route cut in both metros
+CORR2,C3,band,pass,,,drone,2026-10-28,Current-practice conflicts with corridors are 0.8-1.5x straight-route value
+WX1,W1,band,fail,worse,no,drone,2026-10-29,Wet share of daytime hours Houston 8-16 % and DFW 6-12 %
+WX1,W2,band,fail,unclear,no,drone,2026-10-29,Thunderstorm share 0.3-2.5 % in both metros
+WX1,W3,band,fail,worse,yes,drone,2026-10-29,Gusty (40 km/h or more) share 4-14 % in both metros
+WX1,W4,band,pass,,,drone,2026-10-29,Hard-stop weather share 1.5-7 % in both metros
+WX1,W5,bound,pass,,,drone,2026-10-29,At most 3 of 10 windy test hours wet and none thunderstorm
+WX1,W6,bound,fail,better,no,drone,2026-10-29,Windy test hours median gust at least 1.5x daytime median
+RECOUNT1,R1,bound,pass,,,method,2026-10-29,At 4 checks per second outage filed heights give at least 3x allocated per held drone
+RECOUNT1,R2,band,pass,,,method,2026-10-29,Outage ratio at 4 checks per second seeds 22-31 between 4 and 14
+RECOUNT1,R3,order,pass,,,method,2026-10-29,Counts per held drone higher at 4 checks per second than 1 in both arms

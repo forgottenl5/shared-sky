@@ -1,0 +1,11 @@
+runs 4000, K2 bad 0, K3 missing 0
+PASS K4 arrive+2 pads reproduces STANDS1 {'compared': 40, 'differ': 0}
+PASS K2 ledger <= stands in all limited runs 0
+PASS R1 slot+unlimited+2 pads meets >= 8/10 (DFW 1.5, 3; HOU 1.5, 3, 6) {'DFW 1.5': 9, 'DFW 3': 10, 'HOU 1.5': 10, 'HOU 3': 9, 'HOU 6': 8}
+PASS R2 confirm at S = ceil(F/n)+3 (grid), 2 pads, meets >= 8/10 at r 1.5, 3 {'DFW 1.5 S5': 9, 'DFW 3 S8': 10, 'HOU 1.5 S5': 10, 'HOU 3 S6': 8}
+PASS R3 confirm median wait > slot at S = ceil(F/n)+2 in >= 6 cells where both can park {'cells_parkable': 8, 'confirm_higher': 7, 'detail': [('DFW', 1.5, 4, 226.9, 131.1, True), ('DFW', 3, 6, 225.2, 130.2, True), ('DFW', 6, 8, 734.8, 692.5, True), ('DFW', 12, 16, 1442.2, 1482.5, False), ('HOU', 1.5, 4, 1.9, 0.0, True), ('HOU', 3, 5, 284.9, 46.0, True), ('HOU', 6, 8, 398.6, 300.3, True), ('HOU', 12, 12, 736.9, 727.4, True)]}
+PASS R4 confirm swaps in >= 3/10 seeds at S = ceil(F/n), r = 3 {'DFW S4': 10, 'HOU S3': 7}
+PASS R5 slot S=10, 4 pads meets >= 8/10 at r = 6 {'DFW': 8, 'HOU': 10}
+FAIL R6 confirm leaves no aircraft waiting to take off (r <= 3, S >= ceil(F/n)+2, 2 pads) {'DFW 1.5 S4': 1, 'DFW 1.5 S5': 1, 'DFW 3 S6': 2, 'HOU 1.5 S4': 2, 'HOU 1.5 S5': 1, 'HOU 3 S5': 8, 'HOU 3 S6': 4}
+
+5 of 6 predictions passed

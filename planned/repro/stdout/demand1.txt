@@ -1,0 +1,4 @@
+FAIL Y1 daily planned conflicts, two-peak demand (busiest hour 2x average) vs flat: houston S1 +48 %; houston A2 +45 %; dfw S1 +42 %; dfw A2 +40 %
+PASS Y2 busiest-hour conflicts vs flat-demand hour: houston S1 4.26x; houston A2 4.17x; dfw S1 4.03x; dfw A2 3.94x
+PASS Y3 height-sharing cut over a two-peak day vs flat: houston 72.7 vs 72.3 %; dfw 74.9 vs 74.5 %
+2 of 3 passed

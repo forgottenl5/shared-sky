@@ -1,0 +1,17 @@
+| d | wind | A0 no check | A2 no check | A2 cut | A0 after check (share of no-check) | A2 after check |
+|---|---|---|---|---|---|---|
+| 4 km | W0 | 203 (102) | 38 (9) | 81 % | 0 (0 %) | 0 |
+| 4 km | p50 | 255 (98) | 40 (10) | 84 % | 202 (79 %) | 33 |
+| 4 km | p90 | 226 (100) | 46 (11) | 80 % | 229 (101 %) | 54 |
+| 4 km | p99 | 222 (88) | 42 (9) | 81 % | 239 (108 %) | 40 |
+| 3 km | W0 | 575 (263) | 108 (19) | 81 % | 0 (0 %) | 0 |
+| 3 km | p50 | 604 (276) | 115 (22) | 81 % | 487 (81 %) | 97 |
+| 3 km | p90 | 613 (261) | 121 (24) | 80 % | 621 (101 %) | 119 |
+| 3 km | p99 | 646 (290) | 127 (27) | 80 % | 640 (99 %) | 144 |
+(close meetings in brackets)
+| Prediction | Result | Verdict |
+|---|---|---|
+| W1 A2 cut under p90 within 5 points of still air | d4 80 vs 81 %; d3 80 vs 81 % | **PASS** |
+| W2 still-air check in p50 wind leaves >= 50 % | d4 79 %; d3 81 % | **PASS** |
+| W3 after-check rises p50 < p90 < p99 | 689 / 850 / 879 | **PASS** |
+Runs read: 48 (expected 48).

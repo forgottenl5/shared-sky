@@ -1,0 +1,126 @@
+{
+ "name": "ERRORS1 (as a spec; registered runner planned/errors1_run.js)",
+ "out": "out/study_errors1",
+ "cities": [
+  "houston",
+  "dfw"
+ ],
+ "heights": {
+  "A0": {
+   "wing": [
+    46,
+    91
+   ],
+   "aOut": 61,
+   "zip": 101,
+   "aIn": 105
+  },
+  "S1": {
+   "wing": [
+    46,
+    91
+   ],
+   "aOut": 69,
+   "zip": 101,
+   "aIn": [
+    85,
+    115
+   ]
+  },
+  "A2": {
+   "wing": [
+    46,
+    71
+   ],
+   "aOut": 81,
+   "zip": 101,
+   "aIn": 115
+  }
+ },
+ "cells": [
+  {
+   "tag": "A",
+   "type": "count",
+   "arms": [
+    "A0",
+    "A2"
+   ],
+   "errors": [
+    {
+     "level": "L0"
+    },
+    {
+     "level": "L1"
+    },
+    {
+     "level": "L2"
+    },
+    {
+     "level": "L3"
+    },
+    {
+     "level": "L4"
+    }
+   ],
+   "seeds": {
+    "from": 1,
+    "to": 6
+   }
+  },
+  {
+   "tag": "A",
+   "type": "count",
+   "arms": [
+    "A0",
+    "A2"
+   ],
+   "errors": [
+    {
+     "level": "H4"
+    },
+    {
+     "level": "Z4"
+    },
+    {
+     "level": "T4"
+    }
+   ],
+   "seeds": {
+    "from": 1,
+    "to": 4
+   }
+  },
+  {
+   "tag": "B",
+   "type": "check",
+   "arms": [
+    "NONE",
+    "V2",
+    "V3"
+   ],
+   "errors": [
+    {
+     "level": "L0"
+    },
+    {
+     "level": "L2"
+    },
+    {
+     "level": "L4"
+    }
+   ],
+   "seeds": {
+    "from": 1,
+    "to": 6
+   },
+   "check": {
+    "heights": "A2",
+    "wind": [
+     0.85,
+     0.95,
+     10
+    ]
+   }
+  }
+ ]
+}

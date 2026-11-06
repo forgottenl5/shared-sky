@@ -1,0 +1,7 @@
+PASS P1 max off-site DNL over all runs 56.8 dB; cells >= 65: 0
+FAIL P2 D16 - D12: +0.34, +0.30, +0.93, +0.62, +0.86, +0.67
+FAIL P3 D18 - D12: +2.37, +2.87, +3.30, +2.84, +3.32, +3.31
+PASS P4 people with >= 10 loud flights, D12: DFW 24/h 7,623; Houston 12/h 2,060
+FAIL P5 people at DNL >= 55, D18, top level: DFW 0; Houston 0
+2 of 5 passed
+wrote planned/airtaxi_noise2_results_table.md

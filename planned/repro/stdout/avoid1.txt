@@ -1,0 +1,6 @@
+FAIL V1 avoidance cut in risk at L2, base settings: houston S1 5 %; houston A2 4 %; dfw S1 5 %; dfw A2 3 %
+FAIL V2 with every alert acted on (success 100 %): houston S1 6 %; houston A2 6 %; dfw S1 7 %; dfw A2 4 %
+PASS V3 height-sharing cut in residual risk with base avoidance at L2: houston 61 %, dfw 57 %
+PASS V4 fewer avoidance manoeuvres per flight hour with shared-out heights: houston 75 %, dfw 76 %
+PASS V5 avoidance cut with 100 m detection range: houston S1 0 %; houston A2 0 %; dfw S1 1 %; dfw A2 0 %
+3 of 5 passed

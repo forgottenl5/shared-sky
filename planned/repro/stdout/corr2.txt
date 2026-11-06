@@ -1,0 +1,6 @@
+houston {'s1c': 37.6, 'a2c': 11.0, 's1s': 34.6, 'a2s': 9.6, 'cutc': 0.707, 'cuts': 0.723, 'n': (10, 10)}
+dfw {'s1c': 22.05, 'a2c': 4.0, 's1s': 17.15, 'a2s': 4.55, 'cutc': 0.819, 'cuts': 0.735, 'n': (10, 10)}
+PASS C1 houston cut with corridors 71 %, dfw cut with corridors 82 %
+PASS C2 houston 71 vs straight 72 %, dfw 82 vs straight 73 %
+PASS C3 houston S1 37.6 vs 34.6/h (1.09x), dfw S1 22.1 vs 17.1/h (1.29x)
+3 of 3 passed; wrote planned/corr2_results_table.md

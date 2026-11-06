@@ -1,0 +1,7 @@
+PASS P1 7-site DFW 24/h busiest-site peak: 0.57 MW (e 0.45) to 1.07 MW (e 0.85), n=10
+PASS P2 7-site DFW 48/h seeds with busiest site > 0.9 MW at e 0.85: 10 of 10
+PASS P3 busiest site DFW 24/h: {'AFW': 3, 'DFWc': 7}; HOU 12/h: {'IAH': 10}
+PASS P4 Archer DFW 48/h busiest-site peak at e 0.85: 2.12 MW (n=10)
+PASS P5 7-site DFW 24/h busiest-site energy over 12 h at e 0.65: 2.83 MWh
+5 of 5 passed
+wrote planned/airtaxi_power1_results_table.md

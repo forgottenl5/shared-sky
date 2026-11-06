@@ -1,0 +1,40 @@
+## holds
+
+| Arm | runs | holds | cross wide | wide per 100 | cross close | plan-check delayed / checked | delay h |
+|---|---|---|---|---|---|---|---|
+| A0 | 6 | 6241 | 245 | 3.93 | 111 | 4031 / 48343 | 66.7 |
+| R | 6 | 6236 | 36 | 0.58 | 7 | 1211 / 48343 | 13.8 |
+| A2 | 6 | 6235 | 26 | 0.42 | 9 | 923 / 48343 | 9.9 |
+
+A0 vs R per event: 6.8 [4.8–9.9]
+
+R vs A2 per event: 1.4 [0.8–2.4]
+
+A0 vs A2 per event: 9.4 [6.3–14.7]
+
+Delay: A0 vs A2 flights 4.4x, time 6.7x; R vs A2 flights 1.3x, time 1.4x
+
+## outages
+
+| Arm | runs | held drones | cross wide | wide per 100 | cross close |
+|---|---|---|---|---|---|
+| A0 | 3 | 596 | 44 | 7.38 | 20 |
+| R | 3 | 604 | 4 | 0.66 | 1 |
+| A2 | 3 | 607 | 5 | 0.82 | 0 |
+
+A0 vs R per event: 11.1 [4.1–42.7]
+
+R vs A2 per event: 0.8 [0.2–3.7]
+
+A0 vs A2 per event: 9.0 [3.6–29.0]
+
+## Verdicts
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| Q1 A0 >= 3x R per 100 holds | 6.8x | **PASS** |
+| Q2 R < 3x A2 per 100 holds | 1.4x | **PASS** |
+| Q3 R delayed flights <= 50 % of A0 | 1211 vs 4031 (30 %) | **PASS** |
+| Q4 R < 3x A2 per 100 held drones (outages) | 0.8x | **PASS** |
+
+Runs read: 27 (expected 27).

@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shared Sky: drones and air taxis</title>
+<meta property="og:type" content="website"><meta property="og:title" content="Shared Sky · Drones and air taxis near one landing site"><meta property="og:description" content="A simulation of delivery drones and air-taxi take-offs and landings sharing the low sky around two Texas sites, with the study behind it. Not real traffic.">
+<meta name="description" content="A simulation, not real traffic: delivery drones from Wing, Zipline and Amazon at full build-out and air taxis taking off and landing at the Texas Medical Center helipad (Houston) and Toyota's Plano HQ (DFW), from study AIRTAXI1.">
+<link rel="stylesheet" href="vendor/fonts/fonts.css">
+<style>
+:root { --bg:#03060c; --ink:#eaf1fb; --ink2:#9fb1c8; --ink3:#6f8299; --line:rgba(140,185,235,.20); --accent:#ffe9a8;
+  --wing:#4fd8ff; --zip:#ffbe3d; --amz:#a98bff; --taxi:#ffffff; --wc:#ffb347; --nm:#ff5a5a;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace; --sans:"Space Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color-scheme:dark; }
+* { box-sizing:border-box; } [hidden] { display:none !important; }
+html,body { margin:0; height:100%; background:var(--bg); overflow:hidden; } body { color:var(--ink); font-family:var(--sans); }
+canvas#gl { position:fixed; inset:0; width:100%; height:100%; display:block; touch-action:none; cursor:grab; }
+.panel { background:linear-gradient(180deg, rgba(14,22,40,.82), rgba(5,9,18,.86)); border:1px solid var(--line); border-radius:14px; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); box-shadow:0 10px 40px rgba(0,0,0,.45); }
+button { font:inherit; font-size:13px; color:var(--ink); background:rgba(140,185,235,.08); border:1px solid var(--line); border-radius:8px; padding:7px 11px; cursor:pointer; }
+button:hover { background:rgba(140,185,235,.18); } button.on { border-color:var(--accent); background:rgba(255,233,168,.16); color:#fff; }
+button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+a { color:var(--accent); }
+.brand { font-family:var(--mono); font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); text-decoration:none; }
+#head { position:fixed; top:16px; left:16px; width:min(440px, calc(100vw - 32px)); padding:14px 16px; }
+#head h1 { font-size:21px; line-height:1.15; margin:6px 0 4px; } #head p { margin:4px 0 8px; color:var(--ink2); font-size:13.5px; line-height:1.45; }
+.seg { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+#board { position:fixed; top:16px; right:16px; width:270px; padding:12px 14px; }
+#board .clock { font-family:var(--mono); font-size:22px; } #board .sub { font-family:var(--mono); font-size:11px; color:var(--ink3); margin-bottom:6px; }
+.row { display:flex; justify-content:space-between; gap:10px; padding:4px 0; border-top:1px solid rgba(140,185,235,.08); font-size:13px; color:var(--ink2); }
+.row .n { font-family:var(--mono); color:var(--ink); }
+.dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; }
+#leg { font-size:11px; color:var(--ink3); line-height:1.4; margin-top:6px; }
+#dock { position:fixed; left:50%; transform:translateX(-50%); bottom:16px; width:min(760px, calc(100vw - 32px)); padding:9px 11px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+#dock input[type=range] { flex:1; min-width:90px; accent-color:var(--accent); }
+#flash { position:fixed; left:50%; top:16px; transform:translateX(-50%); padding:7px 14px; border-radius:12px; background:rgba(5,10,19,.86); border:1px solid rgba(255,179,71,.6); font-size:13px; pointer-events:none; opacity:0; transition:opacity .3s; max-width:calc(100vw - 24px); text-align:center; }
+#flash.on { opacity:1; } #flash.nm { border-color:var(--nm); }
+#drawer { position:fixed; right:16px; top:330px; bottom:84px; width:min(470px, calc(100vw - 32px)); overflow:auto; padding:14px 16px; z-index:5; }
+#drawer h2 { font-size:15px; margin:0 0 8px; } #drawer h3 { font-size:13px; margin:14px 0 6px; color:var(--ink2); }
+#drawer p, #drawer li { font-size:13px; color:var(--ink2); line-height:1.5; } #drawer ul { padding-left:18px; margin:6px 0; }
+.lbl { position:fixed; transform:translate(-50%,-50%); pointer-events:none; font-family:var(--mono); font-size:10.5px; color:var(--ink3); white-space:nowrap; }
+.lbl.pad { color:#6dffb3; font-family:var(--sans); font-size:12px; padding:3px 7px; border-radius:7px; background:rgba(5,10,19,.75); border:1px solid var(--line); transform:translate(-50%,-140%); }
+#nogl { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; padding:24px; text-align:center; color:var(--ink2); }
+@media (max-width:760px) {
+  #head { top:8px; left:8px; right:8px; width:auto; padding:8px 11px; } #head h1 { font-size:15px; margin:2px 0; } #head p { display:none; } #head .brand { font-size:10px; }
+  #head .seg { margin-top:5px; } #head .seg button { padding:5px 8px; font-size:12px; }
+  #board { top:auto; right:8px; left:8px; width:auto; bottom:calc(var(--dockH,110px) + 16px); padding:8px 11px; } #board .sub, #board .opt, #leg .lf { display:none; } #board .clock { font-size:17px; }
+  #dock { bottom:8px; width:calc(100vw - 16px); gap:6px; padding:8px; } #dock button { padding:7px 8px; font-size:12.5px; }
+  #drawer { top:auto; bottom:calc(var(--dockH,110px) + 16px); max-height:55vh; width:calc(100vw - 16px); right:8px; } body.drawer #board { display:none; }
+  #flash { top:auto; bottom:calc(var(--dockH,110px) + 150px); font-size:12px; }
+}
+
+/* 30 Oct: pinch and ctrl+scroll zoom the map, never the whole page (the drawer still scrolls) */
+html, body { touch-action:none; overscroll-behavior:none; } .drawer, #drawer, .dbody, .tabs { touch-action:pan-x pan-y; }
+</style></head><body>
+<canvas id="gl" aria-label="3D view: delivery drones and air-taxi take-offs and landings around one site. In this run the air taxis meet drones inside the well-clear volume many times when nobody gives way, and never when drones wait for booked air-taxi movements."></canvas>
+<section id="head" class="panel">
+  <a class="brand" href="index.html">Shared Sky</a>
+  <h1>One landing site, two kinds of aircraft</h1>
+  <p>Delivery drones at full build-out fly below about 122 m (400 ft). An air taxi climbing out at the 8:1 slope passes through those heights about 0.5 to 1.5 km from its pad. This replays one simulated run of study AIRTAXI1. Not real traffic.</p>
+  <div class="seg" role="group" aria-label="Site"><button data-site="TMC" class="on">Houston: Medical Center</button><button data-site="TOY">DFW: Toyota HQ</button></div>
+  <div class="seg" role="group" aria-label="Rule"><button data-arm="none" class="on" aria-pressed="true">Nobody gives way</button><button data-arm="res" aria-pressed="false">Drones wait for air taxis</button></div>
+</section>
+<aside id="board" class="panel" aria-live="off">
+  <div class="clock" id="clock">0:00</div><div class="sub" id="sub">of 2:00 simulated · one run (seed 1)</div>
+  <div class="row"><span>Delivery drones within 3 km now (<i class="dot" style="background:var(--wing);margin:0 3px 0 0"></i>Wing <i class="dot" style="background:var(--zip);margin:0 3px 0 4px"></i>Zipline <i class="dot" style="background:var(--amz);margin:0 3px 0 4px"></i>Amazon)</span><span class="n" id="nDr">0</span></div>
+  <div class="row"><span><i class="dot" style="background:var(--taxi)"></i>Air-taxi take-offs and landings</span><span class="n" id="nMv">0</span></div>
+  <div class="row"><span><i class="dot" style="background:var(--wc)"></i>Drone inside the well-clear volume</span><span class="n" id="nWc">0</span></div>
+  <div class="row"><span><i class="dot" style="background:var(--nm)"></i>Near-midair (under 500 ft, 100 ft)</span><span class="n" id="nNm">0</span></div>
+  <div class="row opt" id="rowDel" hidden><span>Drone flights held back</span><span class="n" id="nDel">0</span></div>
+  <div id="leg"><span class="ls">Simulation, not to scale.</span> <span class="lf">Drones and aircraft drawn larger than life; heights drawn 3× taller; rings at 0.5, 1, 2 and 3 km.</span></div>
+</aside>
+<div id="flash" aria-live="polite"></div>
+<section id="drawer" class="panel" hidden>
+  <h2 id="dTitle">About this view</h2>
+  <p id="dRun"></p>
+  <h3>What the study found (10 runs per stage)</h3>
+  <ul id="dStudy"></ul>
+  <h3>How it is built</h3>
+  <ul>
+    <li><b>Drones:</b> the Shared Sky delivery engine with each company's FAA-filed heights and speeds, at full build-out of the filed sites. Wing and Zipline site positions are random (their site lists are not public); Amazon's are its filed sites. Customers are random. Only flights that come within 3 km of the pad are drawn.</li>
+    <li><b>Air taxis:</b> 12 take-offs and landings an hour at an 8:1 climb (the shallowest slope the FAA's vertiport obstacle surface allows), each in a random direction, because no Texas air-taxi routes or pad positions are public except the hospital helipad. Nothing steers around anything.</li>
+    <li><b>Volumes:</b> "well clear" is 2,000 ft (609.6 m) across and 250 ft (76.2 m) up or down, the figure used for drone detect-and-avoid (ASTM F3442, read secondhand); near-midair is 500 ft (152.4 m) and 100 ft (30.5 m), my definition. They are yardsticks, not a collision risk.</li>
+    <li><b>"Drones wait for air taxis":</b> each drone flight checks the booked air-taxi movements before take-off and waits (or is cancelled) until its path stays out of those volumes, the reservation rule tested in AIRTAXI1.</li>
+    <li>This page replays the study's own seed-1 run; its counts were checked to match the study's record exactly. Code and records are available on request.</li>
+  </ul>
+  <p>More: <a href="airtaxi.html">air-taxi networks</a> · <a href="houston.html">Houston drones</a> · <a href="dfw.html">DFW drones</a> · <a href="findings.html">findings</a> · <a href="about.html">about</a></p>
+</section>
+<nav id="dock" class="panel" aria-label="Playback">
+  <button id="play" aria-label="Pause">❚❚</button>
+  <input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Time in the run">
+  <span role="group" aria-label="Speed" style="display:flex;gap:4px"><button data-spd="10">10×</button><button data-spd="30" class="on">30×</button><button data-spd="90">90×</button></span>
+  <span role="group" aria-label="Camera" style="display:flex;gap:4px"><button data-view="orbit" class="on">Orbit</button><button data-view="top">Map</button><button data-view="side">Side</button></span>
+  <button id="more" aria-expanded="false">Details</button>
+</nav>
+<div id="labels"></div>
+<script type="application/json" id="data">/*DATA*/</script>
+<script src="vendor/three/build/three.min.js"></script>
+<script src="vendor/three/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function () {
+'use strict';
+const $ = id => document.getElementById(id);
+let ok = false; try { const c = document.createElement('canvas'); ok = !!(window.THREE && (c.getContext('webgl2') || c.getContext('webgl'))); } catch (e) {}
+if (!ok) { document.body.insertAdjacentHTML('beforeend', '<div id="nogl">This view needs WebGL, which this browser does not offer. The study it shows is summarised on the <a href="findings.html">findings page</a>.</div>'); return; }
+const D = JSON.parse($('data').textContent), H = 3, KM = 1 / 1000, DUR = 7200;
+const STUDY = { TMC: { wc: '0.70', any: '41 %', nm: '0.022', today: 'Today (no build-out), no modelled drone comes near this helipad: zero encounters in 10 runs.', wait: 'about 1.1 drone flights held per air-taxi movement, mean wait 116 s' },
+  TOY: { wc: '0.51', any: '35 %', nm: '0.052', today: 'Early in the build-out the rate is about a seventh of this.', wait: 'about 0.8 drone flights held per air-taxi movement, mean wait 124 s' } };
+const COL = { w: 0x4fd8ff, z: 0xffbe3d, a: 0xa98bff };
+const renderer = new THREE.WebGLRenderer({ canvas: $('gl'), antialias: true }); renderer.setPixelRatio(Math.min(2, devicePixelRatio)); renderer.setClearColor(0x03060c);
+const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(45, 1, 0.01, 100); scene.fog = new THREE.Fog(0x03060c, 6, 16);
+const controls = new THREE.OrbitControls(camera, renderer.domElement); controls.enableDamping = true; controls.maxPolarAngle = Math.PI * 0.49; controls.minDistance = 0.6; controls.maxDistance = 14; controls.screenSpacePanning = false;
+scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+// ground: rings and a faint grid
+const ground = new THREE.Group(); scene.add(ground);
+{ const g = new THREE.CircleGeometry(3.2, 96); g.rotateX(-Math.PI / 2); ground.add(new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: 0x07101d })));
+  const grid = new THREE.GridHelper(6.4, 32, 0x13233a, 0x0c1828); grid.position.y = 0.001; ground.add(grid);
+  for (const r of [0.5, 1, 2, 3]) { const pts = []; for (let k = 0; k <= 128; k++) { const a = k / 128 * Math.PI * 2; pts.push(new THREE.Vector3(r * Math.cos(a), 0.003, r * Math.sin(a))); }
+    ground.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: r === 1 ? 0x2c4a6e : 0x1a2d47 }))); }
+  const pad = new THREE.Mesh(new THREE.CircleGeometry(0.07, 32).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0x6dffb3, transparent: true, opacity: 0.8 })); pad.position.y = 0.004; ground.add(pad);
+  // drone ceiling band (about 122 m, drawn 3x)
+  const cg = new THREE.CylinderGeometry(3.0, 3.0, 0.001, 96, 1, true); const ceil = new THREE.Mesh(cg, new THREE.MeshBasicMaterial({ color: 0x4fd8ff, transparent: true, opacity: 0.05, side: THREE.DoubleSide }));
+  ceil.position.y = 0.122 * H; ground.add(ceil); }
+const labels = []; function label(text, x, y, z, cls) { const el = document.createElement('div'); el.className = 'lbl' + (cls ? ' ' + cls : ''); el.textContent = text; $('labels').appendChild(el); labels.push({ el, v: new THREE.Vector3(x, y, z) }); return el; }
+for (const r of [0.5, 1, 2, 3]) label(r + ' km', r * 0.707, 0.01, r * 0.707);
+const padLbl = label('', 0, 0.02, 0, 'pad');
+// drones: instanced spheres
+const MAXD = 400, dGeo = new THREE.SphereGeometry(0.034, 12, 9), dMat = new THREE.MeshBasicMaterial({ color: 0xffffff }), dMesh = new THREE.InstancedMesh(dGeo, dMat, MAXD); dMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); { const c0 = new THREE.Color(0xffffff); for (let i = 0; i < MAXD; i++) dMesh.setColorAt(i, c0); dMesh.instanceColor.setUsage(THREE.DynamicDrawUsage); } scene.add(dMesh);
+// drone stalks to the ground (height cue)
+const stalkPos = new Float32Array(MAXD * 6), stalkGeo = new THREE.BufferGeometry(); stalkGeo.setAttribute('position', new THREE.BufferAttribute(stalkPos, 3)); const stalks = new THREE.LineSegments(stalkGeo, new THREE.LineBasicMaterial({ color: 0x2a4566, transparent: true, opacity: 0.5 })); scene.add(stalks);
+// drone tails: the last 80 s of each drone's track
+const TS = 8, tailPos = new Float32Array(MAXD * TS * 6), tailCol = new Float32Array(MAXD * TS * 6), tailGeo = new THREE.BufferGeometry(); tailGeo.setAttribute('position', new THREE.BufferAttribute(tailPos, 3)); tailGeo.setAttribute('color', new THREE.BufferAttribute(tailCol, 3));
+const tails = new THREE.LineSegments(tailGeo, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.55 })); scene.add(tails);
+// air taxis: cones pointing along the path, with a well-clear ring under 206 m
+const MAXT = 8, tGeo = new THREE.ConeGeometry(0.06, 0.18, 4); tGeo.rotateX(Math.PI / 2);
+const taxis = [], rings = [];
+for (let i = 0; i < MAXT; i++) { const m = new THREE.Mesh(tGeo, new THREE.MeshBasicMaterial({ color: 0xffffff })); m.visible = false; scene.add(m); taxis.push(m);
+  const rg = new THREE.Mesh(new THREE.CylinderGeometry(0.6096, 0.6096, 0.0762 * 2 * H, 64, 1, true), new THREE.MeshBasicMaterial({ color: 0xffb347, transparent: true, opacity: 0.07, side: THREE.DoubleSide, depthWrite: false })); rg.visible = false; scene.add(rg); rings.push(rg); }
+const trailMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.07 });
+const evMarks = [];   // flashes where an encounter happened
+const evGeo = new THREE.SphereGeometry(1, 16, 12);
+let S = null, A = null, arm = 'none', t = 0, speed = 30, playing = true, trails = new THREE.Group(); scene.add(trails);
+function at(tr, tt) { const i = Math.floor((tt - tr.t) / D.dt); if (i < 0 || i * 3 + 2 >= tr.p.length) return null; const p = tr.p, k = i * 3, u = (tt - tr.t) / D.dt - i, n = Math.min(k + 3, p.length - 3);
+  return [p[k] + (p[n] - p[k]) * u, p[k + 1] + (p[n + 1] - p[k + 1]) * u, p[k + 2] + (p[n + 2] - p[k + 2]) * u, p[n] - p[k], p[n + 1] - p[k + 1], p[n + 2] - p[k + 2]]; }
+const end = tr => tr.t + (tr.p.length / 3 - 1) * D.dt;
+function setSite(key) { S = D.sites.find(s => s.key === key); padLbl.textContent = S.name.split(',')[0]; setArm(arm);
+  document.querySelectorAll('[data-site]').forEach(b => b.classList.toggle('on', b.dataset.site === key));
+  trails.clear(); for (const tr of S.taxis) { const pts = []; for (let k = 0; k < tr.p.length; k += 3) pts.push(new THREE.Vector3(tr.p[k] * KM, tr.p[k + 2] * KM * H, -tr.p[k + 1] * KM)); trails.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), trailMat)); }
+  t = 0; drawer(); }
+function setArm(a) { arm = a; A = S[a]; document.querySelectorAll('[data-arm]').forEach(b => { b.classList.toggle('on', b.dataset.arm === a); b.setAttribute('aria-pressed', String(b.dataset.arm === a)); });
+  $('rowDel').hidden = a !== 'res'; $('nDel').textContent = a === 'res' ? A.delayed : ''; evMarks.forEach(m => scene.remove(m.mesh)); evMarks.length = 0; drawer(); }
+function drawer() { if (!S) return; const st = STUDY[S.key], n = S.none, r = S.res;
+  $('dTitle').textContent = S.name; $('dRun').innerHTML = `This run (seed 1, ${n.movements} air-taxi take-offs and landings in 2 hours): with nobody giving way, <b>${n.wellclear}</b> drone encounters inside the well-clear volume (${n.withAny} of ${n.movements} movements had at least one) and <b>${n.nmac}</b> near-midair. With drones waiting for booked movements: <b>${r.wellclear}</b> and <b>${r.nmac}</b>, with ${r.delayed} drone flights held back${r.cancelled ? ' and ' + r.cancelled + ' cancelled' : ''}. This run has ${(n.wellclear / n.movements).toFixed(2)} well-clear encounters per movement, against the study’s ${st.wc} over 10 runs. ${S.note}`;
+  $('dStudy').innerHTML = `<li>At full drone build-out: about <b>${st.wc}</b> well-clear encounters per air-taxi take-off or landing (${st.any} of movements have at least one) and ${st.nm} near-midair encounters per movement, almost all 0.5–0.8 km from the pad, where the climb passes drone heights (AIRTAXI1).</li><li>${st.today}</li><li>A 1 km no-drone circle removes about 90 % of near-midair encounters but not the well-clear ones; 2 km removes all but stops dozens of deliveries an hour. Drones waiting for booked air-taxi movements removes all of them at a cost of ${st.wait}.</li><li>6 of 6 predictions passed; three were close to guaranteed (see the record).</li>`; }
+// camera
+function fit(view) { const r = camera.aspect < 0.8 ? 9.5 : 6.4; const T = new THREE.Vector3(0, 0, 0); let p;
+  if (view === 'top') p = new THREE.Vector3(0, r * 1.05, 0.01); else if (view === 'side') p = new THREE.Vector3(0, r * 0.12, r * 0.9); else p = new THREE.Vector3(r * 0.45, r * 0.55, r * 0.75);
+  VIEW = { p0: camera.position.clone(), t0: controls.target.clone(), p1: p, t1: T, k: 0 }; document.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('on', b.dataset.view === view)); }
+let VIEW = null;
+function resize() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); const d = $('dock'); document.documentElement.style.setProperty('--dockH', d.offsetHeight + 'px'); }
+addEventListener('resize', resize); resize();
+{ const r = camera.aspect < 0.8 ? 9.5 : 6.4; camera.position.set(r * 0.45, r * 0.55, r * 0.75); controls.target.set(0, 0, 0); controls.update(); }
+renderer.domElement.addEventListener('pointerdown', () => { VIEW = null; }, true);
+// UI
+document.querySelectorAll('[data-site]').forEach(b => b.onclick = () => setSite(b.dataset.site));
+document.querySelectorAll('[data-arm]').forEach(b => b.onclick = () => { setArm(b.dataset.arm); });
+document.querySelectorAll('[data-spd]').forEach(b => b.onclick = () => { speed = +b.dataset.spd; document.querySelectorAll('[data-spd]').forEach(x => x.classList.toggle('on', x === b)); });
+document.querySelectorAll('[data-view]').forEach(b => b.onclick = () => fit(b.dataset.view));
+$('play').onclick = () => { playing = !playing; $('play').textContent = playing ? '❚❚' : '▶'; $('play').setAttribute('aria-label', playing ? 'Pause' : 'Play'); };
+$('scrub').oninput = e => { t = DUR * e.target.value / 1000; evMarks.forEach(m => scene.remove(m.mesh)); evMarks.length = 0; };
+$('more').onclick = () => { const d = $('drawer'); d.hidden = !d.hidden; $('more').classList.toggle('on', !d.hidden); $('more').setAttribute('aria-expanded', String(!d.hidden)); document.body.classList.toggle('drawer', !d.hidden); };
+if (matchMedia('(prefers-reduced-motion: reduce)').matches) { speed = 10; document.querySelectorAll('[data-spd]').forEach(x => x.classList.toggle('on', x.dataset.spd === '10')); }
+const M4 = new THREE.Matrix4(), V = new THREE.Vector3(), Q = new THREE.Quaternion(), SC = new THREE.Vector3(1, 1, 1), C = new THREE.Color();
+let last = performance.now(), flashT = 0, lastEv = -1;
+const fmt = s => Math.floor(s / 3600) + ':' + String(Math.floor(s / 60) % 60).padStart(2, '0');
+function frame(now) { const dt = Math.min(0.1, (now - last) / 1000); last = now;
+  if (playing) { t += dt * speed; if (t >= DUR) { t = 0; evMarks.forEach(m => scene.remove(m.mesh)); evMarks.length = 0; } $('scrub').value = Math.round(t / DUR * 1000); }
+  // drones
+  let n = 0; for (const tr of A.drones) { if (t < tr.t || t > end(tr) || n >= MAXD) continue; const p = at(tr, t); if (!p) continue;
+    V.set(p[0] * KM, p[2] * KM * H, -p[1] * KM); M4.compose(V, Q, SC); dMesh.setMatrixAt(n, M4); dMesh.setColorAt(n, C.setHex(COL[tr.k] || 0xffffff));
+    stalkPos.set([V.x, V.y, V.z, V.x, 0, V.z], n * 6);
+    { let prev = [V.x, V.y, V.z]; for (let j = 1; j <= TS; j++) { const q2 = at(tr, Math.max(tr.t, t - j * 10)) || p; const cur = [q2[0] * KM, q2[2] * KM * H, -q2[1] * KM], o = (n * TS + j - 1) * 6, fade = 1 - j / (TS + 1);
+      tailPos.set([...prev, ...cur], o); tailCol.set([C.r * fade, C.g * fade, C.b * fade, C.r * fade * 0.8, C.g * fade * 0.8, C.b * fade * 0.8], o); prev = cur; } }
+    n++; }
+  dMesh.count = n; dMesh.instanceMatrix.needsUpdate = true; if (dMesh.instanceColor) dMesh.instanceColor.needsUpdate = true; stalkGeo.setDrawRange(0, n * 2); stalkGeo.attributes.position.needsUpdate = true; tailGeo.setDrawRange(0, n * TS * 2); tailGeo.attributes.position.needsUpdate = true; tailGeo.attributes.color.needsUpdate = true;
+  // taxis
+  let k = 0, moves = 0; for (const tr of S.taxis) { if (tr.t <= t) moves++; if (t < tr.t || t > end(tr) || k >= MAXT) continue; const p = at(tr, t); if (!p) continue;
+    const m = taxis[k], rg = rings[k]; m.visible = true; m.position.set(p[0] * KM, p[2] * KM * H, -p[1] * KM); const dir = new THREE.Vector3(p[3], p[5] * H, -p[4]); if (dir.lengthSq() > 1e-6) m.lookAt(m.position.clone().add(dir));
+    rg.visible = p[2] < 206; rg.position.copy(m.position); const hot = A.events.some(e => e[6] === tr.id && Math.abs(e[1] - t) < 20); rg.material.opacity = hot ? 0.28 : 0.06; rg.material.color.setHex(A.events.some(e => e[6] === tr.id && e[0] === 1 && Math.abs(e[1] - t) < 20) ? 0xff5a5a : 0xffb347); k++; }
+  for (let i = k; i < MAXT; i++) { taxis[i].visible = false; rings[i].visible = false; }
+  // events so far
+  let wc = 0, nm = 0, newest = null; for (const e of A.events) { if (e[1] > t) break; if (e[0]) nm++; else wc++; newest = e; }
+  $('nWc').textContent = wc; $('nNm').textContent = nm; $('nMv').textContent = moves; $('nDr').textContent = n; $('clock').textContent = fmt(t);
+  if (newest && newest !== lastEv && t - newest[1] < 4) { lastEv = newest; const f = $('flash'), op = { wing: 'Wing', zipline: 'Zipline', amazon: 'Amazon' }[newest[3]] || newest[3];
+    f.textContent = `${newest[0] ? 'Near-midair' : 'Well clear lost'}: ${op} drone at ${newest[5]} m, air taxi at ${newest[4]} m, ${(newest[2] / 1000).toFixed(1)} km from the pad`; f.classList.toggle('nm', !!newest[0]); f.classList.add('on'); flashT = now; }
+  if (flashT && now - flashT > 2600) { $('flash').classList.remove('on'); flashT = 0; }
+  if (VIEW) { VIEW.k = Math.min(1, VIEW.k + dt / 1.1); const e = VIEW.k < .5 ? 4 * VIEW.k ** 3 : 1 - (-2 * VIEW.k + 2) ** 3 / 2; camera.position.lerpVectors(VIEW.p0, VIEW.p1, e); controls.target.lerpVectors(VIEW.t0, VIEW.t1, e); if (VIEW.k >= 1) VIEW = null; }
+  controls.update(); renderer.render(scene, camera);
+  for (const L of labels) { V.copy(L.v).project(camera); const vis = V.z < 1 && Math.abs(V.x) < 1.1 && Math.abs(V.y) < 1.1; L.el.style.display = vis ? '' : 'none'; if (vis) { L.el.style.left = ((V.x + 1) / 2 * innerWidth) + 'px'; L.el.style.top = ((1 - V.y) / 2 * innerHeight) + 'px'; } }
+  requestAnimationFrame(frame); }
+const q = new URLSearchParams(location.search); setSite(q.get('site') === 'TOY' ? 'TOY' : 'TMC'); requestAnimationFrame(frame);
+window.__sh = { state: () => ({ site: S.key, arm, t, drones: dMesh.count, wc: $('nWc').textContent, nm: $('nNm').textContent }), seek: s => { t = s; } };
+})();
+</script>
+<script>/* 30 Oct: pinch (ctrl+wheel on laptops, gestures on iPhone) anywhere goes to the map instead of zooming the page */
+(function () { var cv = document.querySelector('canvas#gl'); if (!cv) return;
+  addEventListener('wheel', function (e) { var onLabel = e.target.closest && e.target.closest('#labels'); if (!e.ctrlKey && !onLabel) return; e.preventDefault(); if (e.target !== cv) cv.dispatchEvent(new WheelEvent('wheel', { deltaX: e.deltaX, deltaY: e.deltaY, deltaMode: e.deltaMode, ctrlKey: e.ctrlKey, clientX: e.clientX, clientY: e.clientY, bubbles: true, cancelable: true })); }, { passive: false, capture: true });
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (t) { addEventListener(t, function (e) { e.preventDefault(); }, { passive: false }); }); })();</script>
+</body></html>

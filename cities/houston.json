@@ -1,0 +1,61 @@
+{
+ "name": "houston",
+ "label": "Houston",
+ "source": "Amazon's Houston sites from its final Texas EA (TEXAS_FILINGS_2026-10-23.md), geocoded with OpenStreetMap Nominatim (results pasted by the founder, 2026-10-23); Wing's nests and Zipline's Chargers at the Houston filing caps, placed uniformly at random in the counted square because their locations are not published.",
+ "cfg": {
+  "half": 51000,
+  "zone": 34000,
+  "warm": 3600,
+  "meas": 7200
+ },
+ "wind": "data/openmeteo_houston_2025.json",
+ "fixed": {
+  "op": "amazon",
+  "sites": [
+   [
+    "SAHx",
+    29.632374704146194,
+    -95.52780057909078,
+    "coordinates in the Texas EA"
+   ],
+   [
+    "STX5",
+    29.8327131,
+    -95.52968,
+    "street-level match only (Campbell Road, 77041), up to ~1 km off"
+   ],
+   [
+    "HOU2",
+    29.9341403,
+    -95.4283824,
+    "OSM building \"Amazon HOU2\""
+   ],
+   [
+    "HOU6",
+    29.6666527,
+    -95.712891,
+    "OSM building \"Amazon HOU6\""
+   ],
+   [
+    "STX4",
+    29.6100929,
+    -95.0789902,
+    "OSM address point"
+   ]
+  ],
+  "excluded": [
+   "SAH1 (1202 E FM 1960 Road, Houston 77073): not found by three Nominatim queries (2026-10-23)"
+  ]
+ },
+ "random": [
+  {
+   "op": "wing",
+   "n": 75
+  },
+  {
+   "op": "zipline",
+   "n": 65
+  }
+ ],
+ "rngOffset": 31337
+}

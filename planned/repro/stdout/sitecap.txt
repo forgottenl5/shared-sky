@@ -1,0 +1,28 @@
+| Site | rate x | pads | D 0 s | D 10 s | D 20 s | D 40 s | mean wait at D 10 / 20 / 40 s |
+|---|---|---|---|---|---|---|---|
+| amazon | 1 | 30 m | 301 | 272 | 267 | 265 | 1 / 5 / 40 s |
+| amazon | 1 | 120 m | 73 | 60 | 58 | 72 | 1 / 5 / 40 s |
+| amazon | 2 | 30 m | 1210 | 1084 | 1052 | 680 | 3 / 20 / 2153 s |
+| amazon | 2 | 120 m | 297 | 240 | 224 | 169 | 3 / 20 / 2153 s |
+| amazon | 4 | 30 m | 5020 | 4546 | 2680 | 680 | 10 / 2151 / 11531 s |
+| amazon | 4 | 120 m | 1263 | 1026 | 614 | 169 | 10 / 2151 / 11531 s |
+| wing | 1 | 30 m | 98 | 97 | 93 | 69 | 0 / 1 / 6 s |
+| wing | 1 | 120 m | 9 | 8 | 8 | 9 | 0 / 1 / 6 s |
+| wing | 2 | 30 m | 396 | 389 | 374 | 269 | 1 / 4 / 23 s |
+| wing | 2 | 120 m | 77 | 74 | 74 | 53 | 1 / 4 / 23 s |
+| wing | 4 | 30 m | 1717 | 1682 | 1560 | 778 | 2 / 15 / 1236 s |
+| wing | 4 | 120 m | 299 | 294 | 312 | 132 | 2 / 15 / 1236 s |
+| zipline | 1 | 30 m | 377 | 361 | 336 | 318 | 1 / 5 / 37 s |
+| zipline | 1 | 120 m | 86 | 76 | 69 | 69 | 1 / 5 / 37 s |
+| zipline | 2 | 30 m | 1291 | 1225 | 1231 | 616 | 3 / 20 / 2884 s |
+| zipline | 2 | 120 m | 340 | 308 | 290 | 149 | 3 / 20 / 2884 s |
+| zipline | 4 | 30 m | 4865 | 4598 | 2443 | 621 | 10 / 2827 / 12804 s |
+| zipline | 4 | 120 m | 1125 | 1016 | 572 | 154 | 10 / 2827 / 12804 s |
+(near-site same-company wide meetings, 3 seeds x 2 h, within 300 m of the site)
+| Prediction | Result | Verdict |
+|---|---|---|
+| S1 slope in rate 1.5–2.5 (each site, D 0, 30 m pads) | amazon 2.03, wing 2.07, zipline 1.84 | **PASS** |
+| S2 120 m pads cut >= 50 % at x4 | amazon 75 %, wing 83 %, zipline 77 % | **PASS** |
+| S3 Amazon x4: D 20 s mean wait > 600 s and D 10 s <= 60 s | 2151 s / 10 s | **PASS** |
+| S4 no site reaches an 80 % cut by departure spacing alone at x2 | amazon 44 %, wing 32 %, zipline 52 % | **PASS** |
+Runs read: 216 (expected 216).

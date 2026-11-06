@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shared Sky Lab</title>
+<meta name="description" content="Run the Shared Sky delivery-drone engine in your browser: change heights, density, plan-check rules and bad-day events.">
+<meta property="og:type" content="website"><meta property="og:title" content="Shared Sky Lab"><meta property="og:description" content="Run the Shared Sky delivery-drone engine in your browser, with the full record of studies and failed predictions."><meta property="og:url" content="https://forgottenl5.github.io/shared-sky/lab.html"><meta property="og:image" content="https://forgottenl5.github.io/shared-sky/img/houston.jpg"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%2303060c%27/%3E%3Ccircle cx=%279%27 cy=%2720%27 r=%274%27 fill=%27%234fd8ff%27/%3E%3Ccircle cx=%2716%27 cy=%2711%27 r=%274%27 fill=%27%23ffbe3d%27/%3E%3Ccircle cx=%2723%27 cy=%2720%27 r=%274%27 fill=%27%23a98bff%27/%3E%3C/svg%3E">
+<link rel="stylesheet" href="vendor/fonts/fonts.css">
+<style>
+/* Layout: an operations bench: scenario controls on the left, the live run (plan view, side view, numbers) on the right, then the run log and the study record. */
+:root {
+  --paper: #f3f5f1; --surface: #fbfcfa; --ink: #142030; --muted: #566473; --rule: #d3d9d4; --grid: #e4e9e4;
+  --alert: #b0237a; --wing: #2563c9; --zip: #c97a1c; --amz: #8a3fbf; --band: rgba(37, 99, 201, .08); --good: #2f7d4f;
+  --display: "Saira Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0b1119; --surface: #0f1620; --ink: #e4e9ee; --muted: #93a0ad; --rule: #26313d; --grid: #18222d;
+  --alert: #e04fa2; --wing: #5288dc; --zip: #b97a2e; --amz: #a06cd6; --band: rgba(82, 136, 220, .12); --good: #5fb886; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #0b1119; --surface: #0f1620; --ink: #e4e9ee; --muted: #93a0ad; --rule: #26313d; --grid: #18222d;
+  --alert: #e04fa2; --wing: #5288dc; --zip: #b97a2e; --amz: #a06cd6; --band: rgba(82, 136, 220, .12); --good: #5fb886; color-scheme: dark }
+* { box-sizing: border-box }
+[hidden] { display: none !important }
+body { background: var(--paper); color: var(--ink); font: 400 15px/1.5 var(--body) }
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 32px 56px; display: grid; gap: 40px }
+h1, h2 { font-family: var(--display); font-weight: 700; line-height: 1.05; margin: 0; text-wrap: balance }
+h1 { font-size: clamp(2rem, 4.4vw, 3.1rem) } h2 { font-size: clamp(1.4rem, 2.6vw, 1.9rem) }
+p { margin: 0; max-width: 72ch }
+.eyebrow { font: 500 .76rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted) }
+.head { display: grid; gap: 10px }
+.sub { color: var(--muted) }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums }
+a { color: var(--wing) }
+button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--alert); outline-offset: 2px }
+.note { border-left: 3px solid var(--zip); padding: 2px 0 2px 12px; font-size: .9rem; color: var(--muted); max-width: 90ch }
+.bench { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 20px; align-items: start }
+@media (max-width: 960px) { .bench { grid-template-columns: minmax(0, 1fr) } }
+.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 16px; display: grid; gap: 14px; min-width: 0 }
+.panel h3 { font: 600 .78rem/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; margin: 0; color: var(--muted) }
+.presets { display: flex; flex-wrap: wrap; gap: 6px }
+.chip { font: 500 .82rem/1.2 var(--body); border: 1px solid var(--rule); background: transparent; color: var(--ink); border-radius: 999px; padding: 6px 10px; cursor: pointer }
+.chip:hover { border-color: var(--ink) }
+fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; min-width: 0 }
+legend { font: 600 .78rem/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 0; margin-bottom: 6px }
+label { display: grid; gap: 4px; font-size: .88rem }
+.row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px }
+select, input[type=number] { font: 500 .9rem/1.2 var(--body); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 5px; padding: 7px 8px; width: 100%; min-width: 0 }
+.check { display: flex; gap: 8px; align-items: center; font-size: .9rem }
+.actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px }
+.btn { font: 600 .92rem/1 var(--body); border-radius: 5px; padding: 11px 12px; cursor: pointer; border: 1px solid var(--ink); background: var(--ink); color: var(--paper) }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--rule) }
+.btn:disabled { opacity: .5; cursor: progress }
+.status { font: 400 .82rem/1.3 var(--mono); color: var(--muted); min-height: 1.3em }
+.bar { height: 4px; background: var(--grid); border-radius: 2px; overflow: hidden } .bar i { display: block; height: 100%; width: 0; background: var(--wing); transition: width .2s }
+.run { display: grid; gap: 14px; min-width: 0 }
+.views { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px }
+@media (max-width: 700px) { .views { grid-template-columns: minmax(0, 1fr) } }
+.view { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 12px; display: grid; gap: 8px; min-width: 0 }
+.view-t { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font: 500 .78rem/1.2 var(--mono); color: var(--muted) }
+.view-t b { color: var(--ink); letter-spacing: .08em; text-transform: uppercase }
+canvas { width: 100%; display: block; border-radius: 3px } #map { aspect-ratio: 1 / 1 } #side { aspect-ratio: 1 / 1 }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: .8rem; color: var(--muted) }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: -1px } .legend .ring { border: 2px solid var(--alert) }
+.playrow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font: 400 .82rem/1 var(--mono); color: var(--muted) }
+.playrow .btn { padding: 7px 10px; font-size: .82rem }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px }
+@media (max-width: 700px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+.stat { border-top: 2px solid var(--rule); padding-top: 8px; display: grid; gap: 2px; min-width: 0 }
+.stat.hot { border-color: var(--alert) } .stat.ok { border-color: var(--good) }
+.stat .n { font: 700 1.9rem/1 var(--display); font-variant-numeric: tabular-nums } .stat .l { font-size: .82rem; color: var(--muted) }
+.pairs { display: grid; gap: 6px; font-size: .85rem }
+.pairs div { display: grid; grid-template-columns: 150px minmax(0, 1fr) 44px; gap: 8px; align-items: center }
+.pairs span.track { height: 10px; background: var(--grid); border-radius: 2px; overflow: hidden } .pairs span.track i { display: block; height: 100% }
+.scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px }
+table { border-collapse: collapse; width: 100%; font-size: .88rem; min-width: 760px }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top }
+th { font: 600 .72rem/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--surface); position: sticky; top: 0 }
+td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right } th.num { text-align: right }
+.pill { display: inline-block; font: 600 .72rem/1 var(--mono); padding: 4px 7px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap }
+.pill.pass { color: var(--good) } .pill.fail { color: var(--alert) } .pill.mixed { color: var(--zip) }
+.empty { color: var(--muted); font-size: .88rem; padding: 14px 12px }
+footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 16px }
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <nav class="mono" style="font-size:.85rem;margin-bottom:6px"><a href="index.html">← Shared Sky home</a> · <a href="findings.html">Findings</a> · <a href="about.html">About</a></nav>
+    <div class="eyebrow">Shared Sky · planned-operations engine · runs in your browser</div>
+    <h1>Shared Sky Lab</h1>
+    <p class="sub">Set up a Houston-style build-out of Wing, Zipline and Amazon delivery sites using their FAA-filed flight profiles, choose the heights and rules, and run it. Your runs are computed live in your browser by the same engine used for the published studies; the two example runs shown first were computed with it when this page was built.</p>
+  </header>
+
+  <section class="bench">
+    <form class="panel" id="form" autocomplete="off">
+      <div class="head" style="gap:8px"><h3>Start from</h3>
+        <div class="presets" id="presets"></div></div>
+      <fieldset><legend>Airspace</legend>
+        <label>Site spacing (Wing nests)<select id="d"><option value="4">4 km apart</option><option value="3" selected>3 km apart</option><option value="2">2 km apart (slow)</option></select></label>
+        <label>Fleet mix<select id="fleet"><option value="filed" selected>As filed for Houston (75 : 65 : 6)</option><option value="equal">Equal fleet sizes</option></select></label>
+        <label>Random seed<input type="number" id="seed" min="1" max="999" value="1"></label>
+      </fieldset>
+      <fieldset><legend>Heights (metres)</legend>
+        <label>Height plan<select id="heights"><option value="filed" selected>Filed baselines</option><option value="reported">High return, staff remark only (69 m out, 122 m back)</option><option value="allocation">Allocation inside filed bands</option><option value="custom">Custom</option></select></label>
+        <div class="row" id="custom" hidden>
+          <label>Wing low<input type="number" id="wlo" value="46" min="0" max="122"></label><label>Wing high<input type="number" id="whi" value="91" min="0" max="122"></label>
+          <label>Amazon out<input type="number" id="aout" value="61" min="0" max="122"></label><label>Amazon back<input type="number" id="ain" value="105" min="0" max="122"></label>
+          <label>Zipline<input type="number" id="zip" value="101" min="0" max="122"></label>
+        </div>
+        <label>Wing height practice<select id="wingfix"><option value="0" selected>Random within its band</option><option value="46">Fixed 46 m</option><option value="61">Fixed 61 m</option><option value="76">Fixed 76 m</option></select></label>
+      </fieldset>
+      <fieldset><legend>Shared flight-plan check</legend>
+        <label class="check"><input type="checkbox" id="check"> Companies check each other's plans before take-off</label>
+        <div class="row">
+          <label>Reserved width<select id="cell"><option value="15">15 m</option><option value="30" selected>30 m</option><option value="60">60 m</option><option value="90">90 m</option></select></label>
+          <label>Time margin<select id="tb"><option value="5" selected>±5 s</option><option value="15">±15 s</option><option value="30">±30 s</option></select></label>
+          <label>Vertical gap<select id="vsep"><option value="10" selected>10 m</option><option value="20">20 m</option></select></label>
+        </div>
+      </fieldset>
+      <fieldset><legend>When something goes wrong</legend>
+        <label>Off-plan event<select id="cont"><option value="none" selected>None</option><option value="hold">20 % of drones stop for 2 min</option><option value="rth-own">20 % return home at own height</option><option value="rth-120">20 % return home at 120 m</option><option value="outage">6 area outages (2 km, 2 min)</option></select></label>
+        <p class="sub" id="conthint" style="font-size:.82rem" hidden>Turn on the plan check to isolate conflicts caused by the off-plan event; without it, conflicts in the plans themselves are counted too.</p>
+      </fieldset>
+      <div class="actions"><button class="btn" type="submit" id="run">Run</button><button class="btn ghost" type="button" id="runboth">Run filed vs allocation</button></div>
+      <div class="bar"><i id="prog"></i></div>
+      <div class="status" id="status" aria-live="polite">Ready.</div>
+    </form>
+
+    <div class="run">
+      <div class="stats" id="stats"></div>
+      <div class="views">
+        <div class="view"><div class="view-t"><b>Plan view</b><span>counted area, 10 × 10 km</span></div><canvas id="map" role="img" aria-label="Top-down view of the latest run"></canvas></div>
+        <div class="view"><div class="view-t"><b>Side view</b><span>east–west, height × 40</span></div><canvas id="side" role="img" aria-label="Side view of drone heights in the latest run"></canvas></div>
+      </div>
+      <div class="legend"><span><i style="background:var(--wing)"></i>Wing</span><span><i style="background:var(--zip)"></i>Zipline</span><span><i style="background:var(--amz)"></i>Amazon</span><span><i class="ring"></i>Planned conflict between companies</span></div>
+      <div class="playrow"><button class="btn ghost" type="button" id="play">Pause</button><span id="clock">minute 0 of 60</span><span id="runlabel"></span></div>
+      <div class="view"><div class="view-t"><b>Planned conflicts by company pair</b><span>within 30 m and 10 m</span></div><div class="pairs" id="pairs"></div></div>
+    </div>
+  </section>
+
+  <p class="note">Lab runs use a 24 km area, 1 hour and one seed, so they are faster and noisier than the published studies (the headline uses real 68–80 km layouts, 2 measured hours and 10 seeds, with 95 % ranges). Expect the same direction and similar size of effect, not the same numbers. Try a few seeds before reading much into one run.</p>
+
+  <section class="head">
+    <div class="eyebrow">Your runs</div>
+    <h2>Run log</h2>
+    <div class="scroll"><table><thead><tr><th>Scenario</th><th class="num">Planned conflicts</th><th class="num">Tight</th><th class="num">Flights delayed</th><th class="num">Avg wait</th><th class="num">Off-plan events</th><th class="num">Conflicts per 100 events</th><th class="num">Time</th></tr></thead><tbody id="log"></tbody></table></div>
+  </section>
+
+  <section class="head">
+    <div class="eyebrow">Published studies</div><p class="note" style="margin:4px 0 10px"><a href="studies.csv" download>Download the scorecard as a spreadsheet (CSV)</a>: one row per study with its question, result and how many registered predictions passed.</p>
+    <h2>Study record</h2>
+    <p class="sub">Since 22 Oct 2026 every study was written down with its predictions and fingerprinted before any code or run. Exceptions: VALLOC, VALLOC2 and ROBUST were committed together with their results, and FLEET’s analysis came after its runs. Failed predictions stay in the record.</p>
+    <div class="scroll"><table><thead><tr><th>Study</th><th>Question</th><th>Result</th><th>Predictions</th></tr></thead><tbody id="record"></tbody></table></div>
+  </section>
+
+  <footer>
+    <p>Findings and methods: <a href="findings.html">what the simulation found</a> (the full study record of registrations, code and results is private for now and available on request) · <a href="houston.html">Houston simulation</a> · <a href="dfw.html">Dallas–Fort Worth simulation</a>. The lab engine is the research engine in one file; it reproduces the published counts exactly at the research settings.</p>
+    <p>A "planned conflict" is two planned flights of different companies within 30 m horizontally and 10 m vertically at the same moment, checked four times a second. It measures how plans interact with no coordination between companies, not collision risk. Pass counts include some predictions that were easy to meet; the failures are the informative part. Planned tracks only: no wind, no in-flight avoidance.</p>
+    <p class="mono">forgottenl5 · 28 October 2026</p>
+  </footer>
+</div>
+
+<script type="text/plain" id="engine">__ENGINE__</script>
+<script type="application/json" id="seed-runs">__SEEDRUNS__</script>
+<script type="application/json" id="studies">__STUDIES__</script>
+<script>
+(() => {
+  const CFG = { half: 12000, zone: 5000, warm: 1800, meas: 3600 }, DT = 3;
+  const $ = id => document.getElementById(id), css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const OPC = { w: '--wing', z: '--zip', a: '--amz' }, NAMES = { wing: 'Wing', zipline: 'Zipline', amazon: 'Amazon' };
+  // ---- worker running the engine
+  const workerSrc = $('engine').textContent + `
+self.onmessage = e => { const { id, cfg, p } = e.data, t0 = Date.now();
+  const r = SkyLab.run(cfg, p, (stage, x) => self.postMessage({ id, progress: { stage, x } }));
+  const T0 = cfg.warm, T1 = cfg.warm + cfg.meas, DT = ${DT}, tracks = [], bufs = [];
+  for (const f of r.fin) { if (f.end < T0 || f.t0 > T1 || !SkyLab.reachesZone(cfg, f, 0)) continue;
+    const s0 = Math.max(T0, Math.ceil(f.t0 / DT) * DT), s1 = Math.min(T1, f.end - 1); if (s1 <= s0) continue;
+    const n = Math.floor((s1 - s0) / DT) + 1, a = new Int16Array(n * 3); let k = 0;
+    for (let i = 0; i < n; i++) { const t = s0 + i * DT; while (k < f.sg.length - 1 && t >= f.sg[k][0] + f.sg[k][1]) k++; const p = SkyLab.posAt(f.sg[k], t); a[i * 3] = Math.round(p[0]); a[i * 3 + 1] = Math.round(p[1]); a[i * 3 + 2] = Math.round(p[2]); }
+    tracks.push({ o: f.op[0], s: s0 - T0, a }); bufs.push(a.buffer); }
+  delete r.fin; r.ms = Date.now() - t0; self.postMessage({ id, result: r, tracks }, bufs); };`;
+  let worker = null; try { worker = new Worker(URL.createObjectURL(new Blob([workerSrc], { type: 'text/javascript' }))); } catch (e) { worker = null; }
+  let nextId = 1; const pending = new Map();
+  if (worker) worker.onmessage = e => { const m = e.data, h = pending.get(m.id); if (!h) return; if (m.progress) { h.progress(m.progress); return; } pending.delete(m.id); h.resolve(m); };
+  const runInWorker = (p, progress) => new Promise((resolve, reject) => { if (!worker) return reject(new Error('This browser blocked the background worker the lab needs.')); const id = nextId++; pending.set(id, { resolve, progress }); worker.postMessage({ id, cfg: CFG, p }); });
+
+  // ---- form
+  const PRESETS = [
+    ['Filed heights', { heights: 'filed', check: false, cont: 'none' }],
+    ['High return (staff remark)', { heights: 'reported', check: false, cont: 'none' }],
+    ['Allocation', { heights: 'allocation', check: false, cont: 'none' }],
+    ['Allocation + plan check', { heights: 'allocation', check: true, cont: 'none' }],
+    ['Drones stop, filed heights', { heights: 'filed', check: true, cont: 'hold' }],
+    ['Drones stop, high return (staff remark)', { heights: 'reported', check: true, cont: 'hold' }],
+    ['Drones stop, allocation', { heights: 'allocation', check: true, cont: 'hold' }],
+    ['Return home at 120 m', { heights: 'allocation', check: true, cont: 'rth-120' }]];
+  for (const [name, v] of PRESETS) { const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = name; b.onclick = () => { $('heights').value = v.heights; $('check').checked = v.check; $('cont').value = v.cont; $('wingfix').value = '0'; $('fleet').value = 'filed'; sync(); go(); }; $('presets').append(b); }
+  function sync() { $('custom').hidden = $('heights').value !== 'custom'; $('conthint').hidden = !($('cont').value !== 'none' && !$('check').checked); for (const id of ['cell', 'tb', 'vsep']) $(id).disabled = !$('check').checked; }
+  for (const id of ['heights', 'check', 'cont']) $(id).addEventListener('change', sync); sync();
+  function params(heightsOverride) { const h = heightsOverride || $('heights').value;
+    const heights = h === 'custom' ? { wing: [+$('wlo').value, +$('whi').value], aOut: +$('aout').value, zip: +$('zip').value, aIn: +$('ain').value } : h;
+    return { d: +$('d').value, seed: Math.max(1, Math.min(999, +$('seed').value || 1)), heights, wingFixed: +$('wingfix').value || null, fleet: $('fleet').value, check: $('check').checked, cell: +$('cell').value, tb: +$('tb').value, vsep: +$('vsep').value, contingency: $('cont').value, frac: 0.2, outages: 6, sub: 4 }; }
+  function label(p) { const H = typeof p.heights === 'string' ? (p.heights === 'filed' ? 'Filed heights' : p.heights === 'reported' ? 'High return (staff remark)' : 'Allocation') : `Custom (W ${p.heights.wing[0]}–${p.heights.wing[1]}, A ${p.heights.aOut}/${p.heights.aIn}, Z ${p.heights.zip})`;
+    const parts = [H, `${p.d} km`, `seed ${p.seed}`]; if (p.wingFixed) parts.push(`Wing at ${p.wingFixed} m`); if (p.fleet === 'equal') parts.push('equal fleets');
+    if (p.check) parts.push(`plan check ${p.cell} m / ±${p.tb} s / ${p.vsep} m`); const C = { hold: '2-min stops', 'rth-own': 'return home at own height', 'rth-120': 'return home at 120 m', outage: 'area outages' }; if (p.contingency !== 'none') parts.push(C[p.contingency]); return parts.join(' · '); }
+
+  // ---- results
+  let current = null, tracks = [], t = 0, playing = !matchMedia('(prefers-reduced-motion: reduce)').matches, last = null;
+  const fmt = n => n.toLocaleString('en-US');
+  function stat(n, l, cls) { return `<div class="stat ${cls || ''}"><span class="n">${n}</span><span class="l">${l}</span></div>`; }
+  function show(r, p) { current = { r, p };
+    const ds = r.delays, delayedPct = ds.checked ? (100 * ds.delayed / ds.checked).toFixed(1) + ' %' : '—', avg = ds.delayed ? Math.round(ds.total_s / ds.delayed) + ' s' : '—';
+    const per100 = r.contingencyEvents ? (100 * r.cross_wide / r.contingencyEvents).toFixed(2) : '—';
+    $('stats').innerHTML = stat(fmt(r.cross_wide), 'planned conflicts between companies (1 h)', r.cross_wide ? 'hot' : 'ok') + stat(fmt(r.cross_close), 'of them within 15 m', r.cross_close ? 'hot' : 'ok')
+      + stat(p.check ? delayedPct : 'off', p.check ? `flights delayed · avg wait ${avg}` : 'shared plan check') + stat(p.contingency !== 'none' ? per100 : '—', p.contingency !== 'none' ? `planned conflicts per 100 off-plan events (${fmt(r.contingencyEvents)} events)` : 'no off-plan events');
+    const pairs = Object.entries(r.pairs).sort((a, b) => b[1] - a[1]), mx = Math.max(1, ...pairs.map(x => x[1]));
+    $('pairs').innerHTML = pairs.length ? pairs.map(([k, v]) => { const [a, b] = k.split('-'); return `<div><span>${NAMES[a]} – ${NAMES[b]}</span><span class="track"><i style="width:${100 * v / mx}%;background:linear-gradient(90deg,var(${OPC[a[0]]}),var(${OPC[b[0]]}))"></i></span><span class="mono" style="text-align:right">${v}</span></div>`; }).join('') : '<div class="empty" style="display:block;padding:0">No planned conflicts between companies in this run.</div>';
+    $('runlabel').textContent = label(p); }
+  function logRow(r, p) { const ds = r.delays, tr = document.createElement('tr');
+    tr.innerHTML = `<td>${label(p)}</td><td class="num">${fmt(r.cross_wide)}</td><td class="num">${fmt(r.cross_close)}</td><td class="num">${p.check ? (100 * ds.delayed / Math.max(1, ds.checked)).toFixed(1) + ' %' : '—'}</td><td class="num">${ds.delayed ? Math.round(ds.total_s / ds.delayed) + ' s' : '—'}</td><td class="num">${r.contingencyEvents ? fmt(r.contingencyEvents) : '—'}</td><td class="num">${r.contingencyEvents ? (100 * r.cross_wide / r.contingencyEvents).toFixed(2) : '—'}</td><td class="num">${r.ms ? (r.ms / 1000).toFixed(1) + ' s' : 'example'}</td>`;
+    const empty = $('log').querySelector('.empty-row'); if (empty) empty.remove(); $('log').prepend(tr); }
+
+  // ---- animation
+  const map = $('map'), side = $('side'), cM = map.getContext('2d'), cS = side.getContext('2d');
+  const fit = c => { const r = c.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1); c.width = Math.max(1, Math.round(r.width * d)); c.height = Math.max(1, Math.round(r.height * d)); return d; };
+  let dM = fit(map), dS = fit(side); addEventListener('resize', () => { dM = fit(map); dS = fit(side); });
+  const posT = (tr, tt) => { const f = (tt - tr.s) / DT, i = Math.floor(f), n = tr.a.length / 3; if (i < 0 || i + 1 >= n) return null; const u = f - i, a = tr.a; return [a[i * 3] + (a[i * 3 + 3] - a[i * 3]) * u, a[i * 3 + 1] + (a[i * 3 + 4] - a[i * 3 + 1]) * u, a[i * 3 + 2] + (a[i * 3 + 5] - a[i * 3 + 2]) * u]; };
+  function draw() { const Z = CFG.zone, W = map.width, Hh = map.height, sc = W / (2 * Z), X = x => (x + Z) * sc, Y = y => (Z - y) * sc;
+    cM.fillStyle = css('--surface'); cM.fillRect(0, 0, W, Hh); cM.strokeStyle = css('--grid'); cM.lineWidth = 1;
+    for (let k = -Z; k <= Z; k += 1000) { cM.beginPath(); cM.moveTo(X(k), 0); cM.lineTo(X(k), Hh); cM.moveTo(0, Y(k)); cM.lineTo(W, Y(k)); cM.stroke(); }
+    const ev = current ? current.r.events : [];
+    for (const tr of tracks) { const p = posT(tr, t); if (!p) continue; cM.fillStyle = css(OPC[tr.o]); cM.beginPath(); cM.arc(X(p[0]), Y(p[1]), 1.9 * dM, 0, 7); cM.fill(); }
+    cM.strokeStyle = css('--alert'); for (const e of ev) { const age = t - (e[1] - CFG.warm); if (age < 0 || age > 60) continue; const k = age / 60; cM.globalAlpha = 1 - k; cM.lineWidth = (e[0] ? 3 : 2) * dM; cM.beginPath(); cM.arc(X(e[2]), Y(e[3]), (5 + 20 * k) * dM, 0, 7); cM.stroke(); } cM.globalAlpha = 1;
+    cM.font = `${11 * dM}px "IBM Plex Mono", monospace`; cM.fillStyle = css('--muted'); cM.fillRect(10 * dM, Hh - 14 * dM, 1000 * sc, 2 * dM); cM.fillText('1 km', 10 * dM, Hh - 22 * dM);
+    if (!tracks.length) { cM.textAlign = 'center'; cM.fillText(worker ? 'Run a scenario to see it fly' : 'Background worker blocked in this browser', W / 2, Hh / 2); cM.textAlign = 'left'; }
+    // side
+    const Ws = side.width, Hs = side.height, pl = 124 * dS, pb = 20 * dS, pt = 10 * dS, ZM = 130, SX = x => pl + (x + Z) / (2 * Z) * (Ws - pl - 6 * dS), SZ = z => Hs - pb - z / ZM * (Hs - pb - pt);
+    cS.fillStyle = css('--surface'); cS.fillRect(0, 0, Ws, Hs); cS.font = `${10.5 * dS}px "IBM Plex Mono", monospace`; cS.textBaseline = 'middle';
+    if (current) { const H = current.r.heights; cS.fillStyle = css('--band'); cS.fillRect(pl, SZ(H.wing[1]), Ws - pl, SZ(H.wing[0]) - SZ(H.wing[1]) || 1);
+      const lab = [['Wing', (H.wing[0] + H.wing[1]) / 2, '--wing', H.wing[0] === H.wing[1] ? `${H.wing[0]} m` : `${H.wing[0]}–${H.wing[1]} m`], ['Amazon out', H.aOut, '--amz', `${H.aOut} m`], ['Zipline', H.zip, '--zip', `${H.zip} m`], ['Amazon back', H.aIn, '--amz', `${H.aIn} m`]].sort((a, b) => a[1] - b[1]);
+      for (const [n, z, tok] of lab) { if (n === 'Wing') continue; cS.strokeStyle = css(tok); cS.globalAlpha = .5; cS.setLineDash([4 * dS, 4 * dS]); cS.beginPath(); cS.moveTo(pl, SZ(z)); cS.lineTo(Ws, SZ(z)); cS.stroke(); cS.setLineDash([]); cS.globalAlpha = 1; }
+      let py = Infinity; cS.textAlign = 'right'; for (const [n, z, tok, txt] of lab) { let y = SZ(z); if (py - y < 12 * dS) y = py - 12 * dS; py = y; cS.fillStyle = css(tok); cS.fillText(`${n} ${txt}`, pl - 5 * dS, y); } }
+    cS.strokeStyle = css('--muted'); cS.globalAlpha = .6; cS.beginPath(); cS.moveTo(pl, SZ(122)); cS.lineTo(Ws, SZ(122)); cS.stroke(); cS.globalAlpha = 1; cS.fillStyle = css('--muted'); cS.textAlign = 'left'; cS.fillText('400 ft (122 m) filed maximum', pl + 4 * dS, SZ(122) - 7 * dS);
+    cS.strokeStyle = css('--rule'); cS.beginPath(); cS.moveTo(pl, SZ(0)); cS.lineTo(Ws, SZ(0)); cS.stroke();
+    for (const tr of tracks) { const p = posT(tr, t); if (!p || p[2] < 1) continue; cS.fillStyle = css(OPC[tr.o]); cS.beginPath(); cS.arc(SX(p[0]), SZ(p[2]), 1.8 * dS, 0, 7); cS.fill(); }
+    cS.strokeStyle = css('--alert'); for (const e of ev) { const age = t - (e[1] - CFG.warm); if (age < 0 || age > 60) continue; const k = age / 60; cS.globalAlpha = 1 - k; cS.lineWidth = 2 * dS; cS.beginPath(); cS.arc(SX(e[2]), SZ(e[4]), (4 + 14 * k) * dS, 0, 7); cS.stroke(); } cS.globalAlpha = 1;
+    $('clock').textContent = `minute ${Math.floor(t / 60)} of ${CFG.meas / 60}`; }
+  function frame(ts) { if (last !== null && playing && tracks.length) { t += (ts - last) / 1000 * 60; if (t >= CFG.meas) t = 0; } last = ts; draw(); requestAnimationFrame(frame); }
+  $('play').textContent = playing ? 'Pause' : 'Play'; $('play').onclick = () => { playing = !playing; $('play').textContent = playing ? 'Pause' : 'Play'; };
+  requestAnimationFrame(frame);
+
+  // ---- running
+  let busy = false;
+  async function go(list, opt) { opt = opt || {}; if (busy) return; busy = true; $('run').disabled = $('runboth').disabled = true; list = list || [params()];
+    try { for (let i = 0; i < list.length; i++) { const p = list[i], tag = list.length > 1 ? `run ${i + 1} of ${list.length}: ` : '';
+        $('status').textContent = tag + 'building flights…'; $('prog').style.width = '0%';
+        const m = await runInWorker(p, pr => { $('status').textContent = tag + (pr.stage === 'plan' ? 'checking plans…' : `counting planned conflicts… ${Math.round(pr.x * 100)} %`); $('prog').style.width = (pr.stage === 'count' ? 20 + 80 * pr.x : 10) + '%'; });
+        tracks = m.tracks.map(x => ({ o: x.o, s: x.s, a: x.a })); t = 0; show(m.result, p); if (opt.log !== false) logRow(m.result, p); $('prog').style.width = '100%'; }
+      $('status').textContent = `Done. ${list.length > 1 ? 'Compare the two rows in the run log.' : ''}`; }
+    catch (e) { $('status').textContent = 'Run failed: ' + e.message; }
+    busy = false; $('run').disabled = $('runboth').disabled = false; }
+  $('form').addEventListener('submit', e => { e.preventDefault(); go(); });
+  $('runboth').onclick = () => go([params('filed'), params('allocation')]);
+
+  // ---- example runs computed at build time (same engine, same settings) so the page has numbers before you run anything
+  const seeds = JSON.parse($('seed-runs').textContent);
+  for (const s of seeds) logRow(s.r, s.p); if (seeds.length) show(seeds[seeds.length - 1].r, seeds[seeds.length - 1].p);
+  // ---- study record
+  const st = JSON.parse($('studies').textContent);
+  $('record').innerHTML = st.map(s => `<tr><td>${s.name}</td><td>${s.q}</td><td>${s.r}</td><td>${s.n ? `<span class="pill ${s.pass === s.n ? 'pass' : s.pass === 0 ? 'fail' : 'mixed'}">${s.pass} of ${s.n} passed${s.unscored ? ' · ' + s.unscored + ' not scored' : ''}</span>` : '—'}</td></tr>`).join('');
+  // start with a live run of the current scenario so the views move
+  if (worker) go(undefined, { log: false });
+})();
+</script>

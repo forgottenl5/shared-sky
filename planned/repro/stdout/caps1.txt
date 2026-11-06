@@ -1,0 +1,5 @@
+PASS Q1 houston Wing 27 %, Zipline 15 %, dfw Wing 34 %, Zipline 17 %
+PASS Q2 houston S1 3.5 vs 34.6/h (90 % fewer), dfw S1 3.0 vs 17.1/h (82 % fewer)
+PASS Q3 houston cut 72 % (uncapped 72 %), dfw cut 59 % (uncapped 73 %)
+PASS Q4 houston Amazon pairs 94 %, dfw Amazon pairs 97 %
+4 of 4 passed

@@ -1,0 +1,262 @@
+<title>Shared Sky Over Houston</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an aeronautical-chart reading of one real slice of airspace: plan view and side view of the same drones, then the measured results drawn to scale. */
+:root {
+  --paper: #f3f5f1; --surface: #fbfcfa; --ink: #142030; --muted: #566473; --rule: #d3d9d4; --grid: #e4e9e4;
+  --alert: #b0237a; --wing: #2563c9; --zip: #c97a1c; --amz: #8a3fbf; --band: rgba(37, 99, 201, .08);
+  --display: "Saira Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0b1119; --surface: #0f1620; --ink: #e4e9ee; --muted: #93a0ad; --rule: #26313d; --grid: #18222d;
+  --alert: #e04fa2; --wing: #5288dc; --zip: #b97a2e; --amz: #a06cd6; --band: rgba(82, 136, 220, .12); color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #0b1119; --surface: #0f1620; --ink: #e4e9ee; --muted: #93a0ad; --rule: #26313d; --grid: #18222d;
+  --alert: #e04fa2; --wing: #5288dc; --zip: #b97a2e; --amz: #a06cd6; --band: rgba(82, 136, 220, .12); color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--paper); color: var(--ink); font: 400 16px/1.55 var(--body); }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 40px 56px; display: grid; gap: 56px }
+h1, h2 { font-family: var(--display); font-weight: 700; letter-spacing: .01em; line-height: 1.05; margin: 0; text-wrap: balance }
+h1 { font-size: clamp(2.2rem, 5vw, 3.6rem) }
+h2 { font-size: clamp(1.6rem, 3vw, 2.2rem) }
+p { margin: 0; max-width: 68ch }
+.eyebrow { font: 500 .78rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted) }
+.lede { font-size: 1.15rem; color: var(--ink) }
+.sub { color: var(--muted) }
+.head { display: grid; gap: 14px }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums }
+a { color: var(--wing) } a:focus-visible, button:focus-visible { outline: 2px solid var(--alert); outline-offset: 2px }
+/* instrument */
+.instrument { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 20px; align-items: start }
+@media (max-width: 860px) { .instrument { grid-template-columns: minmax(0, 1fr) } }
+.pane { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 14px; display: grid; gap: 10px; min-width: 0 }
+.pane-title { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap }
+.pane-title b { font: 600 .82rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase }
+.pane-title span { font: 400 .8rem/1.2 var(--mono); color: var(--muted) }
+canvas { width: 100%; display: block; border-radius: 3px }
+#map { aspect-ratio: 1 / 1 } #side { aspect-ratio: 16 / 10 }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 5px; overflow: hidden }
+.seg button, .btn { font: 500 .9rem/1 var(--body); background: transparent; color: var(--ink); border: 0; padding: 9px 13px; cursor: pointer }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper) }
+.btn { border: 1px solid var(--rule); border-radius: 5px }
+.clock { margin-left: auto; font: 500 .9rem/1 var(--mono); color: var(--muted) }
+.tally { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px }
+.tally div { border-top: 2px solid var(--rule); padding-top: 8px; display: grid; gap: 2px }
+.tally div.on { border-color: var(--alert) }
+.tally .n { font: 700 2rem/1 var(--display) }
+.tally .l { font-size: .85rem; color: var(--muted) }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: .85rem; color: var(--muted) }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px }
+.legend .ring { background: transparent; border: 2px solid var(--alert) }
+/* filings table */
+.scroll { overflow-x: auto }
+table { border-collapse: collapse; width: 100%; font-size: .93rem; min-width: 640px }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top }
+th { font: 600 .75rem/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted) }
+td .sw { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 8px }
+.callout { border-left: 3px solid var(--alert); padding: 2px 0 2px 14px; max-width: 68ch }
+/* results */
+.results { display: grid; gap: 26px }
+.chart { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 16px; overflow-x: auto }
+.chart svg { display: block; width: 100%; min-width: 560px; height: auto }
+.notes { display: grid; gap: 8px; font-size: .92rem; color: var(--muted) }
+/* knowledge */
+.know { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 36px }
+@media (max-width: 720px) { .know { grid-template-columns: minmax(0, 1fr) } }
+.know section { display: grid; gap: 8px; min-width: 0 }
+.know h3 { font: 600 .82rem/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; margin: 0; padding-top: 10px; border-top: 2px solid var(--rule) }
+.know h3.ok { border-color: var(--wing) } .know h3.known { border-color: var(--muted) } .know h3.open { border-color: var(--zip) } .know h3.gap { border-color: var(--alert) }
+.know ul { margin: 0; padding-left: 18px; display: grid; gap: 6px }
+footer { display: grid; gap: 8px; font-size: .9rem; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 18px }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto } }
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <div class="eyebrow">Houston build-out · FAA-filed flight profiles · simulated</div>
+    <h1>Amazon returns at 105 m. Zipline cruises at 101 m.</h1>
+    <p class="lede">Both heights come from the companies' own FAA filings. Four metres apart, the two fleets meet in the same slice of sky again and again. Moving each operator to a different height inside its own filed range removes most of those meetings.</p>
+  </header>
+
+  <section class="instrument" aria-label="Simulated airspace">
+    <div class="pane">
+      <div class="pane-title"><b>Plan view</b><span>8 × 8 km around an Amazon hub · north up</span></div>
+      <canvas id="map" role="img" aria-label="Top-down map of drone tracks; near-meetings between companies flash as rings"></canvas>
+      <div class="legend"><span><i style="background:var(--wing)"></i>Wing</span><span><i style="background:var(--zip)"></i>Zipline</span><span><i style="background:var(--amz)"></i>Amazon</span><span><i class="ring"></i>Near-meeting with another company (within 30 m and 10 m)</span></div>
+    </div>
+    <div class="pane">
+      <div class="pane-title"><b>Side view</b><span>same drones, east–west · height × 30</span></div>
+      <canvas id="side" role="img" aria-label="Side view of drone heights with each operator's height marked"></canvas>
+      <div class="controls">
+        <div class="seg" role="group" aria-label="Heights">
+          <button id="b-A0" aria-pressed="true">Filed heights</button>
+          <button id="b-A2" aria-pressed="false">Allocation</button>
+        </div>
+        <button class="btn" id="play">Pause</button>
+        <span class="clock" id="clock">minute 0 of 30</span>
+      </div>
+      <div class="tally">
+        <div id="t-A0" class="on"><span class="n mono" id="n-A0">0</span><span class="l">near-meetings so far, filed heights</span></div>
+        <div id="t-A2"><span class="n mono" id="n-A2">0</span><span class="l">near-meetings so far, allocation</span></div>
+      </div>
+      <p class="sub" style="font-size:.88rem">Real tracks from the Shared Sky engine: 1,083 flights over 30 minutes, sites 3 km apart, the same orders and times in both cases. Playback runs at 30× speed.</p>
+    </div>
+  </section>
+
+  <section class="head">
+    <div class="eyebrow">What the filings say</div>
+    <h2>Three operators, overlapping heights, one assessment each</h2>
+    <div class="scroll"><table>
+      <thead><tr><th>Operator</th><th>Filed cruise height</th><th>At the customer</th><th>Allocation tested</th><th>Source</th></tr></thead>
+      <tbody>
+        <tr><td><span class="sw" style="background:var(--wing)"></span>Wing</td><td class="mono">150–300 ft (46–91 m)</td><td>hovers at 23 ft, lowers the package</td><td class="mono">46–71 m</td><td><a href="https://www.faa.gov/uas/advanced_operations/nepa_and_drones/20260813_Wing_Houston_FONSI-ROD_Signed.pdf">Wing Houston FONSI</a></td></tr>
+        <tr><td><span class="sw" style="background:var(--zip)"></span>Zipline</td><td class="mono">330 ft (101 m)</td><td>hovers at 330 ft for 75 s</td><td class="mono">101 m</td><td><a href="https://www.faa.gov/uas/advanced_operations/nepa_and_drones/20260911_Zipline_Texas_Metros_Draft_EA_CLEAN_ADA_Signed.pdf">Zipline Texas draft EA</a></td></tr>
+        <tr><td><span class="sw" style="background:var(--amz)"></span>Amazon</td><td class="mono">out 200 ft (61 m) · back 345 ft (105 m)</td><td>descends to 13 ft</td><td class="mono">out 81 m · back 115 m</td><td><a href="https://www.faa.gov/uas/advanced_operations/nepa_and_drones/AMZ-OMA-Appendix-E_ADA-508-Final.pdf">Amazon Omaha EA App. E</a></td></tr>
+      </tbody>
+    </table></div>
+    <p class="callout">Every allocated height lies inside the operator's own filed range, so none needs a new approval. Amazon's return moves to the top of its filed band (377 ft); Wing stays in the lower part of its band.</p>
+  </section>
+
+  <section class="results">
+    <div class="head">
+      <div class="eyebrow">Measured results · 95 % ranges</div>
+      <h2>Fewer meetings, and safer when something goes wrong</h2>
+      <p class="sub">Each bar is a registered prediction tested on paired runs; the line shows the 95 % range. Sites 3 and 4 km apart, three seeds each.</p>
+    </div>
+    <div class="chart"><svg id="cuts" viewBox="0 0 900 252" role="img" aria-label="Meeting reductions with 95 % ranges"></svg></div>
+    <div class="chart"><svg id="ratios" viewBox="0 0 900 252" role="img" aria-label="Risk ratios with 95 % ranges, log scale"></svg></div>
+    <div class="notes">
+      <p><b style="color:var(--ink)">Shared flight-plan check.</b> If companies also check each other's filed plans before take-off, planned meetings drop to zero (at most about 4 in six runs at 95 % confidence). The cost is 1.5–4.8 % of flights waiting about 40 seconds. The smallest fleet, Amazon, waits most often, mainly because it meets two larger fleets.</p>
+      <p><b style="color:var(--ink)">What a meeting is.</b> Two planned flights of different companies within 30 m horizontally and 10 m vertically at the same moment, checked four times a second. It is a planning measure, not a collision count.</p>
+    </div>
+  </section>
+
+  <section class="head">
+    <div class="eyebrow">What we know and what we don't</div>
+    <h2>Scorecard</h2>
+    <div class="know">
+      <section><h3 class="ok">Measured and robust</h3><ul>
+        <li>The 4 m clash comes straight from the filings.</li>
+        <li>The allocation cuts meetings 81 % and close meetings 92 %, whether Wing flies a fixed height or a random one.</li>
+        <li>How meetings grow with traffic matches an independent simulator (BlueSky).</li>
+      </ul></section>
+      <section><h3 class="known">Already published elsewhere</h3><ul>
+        <li>Delay grows with the size of the reserved airspace (NASA, 2023).</li>
+        <li>Plan checks by departure delay, and their limits under heavy demand (Airbus UTM and EUROCONTROL).</li>
+        <li>Off-plan aircraft add risk after plans are shared (NASA, 2024), studied with all aircraft at one height.</li>
+      </ul></section>
+      <section><h3 class="open">Not checked against reality</h3><ul>
+        <li>Delays between companies: none are published. Wing and Flytrex report about 8,000 shared operations with zero planned conflicts, consistent in kind.</li>
+        <li>Incident rates and return-home heights are assumed.</li>
+      </ul></section>
+      <section><h3 class="gap">Known gaps</h3><ul>
+        <li>Overflights per home: near Amazon's Richardson hub a resident counted about half of all hub traffic over one house; the model gives about 2.5 %, or 10 % with the hospital no-fly zone.</li>
+        <li>Planned tracks only: no wind, no in-flight avoidance, flat demand through the day.</li>
+      </ul></section>
+    </div>
+  </section>
+
+  <footer>
+    <p>Full write-up with methods, limits and sources: <a href="https://github.com/forgottenl5/shared-sky/tree/main/planned">Shared Sky Over Houston (note)</a>. Every study was pre-registered and fingerprinted before any run; failed predictions are reported there.</p>
+    <p class="mono">forgottenl5 · 23 October 2026 · Shared Sky engine, planned-operations model</p>
+  </footer>
+</div>
+
+<script type="application/json" id="data">__DATA__</script>
+<script>
+(() => {
+  const D = JSON.parse(document.getElementById('data').textContent), M = D.meta, H = M.window_m / 2, DUR = M.t1 - M.t0, SPEED = 30;
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const OPC = { w: '--wing', z: '--zip', a: '--amz' };
+  const HEIGHTS = { A0: [['Wing', 46, 91, '--wing'], ['Amazon out', 61, 61, '--amz'], ['Zipline', 101, 101, '--zip'], ['Amazon back', 105, 105, '--amz']],
+                    A2: [['Wing', 46, 71, '--wing'], ['Amazon out', 81, 81, '--amz'], ['Zipline', 101, 101, '--zip'], ['Amazon back', 115, 115, '--amz']] };
+  let arm = 'A0', t = 0, playing = !matchMedia('(prefers-reduced-motion: reduce)').matches, last = null;
+  const map = document.getElementById('map'), side = document.getElementById('side');
+  const ctxM = map.getContext('2d'), ctxS = side.getContext('2d');
+  function fit(c) { const r = c.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1); c.width = Math.round(r.width * dpr); c.height = Math.round(r.height * dpr); return dpr; }
+  let dprM = fit(map), dprS = fit(side);
+  addEventListener('resize', () => { dprM = fit(map); dprS = fit(side); draw(); });
+  const pos = (tr, tt) => { const f = (tt - tr.s) / M.dt, i = Math.floor(f); if (i < 0 || i + 1 >= tr.p.length) return null; const a = tr.p[i], b = tr.p[i + 1]; if (!a || !b) return null; const u = f - i; return [a[0] + (b[0] - a[0]) * u, a[1] + (b[1] - a[1]) * u, a[2] + (b[2] - a[2]) * u]; };
+  function drawMap() {
+    const W = map.width, Hh = map.height, sc = W / M.window_m, X = x => (x + H) * sc, Y = y => (H - y) * sc;
+    ctxM.fillStyle = css('--surface'); ctxM.fillRect(0, 0, W, Hh);
+    ctxM.strokeStyle = css('--grid'); ctxM.lineWidth = 1;
+    for (let k = -H; k <= H; k += 1000) { ctxM.beginPath(); ctxM.moveTo(X(k), 0); ctxM.lineTo(X(k), Hh); ctxM.moveTo(0, Y(k)); ctxM.lineTo(W, Y(k)); ctxM.stroke(); }
+    ctxM.font = `${11 * dprM}px "IBM Plex Mono", monospace`; ctxM.textBaseline = 'middle'; ctxM.textAlign = 'center';
+    for (const [o, x, y] of D.sites) { const s = 7 * dprM; ctxM.fillStyle = css(OPC[o]); ctxM.fillRect(X(x) - s / 2, Y(y) - s / 2, s, s); }
+    const A = D.arms[arm];
+    for (const tr of A.tracks) { const p = pos(tr, t); if (!p) continue; ctxM.fillStyle = css(OPC[tr.o]); ctxM.beginPath(); ctxM.arc(X(p[0]), Y(p[1]), 2.2 * dprM, 0, 7); ctxM.fill(); }
+    ctxM.strokeStyle = css('--alert');
+    for (const e of A.events) { const age = t - e.t; if (age < 0 || age > 45) continue; const k = age / 45; ctxM.globalAlpha = 1 - k; ctxM.lineWidth = (e.k === 'c' ? 3 : 2) * dprM; ctxM.beginPath(); ctxM.arc(X(e.x), Y(e.y), (6 + 22 * k) * dprM, 0, 7); ctxM.stroke(); }
+    ctxM.globalAlpha = 1; ctxM.fillStyle = css('--muted'); ctxM.textAlign = 'left';
+    ctxM.fillRect(12 * dprM, Hh - 16 * dprM, 1000 * sc, 2 * dprM); ctxM.fillText('1 km', 12 * dprM, Hh - 26 * dprM);
+    ctxM.textAlign = 'right'; ctxM.fillText('N ↑', W - 12 * dprM, 16 * dprM);
+  }
+  function drawSide() {
+    const W = side.width, Hh = side.height, padL = 132 * dprS, padB = 22 * dprS, padT = 12 * dprS, ZMAX = 130;
+    const X = x => padL + (x + H) / M.window_m * (W - padL - 8 * dprS), Z = z => Hh - padB - z / ZMAX * (Hh - padB - padT);
+    ctxS.fillStyle = css('--surface'); ctxS.fillRect(0, 0, W, Hh);
+    ctxS.font = `${11 * dprS}px "IBM Plex Mono", monospace`; ctxS.textBaseline = 'middle';
+    ctxS.fillStyle = css('--band'); const wb = HEIGHTS[arm][0]; ctxS.fillRect(padL, Z(wb[2]), W - padL, Z(wb[1]) - Z(wb[2]));
+    for (const [name, lo, hi, tok] of HEIGHTS[arm]) { if (lo !== hi) continue; ctxS.strokeStyle = css(tok); ctxS.globalAlpha = .55; ctxS.lineWidth = 1 * dprS; ctxS.setLineDash([4 * dprS, 4 * dprS]); ctxS.beginPath(); ctxS.moveTo(padL, Z(lo)); ctxS.lineTo(W, Z(lo)); ctxS.stroke(); ctxS.setLineDash([]); ctxS.globalAlpha = 1; }
+    const labels = HEIGHTS[arm].map(([n, lo, hi, tok]) => [n, lo === hi ? lo : (lo + hi) / 2, tok, lo === hi ? `${lo} m` : `${lo}–${hi} m`]).sort((a, b) => a[1] - b[1]);
+    let prevY = Infinity; ctxS.textAlign = 'right';
+    for (const [n, z, tok, txt] of labels) { let y = Z(z); if (prevY - y < 13 * dprS) y = prevY - 13 * dprS; prevY = y; ctxS.fillStyle = css(tok); ctxS.fillText(`${n} ${txt}`, padL - 6 * dprS, y); }
+    ctxS.strokeStyle = css('--muted'); ctxS.globalAlpha = .6; ctxS.beginPath(); ctxS.moveTo(padL, Z(122)); ctxS.lineTo(W, Z(122)); ctxS.stroke(); ctxS.globalAlpha = 1;
+    ctxS.fillStyle = css('--muted'); ctxS.textAlign = 'left'; ctxS.fillText('400 ft ceiling', padL + 6 * dprS, Z(122) - 8 * dprS);
+    ctxS.strokeStyle = css('--rule'); ctxS.beginPath(); ctxS.moveTo(padL, Z(0)); ctxS.lineTo(W, Z(0)); ctxS.stroke();
+    ctxS.fillText('west', padL, Hh - 8 * dprS); ctxS.textAlign = 'right'; ctxS.fillText('east', W - 4 * dprS, Hh - 8 * dprS);
+    const A = D.arms[arm];
+    for (const tr of A.tracks) { const p = pos(tr, t); if (!p || p[2] < 1) continue; ctxS.fillStyle = css(OPC[tr.o]); ctxS.beginPath(); ctxS.arc(X(p[0]), Z(p[2]), 2 * dprS, 0, 7); ctxS.fill(); }
+    ctxS.strokeStyle = css('--alert');
+    for (const e of A.events) { const age = t - e.t; if (age < 0 || age > 45) continue; const k = age / 45; ctxS.globalAlpha = 1 - k; ctxS.lineWidth = 2 * dprS; ctxS.beginPath(); ctxS.arc(X(e.x), Z(e.z), (5 + 16 * k) * dprS, 0, 7); ctxS.stroke(); }
+    ctxS.globalAlpha = 1;
+  }
+  function tallies() { for (const a of ['A0', 'A2']) document.getElementById('n-' + a).textContent = D.arms[a].events.filter(e => e.k === 'w' && e.t <= t).length; document.getElementById('clock').textContent = `minute ${Math.floor(t / 60)} of ${Math.round(DUR / 60)}`; }
+  function draw() { drawMap(); drawSide(); tallies(); }
+  function frame(ts) { if (last !== null && playing) { t += (ts - last) / 1000 * SPEED; if (t >= DUR) t = 0; } last = ts; draw(); requestAnimationFrame(frame); }
+  function setArm(a) { arm = a; for (const b of ['A0', 'A2']) { document.getElementById('b-' + b).setAttribute('aria-pressed', String(b === a)); document.getElementById('t-' + b).classList.toggle('on', b === a); } draw(); }
+  document.getElementById('b-A0').onclick = () => setArm('A0'); document.getElementById('b-A2').onclick = () => setArm('A2');
+  const pb = document.getElementById('play'); pb.textContent = playing ? 'Pause' : 'Play'; pb.onclick = () => { playing = !playing; pb.textContent = playing ? 'Pause' : 'Play'; };
+  if (!playing) { const first = D.arms.A0.events.find(e => e.k === 'w'); t = first ? first.t + 5 : DUR / 2; }
+  draw(); requestAnimationFrame(frame);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw); new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  // results charts, drawn to scale from the measured values
+  const NS = 'http://www.w3.org/2000/svg', el = (tag, at, txt) => { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); if (txt !== undefined) e.textContent = txt; return e; };
+  function chart(id, rows, opt) {
+    const s = document.getElementById(id); s.innerHTML = ''; const L = 330, R = 870, top = 34, rh = 48, sc = opt.scale;
+    s.append(el('text', { x: 0, y: 14, fill: 'var(--muted)', 'font-family': 'IBM Plex Mono, monospace', 'font-size': 12, 'letter-spacing': '1' }, opt.title));
+    for (const v of opt.ticks) { const x = L + sc(v) * (R - L); s.append(el('line', { x1: x, x2: x, y1: top - 6, y2: top + rows.length * rh - 10, stroke: 'var(--grid)', 'stroke-width': 1 }));
+      s.append(el('text', { x, y: top + rows.length * rh + 6, 'text-anchor': 'middle', fill: 'var(--muted)', 'font-family': 'IBM Plex Mono, monospace', 'font-size': 12 }, opt.fmt(v))); }
+    rows.forEach((r, i) => { const y = top + i * rh + 14, x = v => L + sc(v) * (R - L);
+      s.append(el('text', { x: 0, y: y + 4, fill: 'var(--ink)', 'font-family': 'IBM Plex Sans, sans-serif', 'font-size': 14 }, r.label));
+      s.append(el('rect', { x: L, y: y - 7, width: Math.max(0, x(r.v) - L), height: 14, rx: 2, fill: r.color, opacity: .85 }));
+      s.append(el('line', { x1: x(r.lo), x2: x(r.hi), y1: y, y2: y, stroke: 'var(--ink)', 'stroke-width': 2 }));
+      for (const e of [r.lo, r.hi]) s.append(el('line', { x1: x(e), x2: x(e), y1: y - 6, y2: y + 6, stroke: 'var(--ink)', 'stroke-width': 2 }));
+      s.append(el('text', { x: Math.min(R - 4, x(r.hi) + 8), y: y + 4, fill: 'var(--ink)', 'font-family': 'IBM Plex Mono, monospace', 'font-size': 13, 'text-anchor': x(r.hi) + 8 > R - 90 ? 'end' : 'start', dy: x(r.hi) + 8 > R - 90 ? -14 : 0 }, r.txt)); });
+  }
+  const pct = v => v / 100, logs = v => (Math.log10(v) - Math.log10(1)) / (Math.log10(30) - Math.log10(1));
+  function charts() {
+    chart('cuts', [
+      { label: 'Meetings between companies', v: 81, lo: 78, hi: 84, txt: '81 % [78–84]', color: 'var(--wing)' },
+      { label: 'Close meetings (within 15 m)', v: 92, lo: 89, hi: 95, txt: '92 % [89–95]', color: 'var(--wing)' },
+      { label: 'With Wing at a fixed height', v: 81, lo: 81, hi: 84, txt: '81–84 % across 46, 61, 76 m', color: 'var(--wing)' },
+      { label: 'Planned meetings after a plan check', v: 100, lo: 97.5, hi: 100, txt: '100 % (0 left)', color: 'var(--muted)' }],
+      { title: 'REDUCTION IN MEETINGS WITH THE ALLOCATION', scale: pct, ticks: [0, 25, 50, 75, 100], fmt: v => v + ' %' });
+    chart('ratios', [
+      { label: 'Drone stops 2 min: filed vs allocation', v: 9.4, lo: 6.3, hi: 14.7, txt: '9.4× [6.3–14.7]', color: 'var(--alert)' },
+      { label: 'Return home at 120 m vs own height', v: 10.7, lo: 5.4, hi: 24, txt: '10.7× [5.4–24]', color: 'var(--alert)' },
+      { label: 'Area outage: filed vs allocation', v: 7.0, lo: 4.1, hi: 12.9, txt: '7.0× [4.1–12.9]', color: 'var(--alert)' },
+      { label: 'Delay under the plan check: filed vs allocation', v: 6.7, lo: 4.4, hi: 6.7, txt: '4.4–6.7× more delay', color: 'var(--zip)' }],
+      { title: 'HOW MANY TIMES RISKIER OR COSTLIER WITHOUT THE ALLOCATION · LOG SCALE', scale: logs, ticks: [1, 2, 5, 10, 20, 30], fmt: v => v + '×' });
+  }
+  charts();
+})();
+</script>

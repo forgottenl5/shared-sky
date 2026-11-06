@@ -1,0 +1,11 @@
+PASS D1 headline-case cut at L1: houston 71 %, dfw 73 %
+PASS D2 at L2: houston 60 %, dfw 54 %
+PASS D3 at L4: houston 22 %, dfw 23 %
+PASS D4 share of the no-error cut kept, headline case vs filed-heights case (ERRORS1): houston L2 0.83 vs 0.79; dfw L2 0.73 vs 0.72; houston L4 0.31 vs 0.25; dfw L4 0.31 vs 0.29
+PASS D5 by level: houston 72 > 71 > 60 > 32 > 22; dfw 74 > 73 > 54 > 27 > 23
+PASS C1 rho 0.8, seeds 1-4, shared field vs personal part only: houston L2 64 vs 64 %; dfw L2 65 vs 65 %; houston L4 52 vs 52 %; dfw L4 55 vs 55 %
+PASS C2 cut as the shared share rises 0 > 0.5 > 0.8 > 0.95: houston L2 60 > 63 > 66 > 75; dfw L2 54 > 61 > 66 > 73; houston L4 22 > 39 > 51 > 59; dfw L4 23 > 37 > 53 > 66
+PASS C3 L4, rho 0.95 minus independent: houston 37 %, dfw 43 %
+PASS C4 L2 rho 0.8 vs independent L1: houston 66 vs 71 %; dfw 66 vs 73 %
+PASS C5 L2 rho 0.95 vs no errors: houston 75 vs 72 %; dfw 73 vs 74 %
+10 of 10 passed

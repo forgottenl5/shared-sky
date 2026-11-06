@@ -1,0 +1,7 @@
+PASS P1 max off-site DNL over all 60 runs 54.2 dB; cells >= 65: 0
+FAIL P2 peak off-site DNL, wind - line: -0.29, -0.87, -0.42, -2.41, -2.97, -2.77
+PASS P3 people with >= 10 loud flights, line -> wind: 3,366 -> 6,524; 7,623 -> 9,557; 7,623 -> 15,622; 2,060 -> 1,369; 2,060 -> 4,422; 2,060 -> 5,692
+PASS P4 median people at DNL >= 55, wind: 0, 0, 0, 0, 0, 0
+PASS P5 off-site cells with >= 1 loud flight, line -> wind: 268 -> 657; 268 -> 673; 268 -> 673; 144 -> 489; 144 -> 542; 144 -> 542
+4 of 5 passed
+wrote planned/airtaxi_noisewind1_results_table.md

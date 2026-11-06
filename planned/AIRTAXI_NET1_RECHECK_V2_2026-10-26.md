@@ -1,0 +1,65 @@
+# AIRTAXI_NET1 rerun on engine v2 (check K4 of AIRTAXI_NET2, run 2026-10-26)
+
+Same runner, configurations and analysis as AIRTAXI_NET1; only the engine differs (taxi/net2.js: pad booking fixed, repositioning checks the passenger-leg charge). Post-hoc correction run, not a new registration. The registered NET1 results stay in AIRTAXI_NET1_RESULTS_2026-10-26.md.
+
+## Predictions
+
+| # | Result | Detail |
+|---|---|---|
+| P1 AFW-TOY | pass | peak E* 44.5 min (predicted 33-48; seed range 44.5 to 44.5) |
+| P1 AFW-DFW | pass | peak E* 32.1 min (predicted 22-37; seed range 32.1 to 32.1) |
+| P1 DFW-49T | pass | peak E* 27.6 min (predicted 18-32; seed range 27.0 to 27.6) |
+| P1 IAH-EFD | pass | peak E* 31.0 min (predicted 22-35; seed range 31.0 to 31.0) |
+| P1 IAH-HOU | pass | peak E* 30.3 min (predicted 21-35; seed range 30.3 to 30.3) |
+| P1 DFW-TOY | pass | peak E* 20.0 min (predicted 11-24; seed range 18.4 to 20.0) |
+| P2 | pass | highest AFW-TOY (44.5), lowest DFW-TOY (20.0) |
+| P3 | pass | peak minus noon E*: AFW-DFW 12.8, AFW-TOY 17.5, DFW-TOY 7.4, DFW-49T 8.6, IAH-HOU 5.6, IAH-EFD 5.6 |
+| P8 | pass | routes where peak E* > 40 min: ['AFW-TOY'] |
+| P4 DFW | pass | required fleet 8.0 (seed range (8, 8)); predicted 6-11 |
+| P4 HOU | pass | required fleet 5.0 (seed range (5, 6)); predicted 4-8 |
+| P5 | pass | slow/base fleet ratio: {'DFW': 1.25, 'HOU': 1.6} |
+| P6 | pass | U60/U150 fleet ratio: {'DFW': 1.0, 'HOU': 1.4} |
+| P7 | pass | r3/r0.5 fleet ratio: {'DFW': 4.0, 'HOU': 3.0} |
+
+14 of 14 passed.
+
+## Break-even access time E* (minutes of getting to and from the pad at which air = driving midpoint)
+
+Base case (usable range 100 km, charging 3.2 km/min, r = 1.5), fleet 24 so queueing is negligible. Median over 10 seeds; T_air = request to landing-pad-clear.
+
+| Route | T_air (min) | E* peak (08:00, 17:30) | E* noon | Air beats driving at peak with E = 20 / 40 / 60? |
+|---|---|---|---|---|
+| AFW-DFW | 11.1 | 32.1 (32.1 to 32.1) | 19.4 | yes / no / no |
+| AFW-TOY | 15.5 | 44.5 (44.5 to 44.5) | 27.0 | yes / yes / no |
+| DFW-TOY | 10.8 | 20.0 (18.4 to 20.0) | 12.7 | yes / no / no |
+| DFW-49T | 11.0 | 27.6 (27.0 to 27.6) | 19.0 | yes / no / no |
+| IAH-HOU | 14.1 | 30.3 (30.3 to 30.3) | 24.7 | yes / no / no |
+| IAH-EFD | 15.9 | 31.0 (31.0 to 31.0) | 25.4 | yes / no / no |
+
+## Aircraft needed (smallest fleet with >= 95 % served and median wait <= 10 min; median over 10 seeds, min-max; 99 = not reached at 24)
+
+| Metro | Usable range (km) | Charging (km/min) | r = 0.5 | r = 1.5 | r = 3 |
+|---|---|---|---|---|---|
+| DFW | 60 | 1.5 | 18.0 (5-99) | 16.0 (10-20) | 24.0 (20-99) |
+| DFW | 60 | 3.2 | 5.0 (4-16) | 8.0 (8-10) | 16.0 (12-16) |
+| DFW | 100 | 1.5 | 4.5 (4-6) | 10.0 (10-12) | 20.0 (16-20) |
+| DFW | 100 | 3.2 | 4.0 (4-5) | 8.0 (8-8) | 16.0 (12-16) |
+| DFW | 150 | 1.5 | 4.5 (4-6) | 10.0 (10-12) | 20.0 (16-20) |
+| DFW | 150 | 3.2 | 4.0 (3-5) | 8.0 (8-8) | 14.0 (12-16) |
+| HOU | 60 | 1.5 | 9.0 (5-24) | 13.0 (8-20) | 22.0 (16-99) |
+| HOU | 60 | 3.2 | 7.0 (3-24) | 7.0 (5-12) | 12.0 (10-99) |
+| HOU | 100 | 1.5 | 4.0 (3-24) | 8.0 (8-8) | 12.0 (12-16) |
+| HOU | 100 | 3.2 | 3.0 (2-5) | 5.0 (5-6) | 9.0 (8-10) |
+| HOU | 150 | 1.5 | 3.5 (3-5) | 6.0 (5-8) | 12.0 (10-12) |
+| HOU | 150 | 3.2 | 3.0 (2-4) | 5.0 (4-6) | 8.0 (8-10) |
+
+## Sensitivity: cruise speed (peak E*, minutes)
+
+| Route | 55 m/s (123 mph) | 67 m/s (150 mph, base) | 89 m/s (200 mph) |
+|---|---|---|---|
+| AFW-DFW | 31.2 | 32.1 | 33.2 |
+| AFW-TOY | 42.5 | 44.5 | 46.6 |
+| DFW-TOY | 19.1 | 20.0 | 21.0 |
+| DFW-49T | 26.7 | 27.6 | 28.6 |
+| IAH-HOU | 28.7 | 30.3 | 32.1 |
+| IAH-EFD | 29.0 | 31.0 | 33.3 |

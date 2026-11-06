@@ -1,0 +1,19 @@
+| Site | traffic | random pads (30 m square) | fixed, 10 m apart | fixed, 30 m | fixed, 60 m | mean pad wait (fixed) |
+|---|---|---|---|---|---|---|
+| amazon | 1x | 301 (111 low) | 214 (70 low) | 23 (0 low) | 13 (0 low) | 3 s |
+| amazon | 2x | 1210 (443 low) | 564 (199 low) | 79 (0 low) | 39 (0 low) | 1757 s |
+| wing | 1x | 98 (76 low) | 67 (54 low) | 1 (0 low) | 0 (0 low) | 0 s |
+| wing | 2x | 396 (285 low) | 265 (189 low) | 11 (0 low) | 7 (0 low) | 0 s |
+| zipHOU | 1x | 377 (73 low) | 185 (36 low) | 25 (0 low) | 15 (0 low) | 235 s |
+| zipHOU | 2x | 1291 (227 low) | 220 (38 low) | 22 (0 low) | 13 (0 low) | 6300 s |
+| zipDFW | 1x | 56 (9 low) | 42 (6 low) | 8 (0 low) | 3 (0 low) | 0 s |
+| zipDFW | 2x | 248 (41 low) | 173 (27 low) | 20 (0 low) | 13 (0 low) | 24 s |
+(near-site same-company wide meetings within 300 m, 3 seeds x 2 h; "low" = both drones below 20 m)
+| Prediction | Result | Verdict |
+|---|---|---|
+| F1 fixed 30 m pads <= 50 % of random pads at 1x, each site | amazon 8 %, wing 1 %, zipHOU 7 %, zipDFW 14 % | **PASS** |
+| F2 meetings fall with pad spacing 10 > 30 > 60 m at 1x, each site | amazon 214/23/13, wing 67/1/0, zipHOU 185/25/15, zipDFW 42/8/3 | **PASS** |
+| F3 mean pad wait <= 30 s at 1x (Wing, Zipline Houston, Zipline DFW) | wing 0 s, zipHOU 235 s, zipDFW 0 s | **FAIL** |
+| F4 random-pad meetings are >= 50 % pad-level (both below 20 m) at 1x, each site | amazon 37 %, wing 78 %, zipHOU 19 %, zipDFW 16 % | **FAIL** |
+Amazon mean pad wait at 1x / 2x (20 pads assumed): 3 1757 s
+Runs read: 96 (expected 96).

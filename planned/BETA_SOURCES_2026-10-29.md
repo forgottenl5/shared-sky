@@ -1,0 +1,6 @@
+# BETA Technologies: sources checked 29 Oct 2026 (for the air-taxi page)
+- FAA press release (faa.gov newsroom, announced Wed 21 Oct 2026): first-ever "Special Airworthiness Market Survey Certificate", issued to BETA for its ALIA eVTOL (A250), allowing flight operations with operators and participants for market surveys, over an expanded area. The release does not mention type certification or performance figures. VERIFIED (read).
+- Seven Days (VT), 22 Oct 2026: first flight under the certificate Plattsburgh to Burlington; BETA expects component certification in 2027 and full certification in 2028 (company expectation). Read.
+- Northeast Times, 10 Sep 2026: Joby, BETA and Wisk in the FAA eVTOL campaign at Perot Field Fort Worth Alliance, 10-14 Sep 2026, no passengers; details only for Joby. Read.
+- Archer press release (BusinessWire, 10 Sep 2026): ACES (Archer, BETA, Macquarie) to expand interoperable charging into Texas (Texas Triangle); no sites, counts or power given. Read.
+- Wikipedia "Beta Technologies Alia" (secondary): A250 5 passengers, planned cruise 170 mph, planned range up to 250 nmi (BETA site lists 387 mi), charge under an hour. NOT verified against BETA's own pages; not used in any model.

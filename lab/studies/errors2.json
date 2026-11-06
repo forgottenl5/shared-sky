@@ -1,0 +1,132 @@
+{
+ "name": "ERRORS2 (as a spec; registered runner planned/errors2_run.js)",
+ "out": "out/study_errors2",
+ "cities": [
+  "houston",
+  "dfw"
+ ],
+ "heights": {
+  "A0": {
+   "wing": [
+    46,
+    91
+   ],
+   "aOut": 61,
+   "zip": 101,
+   "aIn": 105
+  },
+  "S1": {
+   "wing": [
+    46,
+    91
+   ],
+   "aOut": 69,
+   "zip": 101,
+   "aIn": [
+    85,
+    115
+   ]
+  },
+  "A2": {
+   "wing": [
+    46,
+    71
+   ],
+   "aOut": 81,
+   "zip": 101,
+   "aIn": 115
+  }
+ },
+ "cells": [
+  {
+   "tag": "D",
+   "type": "count",
+   "arms": [
+    "S1"
+   ],
+   "errors": [
+    {
+     "level": "L0"
+    },
+    {
+     "level": "L1"
+    },
+    {
+     "level": "L2"
+    },
+    {
+     "level": "L3"
+    },
+    {
+     "level": "L4"
+    }
+   ],
+   "seeds": {
+    "from": 1,
+    "to": 6
+   }
+  },
+  {
+   "tag": "C",
+   "type": "count",
+   "arms": [
+    "S1",
+    "A2"
+   ],
+   "errors": [
+    {
+     "level": "L2",
+     "rho": 0.5
+    },
+    {
+     "level": "L2",
+     "rho": 0.8
+    },
+    {
+     "level": "L2",
+     "rho": 0.95
+    },
+    {
+     "level": "L4",
+     "rho": 0.5
+    },
+    {
+     "level": "L4",
+     "rho": 0.8
+    },
+    {
+     "level": "L4",
+     "rho": 0.95
+    }
+   ],
+   "seeds": {
+    "from": 1,
+    "to": 6
+   }
+  },
+  {
+   "tag": "E",
+   "type": "count",
+   "arms": [
+    "S1",
+    "A2"
+   ],
+   "errors": [
+    {
+     "level": "L2",
+     "rho": 0.8,
+     "shared": false
+    },
+    {
+     "level": "L4",
+     "rho": 0.8,
+     "shared": false
+    }
+   ],
+   "seeds": {
+    "from": 1,
+    "to": 4
+   }
+  }
+ ]
+}

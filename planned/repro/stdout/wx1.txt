@@ -1,0 +1,7 @@
+FAIL W1 houston wet 21.8 %, dfw wet 12.7 %
+FAIL W2 houston thunder 0.0 %, dfw thunder 0.0 %
+FAIL W3 houston gust>=40 11.8 %, dfw gust>=40 15.6 %
+PASS W4 houston hard-stop 3.9 %, dfw hard-stop 4.6 %
+PASS W5 houston wet 2/10, thunder 0/10, dfw wet 2/10, thunder 0/10
+FAIL W6 houston band median gust 41 vs daytime 24.1 km/h (1.70x), dfw band median gust 37.4 vs daytime 26.6 km/h (1.41x)
+2 of 6 passed; wrote planned/wx1_results_table.md

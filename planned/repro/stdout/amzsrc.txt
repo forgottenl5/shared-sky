@@ -1,0 +1,13 @@
+| Amazon heights | Source | Wide | Close | Amazon–Zipline share | Sharing-out cut wide / close |
+|---|---|---|---|---|---|
+| S1 | out 69 m (Amazon, Richardson); back uniform 85–115 m (FAA final EAs FL/DET/KC inbound band) | 228 | 56 | 66 % | 71 % / 68 % |
+| S2 | out 69 m; back uniform 99–113 m (Omaha final EA inbound band, via DroneXL) | 288 | 86 | 75 % | 77 % / 79 % |
+| A0 (HOUREAL) | | 315 | 122 | 76 % | 79 % / 85 % |
+| T (HOUREAL) | | 226 | 59 | 67 % | 71 % / 69 % |
+| R (HOUREAL) | | 89 | 26 | 22 % | 27 % / 31 % |
+| Prediction | Result | Verdict |
+|---|---|---|
+| Q1 S1: sharing out cuts >= 55 % | 71 % | **PASS** |
+| Q2 S2: sharing out cuts >= 65 % | 77 % | **PASS** |
+| Q3 Amazon–Zipline >= 50 % of S2 meetings | 75 % | **PASS** |
+runs 6 (expected 6)

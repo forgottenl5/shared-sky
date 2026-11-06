@@ -1,0 +1,6 @@
+FAIL H1 share of helicopter seconds in the zone below 150 m: houston 29.9 %; dfw 45.9 %
+FAIL H2 share inside the drone band 46-121 m: houston 13.6 %; dfw 16.5 %
+FAIL H3 share of low helicopter seconds in the busiest 5 % of 1 km cells: houston 46 % (2181 cells); dfw 66 % (4411 cells)
+PASS H4 mean drones in the 450 x 450 x 60 m box around low-flying helicopters: houston S1 0.0291; houston A2 0.0289; dfw S1 0.0089; dfw A2 0.0089
+PASS H5 A2 vs S1 mean exposure, relative difference: houston 1 %; dfw 1 %
+2 of 5 passed

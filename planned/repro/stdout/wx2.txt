@@ -1,0 +1,6 @@
+PASS X1 conflicts grow with traffic at exponent: houston S1 2.09; houston A2 2.06; dfw S1 2.01; dfw A2 1.98
+PASS X2 yearly planned conflicts, stops + catch-up at 1.5x vs no weather: houston S1 +6.5 %; houston A2 +6.3 %; dfw S1 +7.0 %; dfw A2 +6.7 %
+PASS X3 share of daytime hours flown above normal traffic (catch-up at 1.5x): houston 7.8 %, dfw 9.2 %
+FAIL X4 V2 delayed share at 2x traffic / at 1x: houston S1 0.98; houston A2 1.11; dfw S1 1.12; dfw A2 1.20
+PASS X5 height-sharing cut at 2x vs 1x traffic: houston 73 vs 72 %; dfw 75 vs 74 %
+4 of 5 passed

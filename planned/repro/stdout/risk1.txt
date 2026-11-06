@@ -1,0 +1,6 @@
+PASS R1 collision-risk cut by height sharing at L1, base sizes: houston 79 %, dfw 82 %
+PASS R2 risk per 100,000 flight hours, L0 vs L2: houston S1 9.53 vs 17; houston A2 0 vs 6.68; dfw S1 10.2 vs 13.6; dfw A2 5.13 vs 5.79
+PASS R3 L2 with 95 % shared vs independent: houston S1 9.88 vs 17; houston A2 1.66 vs 6.68; dfw S1 9.09 vs 13.6; dfw A2 1.71 vs 5.79
+PASS R4 risk ratio, Zipline/Amazon half-span 2.0 m vs 1.0 m (L2): houston S1 1.76; houston A2 1.91; dfw S1 1.79; dfw A2 1.92
+PASS R5 L2 risk, shared-out vs best-sourced heights: houston 6.68 vs 17; dfw 5.79 vs 13.6
+5 of 5 passed

@@ -1,0 +1,13 @@
+## hou: d = 4 km, 20 hours (seeds) per band
+| Wind band (120 m) | A0 no check | A2 no check | sharing-out cut (wide / very close) | A0 still-air ±5 s check flown in this wind: left |
+|---|---|---|---|---|
+| still (0.0–0.0 m/s) | 1558 | 286 | 82 % / 90 % | 0 (0 %) |
+| p50 (5.1–6.0 m/s) | 1554 | 281 | 82 % / 88 % | 1075 (69 %) |
+| p90 (8.5–10.5 m/s) | 1705 | 343 | 80 % / 87 % | 1630 (96 %) |
+| p99 (11.4–14.8 m/s) | 1837 | 379 | 79 % / 87 % | 1775 (97 %) |
+| Prediction | Result | Verdict |
+|---|---|---|
+| Wn1 sharing-out cut in each wind band within 5 points of still air | still 82 %, p50 82 %, p90 80 %, p99 79 % | **PASS** |
+| Wn2 still-air ±5 s check flown in median-band wind leaves >= 50 % (pooled) | 69 % | **PASS** |
+| Wn3 in at least 18 of 20 median-band hours the check leaves >= 30 % | 20 of 20 | **PASS** |
+Runs read: 160 (expected 160).

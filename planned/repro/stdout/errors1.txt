@@ -1,0 +1,14 @@
+PASS E1 cut at L1: houston 76 %, dfw 79 %
+FAIL E2 cut at L2: houston 63 %, dfw 59 %
+FAIL E3 cut at L3: houston 30 %, dfw 26 %
+FAIL E4 cut at L4: houston 20 %, dfw 23 %
+PASS E5 cut by level: houston 80 > 76 > 63 > 30 > 20; dfw 81 > 79 > 59 > 26 > 23
+PASS E6a cut lost to height error alone (points of cut, seeds 1-4): houston 58 %, dfw 54 %
+PASS E6b change with sideways error alone: houston -1 %, dfw -2 %
+PASS E6c change with late start alone: houston 3 %, dfw 3 %
+PASS E7 V2 removal at L0: houston 99 %, dfw 98 %
+PASS E8 V2 removal at L2: houston 83 %, dfw 77 %
+PASS E9 V2 removal at L4: houston 18 %, dfw 22 %
+PASS E10 flown conflicts V3 vs V2: houston L2 0 vs 61; houston L4 1 vs 721; dfw L2 0 vs 35; dfw L4 0 vs 271
+PASS E11 delayed share V3 / V2 at L0: houston 2.00, dfw 2.75; V2 houston 18 %, dfw 17 %, V3 houston 37 %, dfw 47 %
+10 of 13 passed

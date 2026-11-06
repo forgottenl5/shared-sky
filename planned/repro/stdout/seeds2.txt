@@ -1,0 +1,5 @@
+PASS S1 A2+V2 delayed: Houston 18.9 % (10 runs), DFW 17.5 % (10 runs)
+PASS S2 houston A0 99.6 %, houston A2 99.5 %, dfw A0 99.6 %, dfw A2 99.0 %
+PASS S3 houston 2.05, dfw 2.09
+PASS S4 houston 6.2 min, dfw 6.2 min
+4 of 4 passed

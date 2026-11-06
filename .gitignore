@@ -1,0 +1,6 @@
+out/
+node_modules/
+*.log
+__pycache__/
+.private_patterns
+data/census/

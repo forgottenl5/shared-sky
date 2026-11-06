@@ -1,0 +1,45 @@
+# AIRTAXI_ROUTE1 results (2026-10-29): flight time on a path 15% longer than the straight line
+Registration: planned/AIRTAXI_ROUTE1_PREREG.md. Runner planned/airtaxi_route1_run.js, analysis planned/airtaxi_route1_analyze.py.
+
+**21 of 21 predictions passed.**
+
+## Peak break-even E* (minutes of access time at which air = driving), fleet 24, r = 1.5
+| Route | f=1.00 | f=1.15 | f=1.30 |
+|---|---|---|---|
+| AFW-DFW | 32.1 | 31.1 | 30.1 |
+| AFW-TOY | 44.5 | 42.8 | 41.1 |
+| DFW-TOY | 20.0 | 19.1 | 18.1 |
+| DFW-49T | 27.6 | 26.6 | 25.6 |
+| IAH-HOU | 30.3 | 28.9 | 27.4 |
+| IAH-EFD | 31.0 | 29.3 | 27.6 |
+
+## Required fleet (95% served, median wait <= 10 min), r = 1.5, median over 10 seeds (min-max)
+| Metro | f=1.00 | f=1.15 |
+|---|---|---|
+| DFW | 8.0 (8-10) | 8.0 (8-10) |
+| HOU | 5.0 (5-6) | 5.0 (5-8) |
+
+## Predictions
+| Prediction | Result | Verdict |
+|---|---|---|
+| P1 AFW-DFW | peak E* 32.1 -> 31.1 min (fall 1.01; predicted 0.7-2.1) | PASS |
+| P1 AFW-TOY | peak E* 44.5 -> 42.8 min (fall 1.67; predicted 0.7-2.1) | PASS |
+| P1 DFW-TOY | peak E* 20.0 -> 19.1 min (fall 0.97; predicted 0.7-2.1) | PASS |
+| P1 DFW-49T | peak E* 27.6 -> 26.6 min (fall 1.00; predicted 0.7-2.1) | PASS |
+| P1 IAH-HOU | peak E* 30.3 -> 28.9 min (fall 1.45; predicted 0.7-2.1) | PASS |
+| P1 IAH-EFD | peak E* 31.0 -> 29.3 min (fall 1.72; predicted 0.7-2.1) | PASS |
+| P2 AFW-DFW | peak E* 32.1 -> 30.1 min at f=1.30 (fall 2.02; predicted 1.4-4.2) | PASS |
+| P2 AFW-TOY | peak E* 44.5 -> 41.1 min at f=1.30 (fall 3.35; predicted 1.4-4.2) | PASS |
+| P2 DFW-TOY | peak E* 20.0 -> 18.1 min at f=1.30 (fall 1.94; predicted 1.4-4.2) | PASS |
+| P2 DFW-49T | peak E* 27.6 -> 25.6 min at f=1.30 (fall 2.00; predicted 1.4-4.2) | PASS |
+| P2 IAH-HOU | peak E* 30.3 -> 27.4 min at f=1.30 (fall 2.90; predicted 1.4-4.2) | PASS |
+| P2 IAH-EFD | peak E* 31.0 -> 27.6 min at f=1.30 (fall 3.45; predicted 1.4-4.2) | PASS |
+| P3 | order f=1.00: ['AFW-TOY', 'AFW-DFW', 'IAH-EFD', 'IAH-HOU', 'DFW-49T', 'DFW-TOY']; f=1.15: ['AFW-TOY', 'AFW-DFW', 'IAH-EFD', 'IAH-HOU', 'DFW-49T', 'DFW-TOY'] | PASS |
+| P4 | routes with peak E* >= 40 min: f=1.00 ['AFW-TOY'], f=1.15 ['AFW-TOY'] | PASS |
+| P5 | DFW: 8.0 -> 8.0; HOU: 5.0 -> 5.0 | PASS |
+| P6 AFW-DFW | f=1.00 peak E* 32.1 vs NET1 32.1 | PASS |
+| P6 AFW-TOY | f=1.00 peak E* 44.5 vs NET1 44.5 | PASS |
+| P6 DFW-TOY | f=1.00 peak E* 20.0 vs NET1 20.0 | PASS |
+| P6 DFW-49T | f=1.00 peak E* 27.6 vs NET1 27.6 | PASS |
+| P6 IAH-HOU | f=1.00 peak E* 30.3 vs NET1 30.3 | PASS |
+| P6 IAH-EFD | f=1.00 peak E* 31.0 vs NET1 31.0 | PASS |

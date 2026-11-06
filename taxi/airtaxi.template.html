@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shared Sky Air Taxis</title>
+<meta property="og:type" content="website"><meta property="og:title" content="Shared Sky · Air-taxi networks, simulated"><meta property="og:description" content="A simulation of air-taxi networks for Dallas–Fort Worth and Houston in 3D, with the studies behind it. Not a real schedule."><meta property="og:url" content="https://forgottenl5.github.io/shared-sky/airtaxi.html"><meta property="og:image" content="https://forgottenl5.github.io/shared-sky/img/airtaxi.jpg"><meta property="og:image:width" content="720"><meta property="og:image:height" content="405"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%2303060c%27/%3E%3Ccircle cx=%279%27 cy=%2720%27 r=%274%27 fill=%27%234fd8ff%27/%3E%3Ccircle cx=%2716%27 cy=%2711%27 r=%274%27 fill=%27%23ffbe3d%27/%3E%3Ccircle cx=%2723%27 cy=%2720%27 r=%274%27 fill=%27%23a98bff%27/%3E%3C/svg%3E">
+<meta name="description" content="A simulation, not a real schedule: air-taxi networks for Dallas–Fort Worth and Houston between North Texas airports and sites on Joby’s demonstration routes, Houston airports in Wisk’s plans, and the downtown Dallas vertiport (closed for rebuilding), with aircraft flying, landing and parking in 3D.">
+<link rel="stylesheet" href="vendor/fonts/fonts.css">
+<style>
+/* Same single dark look as the Shared Sky city pages: full-bleed 3D scene, headline top-left, live board top-right, control dock at the bottom, a drawer for the details. */
+:root { --bg:#03060c; --ink:#eaf1fb; --ink2:#9fb1c8; --ink3:#6f8299; --line:rgba(140,185,235,.20);
+  --pax:#ffe9a8; --dead:#7f9cc4; --hold:#ff6b6b; --park:#cfe3ff; --site:#6dffb3; --accent:#ffe9a8;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace; --sans:"Space Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color-scheme:dark; }
+* { box-sizing:border-box; } [hidden] { display:none !important; }
+html,body { margin:0; height:100%; background:var(--bg); } html { overflow:hidden; } body { color:var(--ink); font-family:var(--sans); overflow:hidden; }
+canvas#gl { position:fixed; inset:0; width:100%; height:100%; display:block; touch-action:none; cursor:grab; }
+#vig { position:fixed; inset:0; pointer-events:none; background:radial-gradient(ellipse 120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.6) 100%); }
+.panel { background:linear-gradient(180deg, rgba(14,22,40,.80), rgba(5,9,18,.84)); border:1px solid var(--line); border-radius:14px; backdrop-filter:blur(12px) saturate(1.2); -webkit-backdrop-filter:blur(12px) saturate(1.2); box-shadow:0 10px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06); }
+button { font:inherit; font-size:13px; color:var(--ink); background:rgba(140,185,235,.08); border:1px solid var(--line); border-radius:8px; padding:7px 11px; cursor:pointer; }
+button:hover { background:rgba(140,185,235,.18); } button.on { border-color:var(--accent); background:rgba(255,233,168,.16); color:#fff; }
+button:focus-visible, input:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+a { color:var(--accent); }
+.brand { font-family:var(--mono); font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); text-decoration:none; }
+#head { position:fixed; top:16px; left:16px; width:min(420px, calc(100vw - 32px)); padding:16px 18px; }
+#head h1 { font-size:24px; line-height:1.1; margin:8px 0 6px; letter-spacing:-.01em; }
+#head p { margin:0 0 12px; color:var(--ink2); font-size:14px; line-height:1.45; }
+.seg { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; } .seg .lab { font-size:11px; color:var(--ink3); font-family:var(--mono); width:100%; letter-spacing:.08em; text-transform:uppercase; }
+#board { position:fixed; top:16px; right:16px; width:250px; padding:14px 16px; }
+#board .clock { font-family:var(--mono); font-size:26px; font-variant-numeric:tabular-nums; }
+#board .sub { font-family:var(--mono); font-size:11px; color:var(--ink3); margin-bottom:10px; }
+.row { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:4px 0; border-top:1px solid rgba(140,185,235,.08); font-size:13px; color:var(--ink2); }
+.row .n { font-family:var(--mono); color:var(--ink); font-variant-numeric:tabular-nums; }
+.dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; vertical-align:0; }
+#dock { position:fixed; left:50%; transform:translateX(-50%); bottom:16px; width:min(720px, calc(100vw - 32px)); padding:10px 12px; display:flex; gap:10px; align-items:center; }
+#dock input[type=range] { flex:1; accent-color:var(--accent); min-width:80px; }
+#dock .spd { display:flex; gap:4px; }
+#drawer { position:fixed; right:16px; top:316px; bottom:84px; width:min(470px, calc(100vw - 32px)); overflow:auto; padding:16px 18px; }
+#drawer h2 { font-size:15px; margin:0 0 8px; } #drawer h3 { font-size:13px; margin:16px 0 6px; color:var(--ink2); letter-spacing:.04em; }
+#drawer p, #drawer li { font-size:13px; color:var(--ink2); line-height:1.5; } #drawer ul { padding-left:18px; margin:6px 0; }
+table { border-collapse:collapse; width:100%; font-size:12.5px; } th, td { text-align:left; padding:5px 6px; border-bottom:1px solid rgba(140,185,235,.12); vertical-align:top; }
+th { color:var(--ink3); font-weight:500; font-size:11px; letter-spacing:.06em; text-transform:uppercase; } td.n { font-family:var(--mono); font-variant-numeric:tabular-nums; white-space:nowrap; }
+.big { font-family:var(--mono); color:var(--good, #6dffb3); }
+.lbl { position:fixed; transform:translate(-50%, -100%); pointer-events:auto; cursor:pointer; font-size:12px; white-space:nowrap; padding:4px 8px; border-radius:8px; background:rgba(5,10,19,.78); border:1px solid var(--line); color:var(--ink); }
+#nleg { margin-top:10px; } #nleg .nl { font-size:11.5px; color:var(--ink3); line-height:1.4; margin:4px 0; } .nbar, .nlab { display:grid; grid-template-columns:repeat(4,1fr); gap:3px; } .nbar span { height:9px; border-radius:2px; } .nlab span { font-family:var(--mono); font-size:10.5px; color:var(--ink2); }
+.lbl b { font-weight:600; } .lbl span { font-family:var(--mono); font-size:10.5px; color:var(--ink3); display:block; }
+.lbl.sel { border-color:var(--site); }
+#tip { position:fixed; pointer-events:none; font-size:12px; padding:6px 9px; border-radius:8px; background:rgba(5,10,19,.92); border:1px solid var(--line); max-width:260px; }
+@media (max-width: 760px) {
+  #head { padding:12px 14px; } #head h1 { font-size:19px; } #head p { display:none; }
+  #board { top:auto; bottom:118px; right:16px; width:172px; padding:8px 12px; } #board .clock { font-size:18px; } #board .sub, #board .opt { display:none; }
+  #dock { flex-wrap:wrap; } #dock input[type=range] { order:-1; flex-basis:100%; } #dock .spd { flex:1; } #dock .spd button { flex:1; padding:7px 4px; }
+  #drawer { top:auto; bottom:118px; max-height:50vh; width:calc(100vw - 32px); } body.drawer #board { display:none; }
+  .lbl span { display:none; }
+  #nleg .nl + .nbar + .nlab + .nl { display:none; } #nleg .nl:first-child { margin-top:0; }
+}
+
+#head .hrow { display:block; } #setupBtn { display:none; }
+#dock .spd .u::after { content:' min/s'; font-style:normal; } #dock #views { display:flex; gap:4px; } #dock .sec2 { display:none; } #dock .w { }
+.lf { display:inline; } .ls { display:none; }
+@media (max-width:760px) {
+  #head { top:8px; left:8px; right:8px; width:auto; padding:7px 10px; }
+  #head .hrow { display:flex; align-items:center; gap:8px; } #head .brand { font-size:10px; letter-spacing:.14em; } #head h1 { font-size:14px !important; margin:0 !important; flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #setupBtn { display:inline-block; padding:5px 9px; font-size:12px; } #setupBtn.on { border-color:var(--accent); background:rgba(255,233,168,.16); }
+  body:not(.setup) #head .seg { display:none !important; } body.setup #head .seg { display:flex; } body:not(.setup) #nleg { display:none !important; }
+  #dock { bottom:8px; width:calc(100vw - 16px); padding:8px 10px; gap:6px; } #dock input[type=range] { order:0 !important; flex:1 1 90px !important; min-width:70px; } #dock .spd { flex:0 0 auto !important; } #dock .spd button { flex:0 0 auto !important; padding:7px 7px !important; font-size:12px; } #dock .spd .u::after { content:'m/s'; }
+  #dock button { padding:7px 9px; font-size:12.5px; } #dock .w { display:none; }
+  #dock .sec { display:none; } body.dockx #dock .sec { display:inline-block; } #dock .sec2 { display:inline-block; margin-left:auto; } #dock #views button { padding:7px 8px; }
+  body.dockx #dock #sndStyle[hidden] { display:none; }
+  .lf { display:none; } .ls { display:inline; }
+  #board { right:8px !important; bottom:calc(var(--dockH, 100px) + 16px) !important; }
+  #drawer { bottom:calc(var(--dockH, 100px) + 16px); }
+  #folInfo { top:56px !important; } body.setup #folInfo { top:218px !important; } html body.dir .cap { top:64px !important; } html body.setup.dir .cap { top:218px !important; }
+}
+/* ---------- compact default + cinematic opening ---------- */
+body:not(.full) #head p, body:not(.full) #head .seg.lay, body:not(.full) #nleg, body:not(.full) #board .opt, body:not(.full) #board .sub { display:none; }
+body:not(.full) #head { padding:12px 16px; } body:not(.full) #head h1 { font-size:20px; margin:6px 0 4px; } body:not(.full) #head .lab { display:none; }
+body:not(.full) #board { width:200px; padding:10px 14px; } body:not(.full) #board .clock { font-size:22px; }
+#moreBtn.on { background:var(--accent); color:#0a0f18; } #snd.on { background:var(--accent); color:#0a0f18; }
+.lb { position:fixed; left:0; right:0; height:11vh; background:#000; z-index:6; pointer-events:none; transition:transform 1.4s cubic-bezier(.7,0,.2,1); }
+.lb.t { top:0; transform:translateY(-100%); } .lb.b { bottom:0; transform:translateY(100%); } body.cine .lb { transform:none; }
+#fadeK { position:fixed; inset:0; background:#000; z-index:7; pointer-events:none; opacity:0; }
+body.cine #head, body.cine #board, body.cine #dock, body.cine #drawer, body.cine #labels, body.cine #vig { display:none !important; }
+.cap { position:fixed; left:0; right:0; top:50%; transform:translateY(-50%); z-index:8; text-align:center; pointer-events:none; padding:0 20px; transition:top 1s; }
+.cap.lo { top:auto; bottom:calc(11vh + 40px); transform:none; }
+.cap .k { font-family:var(--mono); font-size:clamp(11px,1.4vw,14px); letter-spacing:.32em; text-transform:uppercase; color:var(--accent); opacity:0; transition:opacity 1s, letter-spacing 2.5s; } .cap .k.on { opacity:1; letter-spacing:.42em; }
+.cap .bg { font-size:clamp(34px,7.4vw,92px); font-weight:600; letter-spacing:-.025em; line-height:1.02; color:#fff; margin:.18em 0; opacity:0; filter:blur(14px); transform:scale(1.04); transition:opacity 1.3s, filter 1.3s, transform 3s ease-out; text-shadow:0 4px 40px rgba(0,0,0,.8); } .cap .bg.on { opacity:1; filter:blur(0); transform:scale(1); }
+.cap .bg.red { color:var(--hold); text-shadow:0 0 40px rgba(255,107,107,.55), 0 4px 40px #000; } .cap.lo .bg { font-size:clamp(28px,5vw,60px); }
+.cap .sm { font-size:clamp(14px,1.8vw,19px); color:var(--ink); max-width:620px; margin:0 auto; line-height:1.45; opacity:0; transition:opacity 1.2s; text-shadow:0 2px 16px #000; } .cap .sm.on { opacity:.92; }
+#capF { position:fixed; left:0; right:0; bottom:calc(11vh + 12px); z-index:8; text-align:center; font-size:11.5px; color:var(--ink3); pointer-events:none; display:none; } body.cine #capF { display:block; }
+#skip { position:fixed; right:16px; bottom:calc(11vh + 12px); z-index:9; display:none; font-size:13px; padding:8px 14px; background:rgba(0,0,0,.45); border-radius:999px; color:var(--ink2); } body.cine #skip { display:block; }
+body.cine #capF { right:130px; text-align:left; left:16px; }
+@media (max-width:760px) { #capF { display:none !important; } body:not(.full) #head .seg { margin-top:6px; } body:not(.full) #board { bottom:calc(var(--dockH, 230px) + 30px); width:auto; min-width:150px; max-width:calc(100vw - 24px); } html body.dir .cap { top:218px; bottom:auto; } body:not(.full) #board .row:nth-of-type(n+4):not(.legend) { display:none; } }
+
+body.dir .lb { height:6vh; } body.dir.idle .lb { transform:none; } /* bars only while the controls are hidden */
+body.dir #head, body.dir #board, body.dir #dock { transition:opacity .8s; } body.dir.idle #head, body.dir.idle #board, body.dir.idle #dock { opacity:0; pointer-events:none; }
+#folInfo { position:fixed; left:50%; transform:translateX(-50%); top:14px; z-index:9; max-width:calc(100vw - 24px); padding:7px 14px; border-radius:12px; background:rgba(5,10,19,.82); border:1px solid rgba(255,255,255,.14); color:#eaf1fb; font-size:13px; text-align:center; pointer-events:none; }
+@media (max-width:760px) { #folInfo { top:218px; font-size:12px; } }
+#folBtn.on { background:var(--accent); color:#0a0f18; }
+/* 30 Oct: no fading, sliding or blur on phones and touch screens (it read as flicker), and the dock wraps instead of overflowing on laptops */
+#dock { width:min(1180px, calc(100vw - 32px)); flex-wrap:wrap; justify-content:center; }
+@media (max-width:760px), (hover:none) {
+  body.dir #head, body.dir #board, body.dir #dock { transition:none !important; } body.dir.idle #head, body.dir.idle #board, body.dir.idle #dock { opacity:1 !important; pointer-events:auto !important; }
+  body.dir .lb, body.dir.idle .lb { transform:translateY(-100%) !important; transition:none !important; } body.dir .lb.b, body.dir.idle .lb.b { transform:translateY(100%) !important; }
+  .cap, body.dir .cap, body.dir.idle .cap { transition:none !important; }
+  body.dir .cap .bg, body.dir .cap .sm { display:none !important; }
+  .panel { backdrop-filter:none !important; -webkit-backdrop-filter:none !important; background:rgba(6,11,21,.93) !important; }
+}
+body.dir .cap { top:auto; bottom:calc(6vh + 92px); transform:none; } body.dir.idle .cap { bottom:calc(6vh + 26px); }
+body.dir .cap .bg { font-size:clamp(26px,4.4vw,52px); } #dirBtn.on { background:var(--accent); color:#0a0f18; }
+
+/* 30 Oct: pinch and ctrl+scroll zoom the map, never the whole page (the drawer still scrolls) */
+html, body { touch-action:none; overscroll-behavior:none; } .drawer, #drawer, .dbody, .tabs { touch-action:pan-x pan-y; }
+</style></head><body>
+<canvas id="gl" aria-label="3D view of the simulated air-taxi network"></canvas><div id="vig"></div>
+<div id="labels"></div><div id="tip" hidden></div>
+
+<section id="head" class="panel">
+  <div class="hrow"><a class="brand" href="index.html">Shared Sky</a>
+  <h1>Air-taxi networks, simulated</h1><button id="setupBtn" aria-expanded="false" title="Choose city, network and demand">⚙ Setup</button></div>
+  <p>One small network per metro, between North Texas airports and sites on Joby’s demonstration routes, Houston airports in Wisk’s plans, and the downtown Dallas vertiport (closed for rebuilding). Switch the network to Archer’s 12 announced Texas sites for a larger network with demand shaped by where commuters would gain. Every aircraft here is a simulation: demand, fleet, pads and parking are assumptions, not a real schedule.</p>
+  <div class="seg" role="group" aria-label="Metro"><div class="lab">Metro</div><button data-metro="DFW" class="on">Dallas–Fort Worth</button><button data-metro="HOU">Houston</button></div>
+  <div class="seg" role="group" aria-label="Network"><div class="lab">Network</div><button data-net="base" class="on" aria-pressed="true">Demo sites</button><button data-net="archer" aria-pressed="false">Archer’s 12 sites</button></div>
+  <div class="seg" role="group" aria-label="Demand" id="levels"><div class="lab">Demand</div></div>
+  <div class="seg lay"><div class="lab">Layer</div><button id="noiseBtn" aria-pressed="false">Noise on the ground</button></div>
+  <div id="nleg" hidden><div class="nl">Flights in 12 daytime hours heard at 55 dBA or more (a busy street), this run</div><div class="nbar"><span style="background:rgba(192,108,255,.22)"></span><span style="background:rgba(192,108,255,.42)"></span><span style="background:rgba(192,108,255,.64)"></span><span style="background:rgba(214,150,255,.88)"></span></div><div class="nlab"><span>1–9</span><span>10–49</span><span>50–99</span><span>100+</span></div><div class="nl">From Joby’s reported levels; cruise overhead is about 43 dBA and does not show. Zoom in on a site (scroll or pinch) to see the footprint.</div></div>
+</section>
+
+<aside id="board" class="panel" aria-live="off">
+  <div class="clock" id="clock">06:00</div><div class="sub" id="runsub">one simulated weekday</div>
+  <div class="row"><span><i class="dot" style="background:var(--pax)"></i>Flying passengers</span><span class="n" id="nPax">0</span></div>
+  <div class="row"><span><i class="dot" style="background:var(--dead)"></i>Flying empty</span><span class="n" id="nDead">0</span></div>
+  <div class="row"><span><i class="dot" style="background:var(--hold)"></i>Holding for a pad or stand</span><span class="n" id="nHold">0</span></div>
+  <div class="row opt"><span><i class="dot" style="background:var(--park)"></i>Parked or charging</span><span class="n" id="nPark">0</span></div>
+  <div class="row"><span>Passengers waiting</span><span class="n" id="nWait">0</span></div>
+  <div class="row" title="Two aircraft within 1.5 nautical miles and 500 ft: a controller would have to separate them. Nothing in the model steers around anyone."><span><i class="dot" style="background:#ffb347"></i>Close approaches so far <span style="color:var(--ink3);font-size:11px">(nobody steers)</span></span><span class="n" id="nEnc">0</span></div>
+  <div class="row opt"><span>Trips flown so far</span><span class="n" id="nDone">0</span></div>
+  <div class="row legend"><span class="ls" style="font-size:10.5px;color:var(--ink3)">Simulation, not to scale (details: Details). Buildings © OpenStreetMap contributors.</span><span class="lf" style="font-size:11px;color:var(--ink3)">Simulation with assumed demand, fleet and parking. Not to scale: aircraft drawn up to about 150× life size (smaller as you zoom in), pads and holding circles enlarged, heights 6×; city blocks schematic and left out near sites. Buildings © OpenStreetMap contributors.</span></div>
+</aside>
+
+<section id="drawer" class="panel" hidden>
+  <h2>Air vs car on these routes</h2>
+  <p>Car times are Google Maps “typically” ranges for a Wednesday (read once, 26 Oct 2026), shown for the first-named direction. Air time is request to landing in a well-supplied network (no queueing). <b>Break-even</b> is how many minutes of getting to and from the pads, in total (including check-in and boarding), before flying stops beating the peak-hour car. It is averaged over both directions and the 08:00 and 17:30 peaks, so it cannot be worked out from the columns shown (AIRTAXI_NET1, engine v2; recomputed on engine v5 with the longer path as AIRTAXI_ROUTE1). The check on engine v5 (AIRTAXI_NET4) failed as registered, because of a setup error: the stand limit I set, with an oversized fleet, left arriving aircraft holding in the air for up to about 2.5 hours. With unlimited stands the break-even times came out unchanged. These are single figures from one set of assumptions: the uncertainty of the break-even was not tested. The route table’s air times and break-evens use flight time on a path 15% longer than the straight line (ROUTE1), while the animation flies the straight lines, so its flights take slightly less time than the table (see the battery note below).</p>
+  <table><thead><tr><th>Route</th><th>Air</th><th>Car 8:00</th><th>Car 12:00</th><th>Break-even</th></tr></thead><tbody id="rtab"></tbody></table>
+  <h3>What this run shows</h3><p id="runtxt"></p>
+  <h3>Assumptions</h3><p style="margin:0 0 4px">From public sources: four seats, the FAA’s 8:1 vertiport obstacle surface and the charging rate (Archer marketing); Archer quotes its noise figure at about 2,000 ft. Not public, so assumed here: the 2,000 ft cruise height, cruise speed, pad count and pad time, parking stands, demand, aircraft range and how the network is run.</p>
+  <ul>
+    <li>Four-seat aircraft, one party per flight, 150 mph cruise at 2,000 ft (between Wisk’s stated 120 knots and Joby’s stated top speed of 200 mph; Archer has flown at nearly 150 mph), climbing at 8:1, the shallowest slope the FAA’s vertiport obstacle surface allows (the surface is defined for clearance, not as a flight path); 100 km usable plus a 20-minute reserve (cautious: Wisk states 90 miles, 144 km, with reserves; 160 km usable changes the fleet by at most one aircraft step, NET3) (the Part 135 daytime VFR minimum that powered-lift able to land vertically along the route may use, 14 CFR 194.306(ss) as quoted in FAA AC 194-1; otherwise 30 minutes by day, which changes nothing here, or 45 at night, not modelled); charging about 10 minutes per 20 miles flown. Holding uses battery.</li>
+    <li>Pads and parking stands per site change with demand, as the studies found workable: 2 pads and 6 to 8 stands at the two lower levels, 4 pads and 10 to 12 stands at the highest. Each take-off or landing holds a pad for 90 s; 5 minutes to unload and board. The landing slot is booked at take-off, and an aircraft with no free stand at its destination holds until one frees. Demand is spread evenly over 12 daytime hours (06:00–18:00).</li>
+    <li>An empty aircraft is flown in when none is at the pickup site. Passengers wait up to 30 minutes, then give up.</li>
+    <li>Who is flying in Texas (checked 29 Oct 2026): Joby, BETA Technologies and Wisk flew in the FAA’s eVTOL campaign at Alliance Airport, 10–14 Sep 2026, with no passengers (Northeast Times, 10 Sep 2026). On 21 Oct 2026 the FAA gave BETA’s ALIA A250 the first “Special Airworthiness Market Survey Certificate”, for market-survey flights with operators and participants; the release does not mention paid service (FAA press release). Archer, BETA and Macquarie plan a shared charging network across the Texas Triangle; no charger sites or power are public. This page models generic aircraft, not any company’s.</li>
+    <li>Downtown Dallas (49T) is closed for rebuilding; reopening is reported for about 2029 (Wikipedia, not confirmed). <b>The model flies it as if it were open</b>, with the same pads and stands as every other site (the real deck has 2 pads and 5 stands, fewer than the 4 pads and up to 12 stands the busiest level gives it here); it is drawn dimmer and its route is marked. None of the company announcements used here names it.</li>
+    <li>Engine v5 (27 Oct 2026). One random day per setting; this run uses the fleet the studies found for that day, which can be one or two aircraft above the study’s central figure.</li>
+  </ul>
+  <h3>Aircraft passing through each other</h3>
+  <p>They really do in this model: every flight cruises at 2,000 ft on the straight line between sites, and nothing steers around anyone. The engine manages pads, parking and charge only. The orange rings mark each close approach in this run: two aircraft within 1.5 nautical miles and 500 ft, which an air traffic controller would have to separate (FAA JO 7110.65 §7-9-4, as amended April 2026). Red rings are the ones under 500 ft apart in 3D, the FAA’s near-midair distance (AIM 7-6-3). <b>In this run: <span id="encTxt"></span>.</b></p>
+  <p>In reality early air taxis will have a pilot on board, flying by sight in good weather; the FAA’s near-term plan says “see-and-avoid will continue to be the primary means of aircraft separation”, with controllers separating aircraft inside the busiest airspace around DFW, IAH and Hobby (FAA Advanced Air Mobility Implementation Plan, Innovate28). Later, the FAA’s concept adds one-way corridors and flight plans checked against each other before take-off. Study AIRTAXI_ENC1 (10 runs a setting): at the middle level about 27 an hour in DFW and 13 in Houston need separating, growing with about the square of traffic; flying the two directions 500 ft apart removes about two thirds of the en-route ones but none near the sites, because climbs and descents still cross the other height.</p>
+  <h3>Noise on the ground</h3>
+  <p>The noise layer counts, for each 200 m square, how many of this run’s flights reach 55 dBA or more there over the 12 hours. It uses Joby’s reported levels (about 45 dBA from a 500 m flyover at 100 knots in a NASA test, applied here at cruise; under 65 dBA at 100 m on take-off and landing), simple spreading on flat ground, holding as a hover 150 m over the site, and departure paths pointed at the next site because real ones are not public. Loud noise stays within about 2.4 km of a site; nowhere more than 300 m from a site comes near the FAA’s 65 dB day–night threshold (highest 54 dB in the study). The day–night level here counts flights from 06:00 to 18:00 (the 06:00–07:00 hour already counts as night, with its 10 dB penalty). Flying on to 22:00 raises it by under 1 dB, and to midnight by 2.4–3.3 dB (highest off-site 56.8 dB); no one off-site reaches 65 and no one lives where it reaches 55. About 7,600 people near the DFW network and 2,100 near Houston’s would hear 10 or more loud flights a day at the middle demand level; these counts are rough, since one large Census block decides much of them (AIRTAXI_NOISE2), and they depend on the straight departure lines: when take-offs and landings instead point into the real wind (a separate study on five real 2025 weekdays per metro, AIRTAXI_NOISEWIND1), the loud-flight footprint covers 2.5 to 3.8 times as many squares, the loudest spot is 0.3 to 3 dB lower, and the people hearing 10 or more loud flights a day range from about 1,400 to 15,600 depending on the setup; still nobody lives where the day–night level reaches 55 dB (the layer drawn here keeps the straight lines); if the aircraft were 5 dB quieter or louder, loud noise would reach about 1.3 km or 4.4 km (NOISE1). What adds up is how often: about 15 loud flights an hour 1 km out from DFW Airport at 48 trips an hour, along the assumed straight departure line (AIRTAXI_NOISE1; one of its six predictions, about these counts, failed). The city blocks are left out near sites so the pads stay visible: people do live there.</p>
+  <h3>Main study results</h3>
+  <ul>
+    <li><b>Break-even access time</b> at peak: about 19 minutes (DFW Airport–Toyota) to about 43 minutes (Alliance–Toyota), with flight times on a path 15% longer than the straight line (ROUTE1; on the straight line it was 20 to 45, NET1). At 20 minutes of getting to and from pads, the air taxi is just behind the car on DFW Airport–Toyota (break-even about 19); at 40, it wins only on Alliance–Toyota.</li>
+    <li><b>Who would save time:</b> on Archer’s announced network of twelve Texas sites (a larger set than this page’s), only about 1.2 % of DFW jobs and 0.5 % of Houston jobs have a commute that flying would shorten by 10 minutes or more at peak, and the range is wide (DFW 0.02–4.9 %, Houston 0.2–2.4 %). Those who would gain mostly commute long distances across the metro (ACCESS1, UNCERT1).</li>
+    <li><b>Aircraft needed</b> (95 % served, median wait under 10 min): about 8 for 12 trips an hour in DFW and 5 for 6 trips an hour in Houston, found with 8 pads and unlimited parking at each site; about 1.6–2 times as many each time demand doubles. When the uncertain inputs vary, DFW at 24 trips an hour needs 12–16, Houston at 12 trips an hour 8–12 and at 24 trips an hour 12–20; the charging rate moves it most. The registered inputs behind the central figures favour a small fleet: at 12 trips an hour in DFW and 6 in Houston they equal the lowest 5% of the draws (NET2, NET3, UNCERT1).</li>
+    <li><b>Pads:</b> with unlimited parking, 2 pads cope at the lowest demand; at 48 trips an hour DFW needs 4 (set by waits on the ground for a free pad; counting only holds in the air, 2 would do), and Houston needs 3 at 24 (NET2, whose registered pad predictions mostly failed: 8 of 14: I expected one pad to be enough at low demand and too few at higher demand). If a take-off or landing holds a pad 3 minutes instead of 90 s, the pads needed roughly double.</li>
+    <li><b>Parking and the landing rule:</b> with limited stands, how landings are granted matters more than the stand count. With 2 pads, first come, first served at arrival never met the service and battery-reserve test at 24 trips an hour (DFW); booking the landing slot at take-off needed 8 stands per site, and holding aircraft on the ground until a stand is reserved needed 5 but made passengers wait longer (about 225–285 s against 46–130 s). At the lowest demand about 4 stands per site were enough, 5–6 at the next level (STANDS1, PADRULE1). Its stand-limit test partly failed for a reason unrelated to stands (it was set too tight), so the stand figures come from an exploratory cut. This page uses the slot rule, which is why holding is rare here.</li>
+    <li><b>Archer’s network:</b> with demand shaped by where commuters would gain, Archer’s DFW network needs about 12, 18 and 36 aircraft for 12, 24 and 48 trips an hour, more than the demo network. In Houston, with 100 km of usable range, the Galveston links to IAH and Sugar Land cannot be flown at all, about 30 % of the demand; Wisk’s stated range would cover them (NET4).</li>
+    <li><b>Power:</b> the busiest site would draw about 0.6–1.1 MW at peak at 24 trips an hour and up to about 2 MW at 48, depending on the aircraft’s energy use per km; above the 900 kW of NREL’s constrained vertiport case, far below its unconstrained 13.3 MW (POWER1).</li>
+    <li><b>Engine limit:</b> when every stand at a site is full, the engine lets an arriving aircraft hold in the air without limit and only counts the low-battery landing; a real operator would divert it or hold it on the ground. The setups shown here avoid that (holding is rare), but results that rely on long holds are not physically possible (NET3, NET4).</li>
+    <li><b>Battery reserve:</b> with a 130 km battery and a 20-minute reserve, three of the six routes could not be flown at all; the fleets above assume 100 km usable after the reserve (NET3). Separately, in NET2’s overloaded-pad cases, 138 of 720 runs had some landings that would have happened with an empty battery once holding was made to burn charge; aircraft can still hold in the air without limit here.</li>
+    <li><b>Straight routes and the route factor:</b> the animation flies straight lines between sites. The route table’s air times and break-evens add 15% to the flown distance (ROUTE1), and battery use assumes the flown path is 15% longer than that, plus 5 km for take-off and landing. So “beyond range” in the route table can appear for a route whose straight-line length is under 100 km (92.1 × 1.15 + 5 = 111 km), and air times are slightly optimistic. Real routes would follow corridors, not straight lines.</li>
+    <li><b>Drones near the sites:</b> at full delivery-drone build-out about 1 in 3 take-offs and landings at Toyota’s Plano HQ would have a drone inside the “well clear” volume on planned paths; drones yielding to booked air-taxi movements removes all of them (AIRTAXI1, VTXPAD). <a href="shared.html">Watch it at two sites</a>.</li>
+    <li><b>Outside check:</b> the engine reproduces a published MIT vertiport-capacity study (Vascik &amp; Hansman, 2019) in 5 of 5 predictions; that check covers one vertiport, not the network, energy or demand (VERTIPORT1).</li>
+  </ul>
+  <p>Since 22 Oct 2026 each study was written down and fingerprinted before it ran, and failed predictions stay in the record: 24 of the 119 predictions in the 15 air-taxi studies failed (AIRTAXI_NET1 to NET4, ROUTE1, NOISE1, NOISE2 and NOISEWIND1, POWER1, ENC1, STANDS1, PADRULE1, UNCERT1, ACCESS1 and VERTIPORT1). The full record is private for now and available on request; the main results are on the <a href="findings.html">findings page</a>, and every study, drone and air taxi, with its pass and fail count in the <a href="lab.html">Lab</a>; how it was built is on the <a href="about.html">About page</a>. Map data: city blocks from US Census 2020 and LODES 2022 jobs (schematic, heights from job counts); downtown buildings © OpenStreetMap contributors (ODbL). Not affiliated with Joby, Archer, Wisk, Toyota, any airport or the FAA; not flight data, a forecast or safety advice.</p>
+</section>
+
+<div class="lb t"></div><div class="lb b"></div><div id="fadeK"></div>
+<div id="folInfo" hidden aria-live="polite"></div><div class="cap" id="cap" aria-live="polite"><div class="k" id="capK"></div><div class="bg" id="capB"></div><div class="sm" id="capS"></div></div>
+<div id="capF">A simulation, not a real schedule: assumed demand, fleet, pads and parking. Not to scale.</div><button id="skip">Skip intro ›</button>
+<nav id="dock" class="panel" aria-label="Playback">
+  <button id="play" aria-label="Pause">❚❚</button>
+  <input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Time of day">
+  <div class="spd" role="group" aria-label="Speed"><button data-spd="60">1<i class="u"></i></button><button data-spd="180" class="on">3<i class="u"></i></button><button data-spd="600">10<i class="u"></i></button></div>
+  <button id="dirBtn" class="on" aria-pressed="true" aria-label="Cinema camera" title="Automatic camera that keeps cutting between shots">🎬<span class="w"> Cinema</span></button><button id="folBtn" aria-pressed="false" title="Follow one aircraft; press again for the next one">✈ Follow</button><span id="views" role="group" aria-label="Camera view"><button data-view="orbit" class="on" title="Angled view of the whole network">Orbit</button><button data-view="top" title="Straight down, like a map">Map</button><button data-view="side" title="Low, looking across the network">Side</button></span><button id="dockx" class="sec2" aria-expanded="false" title="More controls">⋯</button><button id="intro" class="sec" title="Replay the opening">▶ Intro</button><button id="snd" class="sec" aria-pressed="false" title="Generated ambient music (made live in your browser, no audio files)">♪ Music</button><button id="sndStyle" hidden title="Change the music style (only changes the music)" aria-label="Music style">♪ Style: Horizon</button><button id="moreBtn" class="sec" aria-pressed="false">More</button><button id="more" class="sec" aria-expanded="false">Details</button>
+</nav>
+
+<script type="application/json" id="data">/*DATA*/</script>
+<script type="application/json" id="city">/*CITY*/</script>
+<script src="vendor/three/build/three.min.js"></script>
+<script src="vendor/three/examples/js/controls/OrbitControls.js"></script>
+<script src="vendor/three/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="vendor/three/examples/js/postprocessing/RenderPass.js"></script>
+<script src="vendor/three/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="vendor/three/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script src="vendor/three/examples/js/shaders/CopyShader.js"></script>
+<script src="vendor/three/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script>/* keep the board and captions above the dock on phones */ (function () { function set() { var d = document.getElementById('dock'); if (d) document.documentElement.style.setProperty('--dockH', d.offsetHeight + 'px'); } window.addEventListener('resize', set); window.addEventListener('load', set); setInterval(set, 1500); set(); })();</script>
+<script>/* no WebGL or three.js blocked: say so instead of an endless loading screen */ (function () { var ok = false; try { var c = document.createElement("canvas"); ok = typeof THREE !== "undefined" && !!window.WebGLRenderingContext && !!(c.getContext("webgl") || c.getContext("experimental-webgl")); } catch (e) {} if (!ok) document.addEventListener("DOMContentLoaded", function () { document.body.insertAdjacentHTML("beforeend", '<div role="alert" style="position:fixed;inset:0;display:grid;place-items:center;background:#03060c;color:#eaf1fb;font:16px/1.5 system-ui,sans-serif;z-index:99;padding:24px;text-align:center"><div><b>This browser cannot show the 3D view</b><br>(WebGL is off, or the 3D library could not load).<br><br>The results are on the <a style="color:#ffe9a8" href="findings.html">findings page</a>.</div></div>'); }); })();</script>
+<script>
+'use strict';
+const D = JSON.parse(document.getElementById('data').textContent), P = D.profile, VX = 6, KM = 1 / 1000;
+const $ = id => document.getElementById(id); const CITYD = JSON.parse(document.getElementById('city').textContent);
+const renderer = new THREE.WebGLRenderer({ canvas: $('gl'), antialias: true }); renderer.setPixelRatio(Math.min(2, devicePixelRatio));
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x03060c); scene.fog = new THREE.FogExp2(0x03060c, 0.008);
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 2000);
+const controls = new THREE.OrbitControls(camera, renderer.domElement); controls.enableDamping = true; controls.maxPolarAngle = Math.PI * 0.47; controls.minDistance = 8; controls.maxDistance = 220; controls.screenSpacePanning = false; controls.panSpeed = 1.2;
+let composer = null, bloom = null;
+if (THREE.EffectComposer && THREE.UnrealBloomPass) { composer = new THREE.EffectComposer(renderer); composer.addPass(new THREE.RenderPass(scene, camera)); bloom = new THREE.UnrealBloomPass(new THREE.Vector2(800, 600), 0.55, 0.55, 0.2); composer.addPass(bloom); }
+function resize() { renderer.setSize(innerWidth, innerHeight, false); if (composer) composer.setSize(innerWidth, innerHeight); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); } addEventListener('resize', resize); resize();
+// ground: faint 5 km grid that fades out
+{ const g = new THREE.GridHelper(160, 32, 0x1b2a40, 0x0e1828); g.material.transparent = true; g.material.opacity = 0.55; scene.add(g);
+  const disc = new THREE.Mesh(new THREE.CircleGeometry(80, 64), new THREE.MeshBasicMaterial({ color: 0x050b15 })); disc.rotation.x = -Math.PI / 2; disc.position.y = -0.01; scene.add(disc); }
+const C = { pax: 0xffe9a8, dead: 0x7f9cc4, hold: 0xff6b6b, park: 0xcfe3ff, site: 0x6dffb3, route: 0x2e4d73 };
+let world = new THREE.Group(); scene.add(world); let noiseOn = false, noiseMesh = null; let trails = []; const TRAIL = 16;
+let net = 'base', metro = 'DFW', level = 1, M, L, sites = {}, flightsBy = [], acMeshes = [], startSite = [], labels = {}, T0, T1, t, playing = true, speed = 180, selSite = null;
+
+// ---- flight position along the profile (x, y in km; z in km, exaggerated)
+function prof(Dm) { let zc = P.cruiseZ, dc = (zc - P.padZ) * P.slope; if (2 * dc > Dm) { dc = Dm / 2; zc = P.padZ + dc / P.slope; }
+  const tl = P.padZ / P.vLift, tr = Math.hypot(dc, zc - P.padZ) / P.vClimb, tc = Math.max(0, Dm - 2 * dc) / P.vCruise; return { dc, zc, tl, tr, tc }; }
+function along(f, tt) {   // f: [ac, from, to, takeoff, eta, land, done, dead]; returns {x,y,z,state}
+  const a = sites[f[1]], b = sites[f[2]], dx = b.x - a.x, dy = b.y - a.y, Dm = Math.hypot(dx, dy), q = prof(Dm), ux = dx / Dm, uy = dy / Dm;
+  const at = (s, z) => ({ x: (a.x + ux * s) * KM, y: (a.y + uy * s) * KM, z: z * KM * VX });
+  let e = tt - f[3];
+  if (tt <= f[4]) {
+    if (e < q.tl) return at(0, P.padZ * e / q.tl);
+    e -= q.tl; if (e < q.tr) { const k = e / q.tr; return at(q.dc * k, P.padZ + (q.zc - P.padZ) * k); }
+    e -= q.tr; if (e < q.tc) return at(q.dc + P.vCruise * e, q.zc);
+    e -= q.tc; if (e < q.tr) { const k = e / q.tr; return at(Dm - q.dc * (1 - k), q.zc - (q.zc - P.padZ) * k); }
+    return at(Dm, P.padZ);
+  }
+  if (tt < f[5]) { const w = (tt - f[4]) / 40, r = 1200; /* one holding model: the engine counts holding time and the noise model hovers 150 m over the site; drawn as a small enlarged circle above the site */ return { x: (b.x + Math.cos(w) * r) * KM, y: (b.y + Math.sin(w) * r) * KM, z: 150 * KM * VX, hold: true }; }
+  const k = Math.min(1, (tt - f[5]) / q.tl); return at(Dm, P.padZ * (1 - k));
+}
+// three.js uses y up: map (x, y, z) -> (x, z, -y)
+const V = p => new THREE.Vector3(p.x, p.z, -p.y);
+
+// ---- aircraft: a small tilt-rotor eVTOL drawn far larger than life (about 1.8 km wingspan, about 150× life size) so it reads at metro scale
+/*MODELS3D*/
+const M3 = SKY3D.materials(), EVG = SKY3D.evtol([1, 1, 1]); SKY3D.addLights(scene);
+const strobeGeo = new THREE.SphereGeometry(0.02, 8, 6);
+// size factor: aircraft keep the on-screen size they have at 40 units away when the camera is closer (down to 3 %), so close-ups are not dwarfed by 150x aircraft
+const zf = p => Math.max(0.03, Math.min(1, camera.position.distanceTo(p) / 40));
+function makeAircraft() { const g = new THREE.Group(); g.rotation.order = 'YZX'; g.userData.base = 1.75; const bodyM = M3.body.clone();
+  g.add(new THREE.Mesh(EVG.body, bodyM)); g.add(new THREE.Mesh(EVG.disc, M3.disc)); g.add(new THREE.Mesh(EVG.lights, M3.lights));
+  const st = new THREE.Mesh(strobeGeo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true })); st.position.set(-0.35, 0.05, 0); g.add(st); g.userData.strobe = st;
+  g.userData.bodyM = bodyM; g.userData.wingM = bodyM; g.userData.rotors = []; g.userData.ph = Math.random() * 6; return g; }
+function paintAircraft(g, hex) { g.userData.bodyM.color.setHex(hex); }
+// landing pads per site (2 or 4 by demand level): each aircraft uses one lane, blended in over the last 1.6 km so arrivals do not merge (drawn enlarged)
+function padXs() { return L && L.pads === 4 ? [-1.05, -0.35, 0.35, 1.05] : [-0.8, 0.8]; }
+function laneOf(i) { const xs = padXs(); return xs[i % xs.length]; }
+function posLane(i, f, tt) { const p = along(f, tt), a = sites[f[1]], b = sites[f[2]], da = Math.hypot(p.x - a.x * KM, p.y - a.y * KM), db = Math.hypot(p.x - b.x * KM, p.y - b.y * KM), w = Math.max(0, 1 - Math.min(da, db) / 1.6);
+  if (w > 0 && !p.hold) p.x += laneOf(i) * w * w * (3 - 2 * w); return p; }
+function fitPose() { const xs = M.sites.map(s => s.x * KM), ys = M.sites.map(s => s.y * KM), span = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys));
+  const wide = camera.aspect > 1.2, tall = camera.aspect < 0.8, fit = span * Math.max(1, 1.15 / camera.aspect) * (wide ? 1.22 : 1), sx = wide ? -span * 0.34 : 0, sz = tall ? -span * 0.3 : 0;
+  return { t: new THREE.Vector3(sx, 0, sz), p: new THREE.Vector3(sx - fit * 0.12, fit * 0.8, sz + fit * 1.0) }; }
+function fitCamera() { const E = fitPose(); controls.target.copy(E.t); camera.position.copy(E.p); controls.update(); }
+function build() { if (typeof DIR !== 'undefined' && DIR) DIR.shot = null;
+  scene.remove(world); world = new THREE.Group(); scene.add(world);
+  $('labels').innerHTML = ''; labels = {}; sites = {}; M = (net === 'archer' ? D.archer : D.metros)[metro]; level = Math.min(level, M.levels.length - 1); L = M.levels[level];
+  for (const s of M.sites) sites[s.id] = s;
+  // routes: a dim line on the ground and a faint arc at cruise height
+  for (const r of M.routes) { const a = sites[r.a], b = sites[r.b], bad = r.feasible === false, shut = a.closed || b.closed;   // Archer's Galveston links are beyond the usable range: drawn red, no flights
+    const q = prof(Math.hypot(b.x - a.x, b.y - a.y)), dur = q.tl + 2 * q.tr + q.tc, fake = [0, r.a, r.b, 0, dur, dur, dur, 0];
+    const pts = []; for (let i = 0; i <= 60; i++) pts.push(V(along(fake, dur * i / 60)));
+    world.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: bad ? C.hold : C.route, transparent: true, opacity: bad ? 0.55 : shut ? 0.35 : 0.8 })));
+    world.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([V({ x: a.x * KM, y: a.y * KM, z: 0 }), V({ x: b.x * KM, y: b.y * KM, z: 0 })]), new THREE.LineDashedMaterial({ color: C.route, dashSize: 0.6, gapSize: 0.6, transparent: true, opacity: shut ? 0.25 : 0.6 })).computeLineDistances());
+  }
+  // cityscape: one block per 500 m cell, height from jobs and glow from residents (Census 2020, LODES 2022), plus real downtown towers (OpenStreetMap)
+  { const G = CITYD.grid.metros[metro], cell = CITYD.grid.cell, dt = G.downtown, box = new THREE.BoxGeometry(1, 1, 1); box.translate(0, 0.5, 0);
+    const keep = G.cells.filter(c => { const x = G.x0 + (c[0] + .5) * cell, y = G.y0 + (c[1] + .5) * cell; if (M.sites.some(q => Math.hypot(x - q.x, y - q.y) < 4600)) return false; return Math.abs(x - dt[0]) > 2200 || Math.abs(y - dt[1]) > 2200; });
+    const im = new THREE.InstancedMesh(box, new THREE.MeshBasicMaterial({ color: 0xffffff }), keep.length), o = new THREE.Object3D(), col = new THREE.Color(), lo = new THREE.Color(0x061226), hiC = new THREE.Color(0x3d8cff), warm = new THREE.Color(0xffb35c);
+    keep.forEach((c, k) => { const x = G.x0 + (c[0] + .5) * cell, y = G.y0 + (c[1] + .5) * cell, dens = Math.min(1, Math.log10(1 + c[2] + c[3]) / 4.2), jw = c[3] / (c[2] + c[3] + 1);
+      const h = 0.012 + 0.06 * Math.pow(Math.min(1, Math.log10(1 + c[3]) / 4.4), 2.2) * VX; o.position.set(x * KM, 0, -y * KM); o.scale.set(0.36, h, 0.36); o.updateMatrix(); im.setMatrixAt(k, o.matrix);
+      col.copy(lo).lerp(hiC, Math.pow(dens, 1.8)).lerp(warm, Math.pow(dens, 3) * Math.min(1, jw * 1.6)); col.multiplyScalar(0.1 + 0.42 * Math.pow(dens, 2.2)); im.setColorAt(k, col); });
+    im.instanceMatrix.needsUpdate = true; if (im.instanceColor) im.instanceColor.needsUpdate = true; world.add(im);
+    const B = CITYD.osm[metro].b, tm = new THREE.InstancedMesh(box, new THREE.MeshBasicMaterial({ color: 0xffffff }), B.length);
+    B.forEach((b, k) => { let x0 = 1e9, x1 = -1e9, z0 = 1e9, z1 = -1e9; for (let q = 1; q < b.length; q += 2) { x0 = Math.min(x0, b[q]); x1 = Math.max(x1, b[q]); z0 = Math.min(z0, b[q + 1]); z1 = Math.max(z1, b[q + 1]); }
+      o.position.set((dt[0] + (x0 + x1) / 2) * KM, 0, -dt[1] * KM + (z0 + z1) / 2 * KM); o.scale.set(Math.max(0.006, (x1 - x0) * KM), Math.max(0.004, b[0] * KM * VX), Math.max(0.006, (z1 - z0) * KM)); o.updateMatrix(); tm.setMatrixAt(k, o.matrix);
+      const u = Math.min(1, b[0] / 250); col.setRGB(0.25 + 0.6 * u, 0.55 + 0.4 * u, 0.9 + 0.1 * u).multiplyScalar(0.35 + 0.55 * u); tm.setColorAt(k, col); });
+    tm.instanceMatrix.needsUpdate = true; if (tm.instanceColor) tm.instanceColor.needsUpdate = true; world.add(tm); }
+  // sites: one disc per pad (2 or 4 by level), a ring and a soft beam; a closed site (49T) is drawn dimmer
+  for (const s of M.sites) { const g = new THREE.Group(); g.position.copy(V({ x: s.x * KM, y: s.y * KM, z: 0 })); const dim = s.closed ? 0.45 : 1, pr = L.pads === 4 ? 0.32 : 0.55;
+    const ring = new THREE.Mesh(new THREE.RingGeometry(1.75, 1.9, 64), new THREE.MeshBasicMaterial({ color: C.site, transparent: true, opacity: 0.7 * dim, side: THREE.DoubleSide })); ring.rotation.x = -Math.PI / 2; g.add(ring);
+    for (const o of padXs()) { const pad = new THREE.Mesh(new THREE.CircleGeometry(pr, 32), new THREE.MeshBasicMaterial({ color: C.site, transparent: true, opacity: 0.35 * dim })); pad.rotation.x = -Math.PI / 2; pad.position.set(o, 0.01, 0); g.add(pad); }
+    const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.3, 6, 12, 1, true), new THREE.MeshBasicMaterial({ color: C.site, transparent: true, opacity: 0.08 * dim, side: THREE.DoubleSide })); beam.position.y = 3; g.add(beam);
+    world.add(g);
+    const el = document.createElement('div'); el.className = 'lbl'; el.innerHTML = `<b>${s.name}</b><span></span>`; if (s.closed) el.style.opacity = '0.75'; el.onclick = () => { selSite = selSite === s.id ? null : s.id; };
+    $('labels').appendChild(el); labels[s.id] = el; }
+  // aircraft
+  const nAc = L.fleet; flightsBy = Array.from({ length: nAc }, () => []); for (const f of L.flights) flightsBy[f[0]].push(f);
+  // starting site of each aircraft: the engine fills sites in order (round robin counts in L.start)
+  startSite = []; for (const s of M.sites) for (let k = 0; k < (L.start[s.id] || 0); k++) startSite.push(s.id);
+  acMeshes = []; trails = [];
+  for (let i = 0; i < nAc; i++) { const m = makeAircraft(); world.add(m); acMeshes.push(m);
+    const tg = new THREE.BufferGeometry(); tg.setAttribute('position', new THREE.BufferAttribute(new Float32Array(TRAIL * 3), 3));
+    const tl = new THREE.Line(tg, new THREE.LineBasicMaterial({ color: C.pax, transparent: true, opacity: 0.55 })); tl.visible = false; world.add(tl); trails.push(tl); }
+  // noise layer: one texel per 200 m grid cell, violet ramp by flights a day at >= 55 dBA
+  noiseMesh = null; if (L.noise) { const n = L.noise, cv = document.createElement('canvas'); cv.width = n.nx; cv.height = n.ny; const cx2 = cv.getContext('2d'), img = cx2.createImageData(n.nx, n.ny);
+    for (const [k, c] of n.cells) { const i = k % n.nx, j = Math.floor(k / n.nx), o = ((n.ny - 1 - j) * n.nx + i) * 4, a = c >= 100 ? .88 : c >= 50 ? .64 : c >= 10 ? .42 : .22;
+      img.data[o] = c >= 100 ? 214 : 192; img.data[o + 1] = c >= 100 ? 150 : 108; img.data[o + 2] = 255; img.data[o + 3] = Math.round(a * 255); }
+    cx2.putImageData(img, 0, 0); const tex = new THREE.CanvasTexture(cv); tex.magFilter = THREE.LinearFilter; tex.minFilter = THREE.LinearFilter;
+    noiseMesh = new THREE.Mesh(new THREE.PlaneGeometry(n.nx * n.step * KM, n.ny * n.step * KM), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false }));
+    noiseMesh.rotation.x = -Math.PI / 2; noiseMesh.position.copy(V({ x: (n.x0 + (n.nx - 1) * n.step / 2) * KM, y: (n.y0 + (n.ny - 1) * n.step / 2) * KM, z: 0 })); noiseMesh.position.y = 0.015;
+    noiseMesh.visible = noiseOn; world.add(noiseMesh); }
+  T0 = D.warm; T1 = D.warm + D.hours * 3600; t = T0;
+  // camera: fit the sites
+  fitCamera();
+  // level buttons and texts
+  const lv = $('levels'); lv.querySelectorAll('button').forEach(b => b.remove());
+  M.levels.forEach((l, i) => { const b = document.createElement('button'); b.textContent = `${l.tripsPerHour} trips/h`; b.title = `${l.fleet} aircraft, ${l.pads} pads and ${l.stands} stands per site`; if (i === level) b.classList.add('on'); b.onclick = () => { level = i; build(); }; lv.appendChild(b); });
+  encPool.length = 0; if ($('encTxt')) $('encTxt').textContent = L.enc ? `${L.enc.n} close approaches over the 12 hours, ${L.enc.nNearMiss} of them under 500 ft apart (${(L.enc.n / 12).toFixed(1)} an hour)` : 'not computed';
+  $('runsub').textContent = `${L.tripsPerHour} trips an hour · ${L.fleet} aircraft · ${L.pads} pads, ${L.stands} stands per site`;
+  const s = L.summary;
+  $('runtxt').textContent = `${metro === 'DFW' ? 'Dallas–Fort Worth' : 'Houston'}, ${L.tripsPerHour} trip requests an hour spread over 12 daytime hours, ${L.fleet} aircraft, ${L.pads} pads and ${L.stands} parking stands per site. Over the 12 hours ${s.served} of ${s.requests} requests were flown (${(100 * s.served / s.requests).toFixed(1)} %), median wait ${s.medianWaitMin} min; ${Math.round(100 * s.deadheadShare)} % of flights were empty repositioning flights; at most ${Math.max(...Object.values(s.maxParked))} aircraft were parked at one site. ${s.meets ? 'This setup meets the studies’ service and battery-reserve test on this random day.' : 'This setup does not meet the studies’ service and battery-reserve test on this random day.'}${s.infeasible ? ` Another ${s.infeasible} requests, on the Galveston links to IAH and Sugar Land, could not be flown at all: they are beyond 100 km of usable range.` : ''}${L.studyFleet ? ` The studies’ central fleet for this demand is ${L.studyFleet}${L.studyRange ? ` (${L.studyRange[0]}–${L.studyRange[1]} when the uncertain inputs vary)` : ''}; this day needs ${L.fleet}.` : ` Demand follows where commuters would gain (ACCESS1); the fleet is the one AIRTAXI_NET4 found for this day.`} One run of one day; the studies report medians over several runs.`;
+  const fm = r => r ? `${r[0]}–${r[1]}` : '–';
+  $('rtab').innerHTML = M.routes.map(r => `<tr><td>${sites[r.a].name.split(' (')[0]} ↔ ${sites[r.b].name.split(' (')[0]}${sites[r.a].closed || sites[r.b].closed ? ' <span style="color:var(--hold);font-size:11px">(site closed until about 2029)</span>' : ''}<br><span style="color:var(--ink3);font-size:11px">${r.km} km straight line</span></td><td class="n">${r.airMin ? r.airMin + ' min' : '–'}</td><td class="n">${fm(r.drive.ab && r.drive.ab['08:00'])}</td><td class="n">${fm(r.drive.ab && r.drive.ab['12:00'])}</td><td class="n">${r.feasible === false ? '<span style="color:var(--hold)">beyond range</span>' : r.breakEvenMin ? r.breakEvenMin + ' min' : '–'}</td></tr>`).join('') + (net === 'archer' ? '<tr><td colspan="5" style="color:var(--ink3);font-size:11px">No drive times have been read for Archer’s pairs (drive times are read by hand), so there is no break-even here.</td></tr>' : '');
+}
+
+// ---- state at time t
+function stateAt(tt) {
+  const out = { pax: 0, dead: 0, hold: 0, park: 0, pos: [], parkedAt: {} };
+  for (const s of M.sites) out.parkedAt[s.id] = [];
+  for (let i = 0; i < flightsBy.length; i++) {
+    const F = flightsBy[i]; let f = null, where = startSite[i];
+    for (const g of F) { if (g[3] <= tt && tt < g[6]) { f = g; break; } if (g[6] <= tt) where = g[2]; if (g[3] > tt) break; }
+    if (f) { const p = along(f, tt); const st = p.hold ? 'hold' : (f[7] ? 'dead' : 'pax'); out[st]++; out.pos.push([i, p, st, f]); }
+    else { out.park++; out.parkedAt[where].push(i); }
+  }
+  let wait = 0, done = 0; const waitAt = {}; for (const s of M.sites) waitAt[s.id] = 0;
+  for (const q of L.reqs) { const gone = q[3] >= 0 ? q[3] : q[2] + 1800; if (q[2] <= tt && tt < gone) { wait++; waitAt[q[0]]++; } if (q[3] >= 0 && q[3] <= tt) done++; }
+  out.wait = wait; out.waitAt = waitAt; out.done = done; return out;
+}
+const COL = { pax: C.pax, dead: C.dead, hold: C.hold, park: C.park };
+// ---- close approaches (taxi/encounters.js, AIRTAXI_ENC1 geometry): rings that fade over ENC_SHOW simulated seconds
+const ENC_SHOW = 600, encGeo = new THREE.RingGeometry(1.15, 1.39, 48), encPool = [];
+function encRing(k) { while (encPool.length <= k) { const m = new THREE.Mesh(encGeo, new THREE.MeshBasicMaterial({ color: 0xffb347, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false })); m.rotation.x = -Math.PI / 2; m.visible = false; world.add(m); encPool.push(m); } return encPool[k]; }
+function drawEnc() { const E = L.enc; let k = 0, done = 0; if (E) { const ev = E.ev; let lo = 0, hi = ev.length; while (lo < hi) { const md = (lo + hi) >> 1; if (ev[md][0] <= t) lo = md + 1; else hi = md; } done = lo;
+    for (let i = lo - 1; i >= 0 && t - ev[i][0] < ENC_SHOW && k < 40; i--) { const e = ev[i], u = (t - e[0]) / ENC_SHOW, m = encRing(k++); m.position.copy(V({ x: e[1] * KM, y: e[2] * KM, z: e[3] })); m.position.y = e[3] * KM * VX;
+      m.material.color.setHex(e[4] ? 0xff4d6d : 0xffb347); m.material.opacity = 0.85 * (1 - u); m.scale.setScalar(0.6 + 0.6 * u); m.visible = true; } }
+  for (let j = k; j < encPool.length; j++) encPool[j].visible = false; $('nEnc').textContent = done; }
+function draw() {
+  const S = stateAt(t);
+  trails.forEach(l => l.visible = false);
+  const now = performance.now() / 1000;
+  for (const [i, p0, st, f] of S.pos) { const m = acMeshes[i], p = posLane(i, f, t), q = posLane(i, f, t + 4), pv = V(p), qv = V(q); m.position.copy(pv); paintAircraft(m, COL[st]); m.scale.setScalar(m.userData.base * zf(pv));
+    let dx = qv.x - pv.x, dz = qv.z - pv.z, dh = Math.hypot(dx, dz); if (dh < 0.02) { const a2 = sites[f[1]], b2 = sites[f[2]]; dx = b2.x - a2.x; dz = -(b2.y - a2.y); dh = 1; }
+    m.rotation.y = Math.atan2(-dz, dx); m.rotation.z = Math.max(-0.25, Math.min(0.25, (qv.y - pv.y) / Math.max(0.05, dh) * 0.5)); m.rotation.x = p0.hold ? -0.38 : 0;
+    m.userData.rotors.forEach((r, k) => r.rotation.y = now * 40 + k); m.userData.strobe.material.opacity = ((now + m.userData.ph) % 1.2) < 0.08 ? 0.45 : 0.12;
+    const a = trails[i].geometry.attributes.position; for (let k = 0; k < TRAIL; k++) { const v = V(posLane(i, f, Math.max(f[3], t - k * 20))); a.setXYZ(k, v.x, v.y, v.z); }
+    a.needsUpdate = true; trails[i].material.color.setHex(COL[st]); trails[i].visible = true; }
+  for (const s of M.sites) { const ids = S.parkedAt[s.id]; ids.forEach((i, k) => { const per = 10, row = Math.floor(k / per), a = (k % per) / per * Math.PI * 2 + row * 0.31 + 0.3, r = 2.5 + row * 1.2;
+      const m = acMeshes[i], zs = zf(V({ x: s.x * KM, y: s.y * KM, z: 0 })); m.position.copy(V({ x: s.x * KM + Math.cos(a) * r * zs, y: s.y * KM + Math.sin(a) * r * zs, z: 0 })).setY(0.03); paintAircraft(m, C.park); m.scale.setScalar(m.userData.base * 0.85 * zs);
+      m.rotation.set(0, -a + Math.PI, 0); m.userData.rotors.forEach(rr => rr.rotation.y = k); m.userData.strobe.material.opacity = 0.1; });
+    labels[s.id].querySelector('span').textContent = `${ids.length} parked · ${S.waitAt[s.id]} waiting`; labels[s.id].classList.toggle('sel', selSite === s.id); }
+  drawEnc(); if (typeof Score !== 'undefined' && Score.on()) Score.mood(Math.min(1, (S.pax + S.dead) / Math.max(4, L.fleet * 0.5))); $('nPax').textContent = S.pax; $('nDead').textContent = S.dead; $('nHold').textContent = S.hold; $('nPark').textContent = S.park; $('nWait').textContent = S.wait; $('nDone').textContent = S.done;
+  const tod = 4 * 3600 + t, h = Math.floor(tod / 3600), mi = Math.floor(tod % 3600 / 60); $('clock').textContent = `${String(h).padStart(2, '0')}:${String(mi).padStart(2, '0')}`;
+  $('scrub').value = Math.round(1000 * (t - T0) / (T1 - T0));
+}
+function placeLabels() { const w = innerWidth, h = innerHeight;
+  for (const s of M.sites) { const v = V({ x: s.x * KM, y: s.y * KM, z: 0 }); v.y = 1.2; v.project(camera); const el = labels[s.id];
+    if (v.z > 1 || Math.abs(v.x) > 1.02 || Math.abs(v.y) > 1.02) { el.hidden = true; continue; } el.hidden = false; const hw = el.offsetWidth / 2 + 8; el.style.left = Math.min(w - hw, Math.max(hw, (v.x + 1) / 2 * w)) + 'px'; el.style.top = ((1 - v.y) / 2 * h - 6) + 'px'; } }
+
+// ---- controls
+document.querySelectorAll('[data-net]').forEach(b => b.onclick = () => { document.querySelectorAll('[data-net]').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-pressed', String(x === b)); }); net = b.dataset.net; build(); });
+document.querySelectorAll('[data-metro]').forEach(b => b.onclick = () => { document.querySelectorAll('[data-metro]').forEach(x => x.classList.toggle('on', x === b)); metro = b.dataset.metro; level = Math.min(level, D.metros[metro].levels.length - 1); build(); });
+document.querySelectorAll('[data-spd]').forEach(b => b.onclick = () => { document.querySelectorAll('[data-spd]').forEach(x => x.classList.toggle('on', x === b)); speed = +b.dataset.spd; });
+$('play').onclick = () => { playing = !playing; $('play').textContent = playing ? '❚❚' : '▶'; $('play').setAttribute('aria-label', playing ? 'Pause' : 'Play'); };
+$('scrub').oninput = e => { t = T0 + (T1 - T0) * e.target.value / 1000; };
+$('noiseBtn').onclick = () => { noiseOn = !noiseOn; if (noiseMesh) noiseMesh.visible = noiseOn; $('noiseBtn').classList.toggle('on', noiseOn); $('noiseBtn').setAttribute('aria-pressed', String(noiseOn)); $('nleg').hidden = !noiseOn; };
+$('more').onclick = () => { const d = $('drawer'); d.hidden = !d.hidden; $('more').setAttribute('aria-expanded', String(!d.hidden)); $('more').classList.toggle('on', !d.hidden); document.body.classList.toggle('drawer', !d.hidden); };
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches; if (RM) { speed = 60; }
+
+
+$('setupBtn').onclick = function () { const on = document.body.classList.toggle('setup'); this.classList.toggle('on', on); this.setAttribute('aria-expanded', String(on)); };
+$('dockx').onclick = function () { const on = document.body.classList.toggle('dockx'); this.classList.toggle('on', on); this.setAttribute('aria-expanded', String(on)); };
+let VIEW = null;
+function viewMark(m) { document.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('on', b.dataset.view === m)); }
+function viewSet(m) { if (CINE) return; if (DIR) dirStop(); if (FOL) folStop(); const E = fitPose(), r = E.p.distanceTo(E.t); let p = E.p.clone();
+  const tall = camera.aspect < 0.8, T = new THREE.Vector3(E.t.x, 0, tall ? r * 0.14 : 0); if (m === 'top') p = new THREE.Vector3(T.x, r * (tall ? 1.25 : 0.9), T.z + r * 0.012); else if (m === 'side') p = new THREE.Vector3(T.x + r * 0.05, r * 0.38, T.z + r * 0.9); else T.copy(E.t);
+  VIEW = { p0: camera.position.clone(), t0: controls.target.clone(), p1: p, t1: T, k: 0 }; viewMark(m); }
+document.querySelectorAll('[data-view]').forEach(b => b.onclick = () => viewSet(b.dataset.view));
+$('moreBtn').onclick = function () { const on = document.body.classList.toggle('full'); this.classList.toggle('on', on); this.setAttribute('aria-pressed', String(on)); this.textContent = on ? 'Less' : 'More'; };
+// ---- cinematic opening (about 28 s; Skip or Esc; off for reduced motion)
+let CINE = null;
+const ease = x => { x = Math.max(0, Math.min(1, x)); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+function capSet(k, b, sm, red, lo) { const K = $('capK'), B = $('capB'), S = $('capS'); [K, B, S].forEach(e => e.classList.remove('on')); $('cap').classList.toggle('lo', !!lo);
+  setTimeout(() => { K.textContent = k || ''; B.textContent = b || ''; S.textContent = sm || ''; B.classList.toggle('red', !!red); if (k) K.classList.add('on'); if (b) setTimeout(() => B.classList.add('on'), 450); if (sm) setTimeout(() => S.classList.add('on'), 1300); }, 500); }
+function cineFade(t0, tt, len) { const u = (tt - t0) / len; return u < 0 || u > 1 ? 0 : (u < .5 ? u * 2 : 2 - u * 2); }
+function pickFlight(minDur) { let best = null, bs = -1; for (const F of flightsBy) for (const g of F) { const d = g[4] - g[3]; if (!g[7] && d >= minDur && d > bs) { bs = d; best = g; } } if (!best) for (const F of flightsBy) for (const g of F) { const d = g[4] - g[3]; if (d > bs) { bs = d; best = g; } } return best; }
+function pickHold() { let best = null, bs = 20; for (const F of flightsBy) for (const g of F) { const h = g[5] - g[4]; if (h > bs) { bs = h; best = g; } } return best; }
+function cineStart() { if (FOL) folStop(); CINE = { t: 0, shot: -1 }; document.body.classList.add('cine'); controls.enabled = false; playing = true; speed = 180; $('fadeK').style.opacity = 1; capSet('', '', ''); }
+function cineEnd() { if (!CINE) return; CINE = null; setTimeout(dirStart, 0); document.body.classList.remove('cine'); $('fadeK').style.opacity = 0; ['capK', 'capB', 'capS'].forEach(i => $(i).classList.remove('on')); if (bloom) bloom.strength = 0.55; camera.fov = 45; camera.updateProjectionMatrix(); fitCamera(); speed = +document.querySelector('[data-spd].on').dataset.spd; }
+function cineCam(dt) {
+  const C = CINE; C.t += dt; const tt = C.t; let P, Lk, fov = 45, fk = 0;
+  const cx = controls.target.x, cz = controls.target.z, R0 = C.R0 || (C.R0 = Math.hypot(camera.position.x - cx, camera.position.z - cz) + 1);
+  if (tt < 7) { if (C.shot < 0) { C.shot = 0; capSet((metro === 'DFW' ? 'Dallas–Fort Worth' : 'Houston') + ' · a simulation', 'Air taxis.', ''); }
+    const u = ease(tt / 7), th = -0.9 + u * 0.9, r = R0 * (0.85 - 0.25 * u); P = new THREE.Vector3(cx + Math.sin(th) * r, 3 + 9 * (1 - u), cz + Math.cos(th) * r); Lk = new THREE.Vector3(cx, 1.2, cz); fov = 55 - 12 * u; fk = Math.max(0, 1 - tt / 1.6) + cineFade(6.4, tt, 1.2); }
+  else if (tt < 15) { if (C.shot < 1) { C.shot = 1; C.f = pickFlight(900); t = C.f[3] + 40; speed = 30; capSet('', 'One aircraft.', 'Four seats. A short vertical lift, a long shallow climb (heights drawn 6× taller), cruise, then down onto a pad. All simulated.', false, true); }
+    const f = C.f, p = V(along(f, t)), q = V(along(f, t - 12)), d = p.clone().sub(q); d.y = 0; if (d.length() < 1e-4) d.set(1, 0, 0); d.normalize(); const u = (tt - 7) / 8, ang = -0.7 + u * 1.2, c = Math.cos(ang), sn = Math.sin(ang), dx = d.x * c - d.z * sn, dz = d.x * sn + d.z * c;
+    P = new THREE.Vector3(p.x - dx * (13 - 3 * u), p.y + 3.2, p.z - dz * (13 - 3 * u)); Lk = new THREE.Vector3(p.x + d.x * 3, p.y - 0.2, p.z + d.z * 3); fov = 52; fk = cineFade(14.4, tt, 1.2); if (t > f[4] - 10) t = f[3] + 40; }
+  else if (tt < 22) { if (C.shot < 2) { C.shot = 2; C.h = pickHold(); C.th = 0.5; if (C.h) { t = C.h[4] - 25; speed = 14; capSet('', 'Sometimes it waits.', 'Holding for a free pad or parking stand. Rare here, because the landing slot is booked at take-off.', true, true); } else { C.h = pickFlight(900); t = C.h[5] - 60; speed = 20; capSet('', 'Then it lands.', 'Each take-off or landing holds a pad for 90 seconds in the model.', false, true); } }
+    const f = C.h, s2 = sites[f[2]], sp = V({ x: s2.x * KM, y: s2.y * KM, z: 0 }); C.th += 0.15 * 1 / 60; const u = (tt - 15) / 7, r = 13 - 4 * ease(u), th = C.th + u * 1.4;
+    P = new THREE.Vector3(sp.x + Math.sin(th) * r, 4 + 2 * (1 - u), sp.z + Math.cos(th) * r); Lk = new THREE.Vector3(sp.x, 1.4, sp.z); fov = 44; fk = Math.max(0, 1 - (tt - 15) / 0.8); }
+  else if (tt < 28) { if (C.shot < 3) { C.shot = 3; C.p0 = camera.position.clone(); C.l0 = new THREE.Vector3(); C.l0.copy(C.lk || new THREE.Vector3(cx, 1, cz)); capSet('', 'Twelve simulated daytime hours.', '', false, false); }
+    const u = ease((tt - 22) / 6), wide = camera.aspect > 1.2, tall = camera.aspect < 0.8, E = fitPose(); P = C.p0.clone().lerp(E.p, u); P.y += Math.sin(u * Math.PI) * 6; Lk = new THREE.Vector3(cx, 0.8, cz).lerp(E.t, u); fov = 44 + 1 * u; speed = 14 + 586 * u * u; if (tt > 24.5 && !C.cl) { C.cl = true; capSet('', '', ''); } }
+  else { cineEnd(); return; }
+  C.lk = Lk; camera.position.copy(P); camera.lookAt(Lk); if (Math.abs(camera.fov - fov) > .01) { camera.fov = fov; camera.updateProjectionMatrix(); } $('fadeK').style.opacity = Math.min(1, fk).toFixed(3);
+}
+
+// ---- director: after the opening the camera keeps cutting between shots; drag or scroll takes over
+let DIR = null, idleT = 0; const rnd = (a, b) => a + Math.random() * (b - a);
+function dirStart() { if (DIR || CINE) return; if (FOL) folStop(); VIEW = null; viewMark(null); DIR = { shot: null, n: 0, last: null }; document.body.classList.add('dir'); controls.enabled = false; playing = true; $('dirBtn').classList.add('on'); $('dirBtn').setAttribute('aria-pressed', 'true'); }
+function dirStop() { if (!DIR) return; DIR = null; document.body.classList.remove('dir', 'idle'); ['capK', 'capB', 'capS'].forEach(i => $(i).classList.remove('on')); $('fadeK').style.opacity = 0; if (bloom) bloom.strength = 0.55;
+  camera.fov = 45; camera.updateProjectionMatrix(); controls.enabled = true; controls.target.copy(fitPose().t); controls.update(); speed = +document.querySelector('[data-spd].on').dataset.spd; $('dirBtn').classList.remove('on'); $('dirBtn').setAttribute('aria-pressed', 'false'); }
+let FOL = null;
+function folName(id) { return (sites[id] && sites[id].name || id).split(' (')[0]; }
+function folStart() { if (CINE) return; if (DIR) dirStop(); VIEW = null; viewMark(null); const S = stateAt(t); if (!S.pos.length) { $('folInfo').textContent = 'No aircraft is flying right now; try again in a moment'; $('folInfo').hidden = false; setTimeout(() => { if (!FOL) $('folInfo').hidden = true; }, 2500); return; }
+  const air = S.pos.filter(x => x[3][5] - t > 90), ids = (air.length ? air : S.pos).map(x => x[0]).sort((a, b) => a - b), prev = FOL ? FOL.i : -1, next = ids.find(i => i > prev); FOL = { i: next === undefined ? ids[0] : next, wait: 0 };
+  controls.enabled = false; const b60 = document.querySelector('[data-spd="60"]'); if (b60 && speed > 60) b60.click(); $('folBtn').classList.add('on'); $('folBtn').setAttribute('aria-pressed', 'true'); $('folBtn').textContent = '✈ Next aircraft'; $('folInfo').hidden = false; }
+function folStop() { if (!FOL) return; FOL = null; controls.enabled = true; const d = new THREE.Vector3(); camera.getWorldDirection(d); controls.target.copy(camera.position).addScaledVector(d, 12); controls.target.y = Math.max(0, controls.target.y * 0.3); controls.update();
+  $('folBtn').classList.remove('on'); $('folBtn').setAttribute('aria-pressed', 'false'); $('folBtn').textContent = '✈ Follow'; $('folInfo').hidden = true; }
+function folCam(dt) { const S = stateAt(t), e = S.pos.find(x => x[0] === FOL.i);
+  if (!e) { FOL.wait += dt; $('folInfo').textContent = `Aircraft ${FOL.i + 1} has landed; switching to another`; if (FOL.wait > 2.5 && S.pos.length) { FOL.i = S.pos.slice().sort((a, b) => (b[3][5] - t) - (a[3][5] - t))[0][0]; FOL.wait = 0; FOL.placed = false; } return; }
+  const f = e[3], p = V(posLane(FOL.i, f, t)), q = V(posLane(FOL.i, f, t - 12)), d = p.clone().sub(q); d.y = 0; if (d.length() < 1e-4) { const a2 = sites[f[1]], b2 = sites[f[2]]; d.set(b2.x - a2.x, 0, -(b2.y - a2.y)); } d.normalize();
+  const P = new THREE.Vector3(p.x - d.x * 6, p.y + 1.8, p.z - d.z * 6), k = 1 - Math.exp(-dt * 3); if (FOL.wait === 0 && !FOL.placed) { camera.position.copy(P); FOL.placed = true; } else camera.position.lerp(P, k);
+  camera.lookAt(p.x + d.x * 3, p.y - 0.2, p.z + d.z * 3); if (Math.abs(camera.fov - 52) > .01) { camera.fov = 52; camera.updateProjectionMatrix(); }
+  const what = e[2] === 'hold' ? 'holding for a free pad' : e[2] === 'dead' ? 'flying empty to pick up passengers' : 'with passengers';
+  $('folInfo').textContent = `Following aircraft ${FOL.i + 1}: ${folName(f[1])} → ${folName(f[2])}, ${what} · touch the map to stop`; }
+$('folBtn').onclick = () => { if (FOL && $('folBtn').classList.contains('on')) { FOL.placed = false; folStart(); } else folStart(); };
+function activeFlight() { let best = null, bs = 150; for (const F of flightsBy) for (const g of F) { if (g[3] <= t && t < g[4] - 60) { const rem = g[4] - t; if (rem > bs && !g[7]) { bs = rem; best = g; } } } return best; }
+function dirPick() { const D = DIR, kinds = ['orbit', 'chase', 'site', 'reveal', 'chase', 'hold', 'site']; let k; if (D.forceK) { k = D.forceK; D.forceK = null; } else if (D.n === 0) k = 'orbit'; else do { k = kinds[Math.floor(Math.random() * kinds.length)]; } while (k === D.last);
+  const E = fitPose(), S = { k, t: 0, dur: 10, E, R0: Math.hypot(E.p.x - E.t.x, E.p.z - E.t.z) + 1, th: rnd(0, 6.28), dir: Math.random() < .5 ? -1 : 1 }; D.last = k; D.n++;
+  const hhmm = () => { const tod = 4 * 3600 + t; return String(Math.floor(tod / 3600)).padStart(2, '0') + ':' + String(Math.floor(tod % 3600 / 60)).padStart(2, '0'); };
+  if (k === 'orbit') { speed = 180; S.dur = 11; capSet(hhmm() + ' · ' + (metro === 'DFW' ? 'Dallas–Fort Worth' : 'Houston'), '', ''); }
+  else if (k === 'reveal') { speed = 300; S.dur = 11; capSet('The whole network', '', ''); }
+  else if (k === 'chase') { let f = activeFlight(); if (!f) { f = pickFlight(900); t = f[3] + 40; } S.f = f; speed = 30; S.dur = 11; capSet('Following one aircraft' + (f[7] ? ' · flying empty to a pickup' : ' · with passengers'), '', ''); }
+  else if (k === 'site') { const ss = M.sites[Math.floor(Math.random() * M.sites.length)]; S.site = ss; speed = 60; S.dur = 10; capSet(ss.name, '', ''); }
+  else { const h = pickHold(); if (!h) { D.last = null; return dirPick(); } S.f = h; t = h[4] - 25; speed = 14; S.dur = 10; capSet('Holding for a free pad or stand', '', '', true); }
+  D.shot = S; }
+function dirCam(dt) {
+  const D = DIR; if (!D.shot) dirPick(); const S = D.shot; S.t += dt; const tt = S.t, u = Math.min(1, tt / S.dur), E = S.E; let P, Lk, fov = 46;
+  const cx = E.t.x, cz = E.t.z;
+  if (S.k === 'orbit') { const th = S.th + S.dir * tt * 0.07, r = S.R0 * 0.5; P = new THREE.Vector3(cx + Math.sin(th) * r, S.R0 * 0.2, cz + Math.cos(th) * r); Lk = new THREE.Vector3(cx, 0.5, cz); }
+  else if (S.k === 'reveal') { const e1 = ease(u), th = S.th + tt * 0.04, r = S.R0 * (0.5 + 0.7 * (1 - e1)), h = S.R0 * (0.2 + 0.75 * (1 - e1)); P = new THREE.Vector3(cx + Math.sin(th) * r, h + 3, cz + Math.cos(th) * r); Lk = new THREE.Vector3(cx, 0, cz); fov = 44; }
+  else if (S.k === 'chase') { const f = S.f; const p = V(along(f, t)), q = V(along(f, t - 12)), d = p.clone().sub(q); d.y = 0; if (d.length() < 1e-4) d.set(1, 0, 0); d.normalize();
+    const ang = -0.8 + u * 1.4, c = Math.cos(ang), sn = Math.sin(ang), dx = d.x * c - d.z * sn, dz = d.x * sn + d.z * c; P = new THREE.Vector3(p.x - dx * 6, p.y + 1.7, p.z - dz * 6); Lk = new THREE.Vector3(p.x + d.x * 3, p.y - 0.2, p.z + d.z * 3); fov = 52; if (t > f[4] - 8) S.dur = Math.min(S.dur, tt + 0.6); }
+  else if (S.k === 'site') { const sp = V({ x: S.site.x * KM, y: S.site.y * KM, z: 0 }), th = S.th + S.dir * tt * 0.12, r = 9 - 2.5 * u; P = new THREE.Vector3(sp.x + Math.sin(th) * r, 2.8, sp.z + Math.cos(th) * r); Lk = new THREE.Vector3(sp.x, 1, sp.z); fov = 44; }
+  else { const f = S.f, s2 = sites[f[2]], sp = V({ x: s2.x * KM, y: s2.y * KM, z: 0 }), th = S.th + tt * 0.14, r = 10 - 3 * ease(u); P = new THREE.Vector3(sp.x + Math.sin(th) * r, 3.6, sp.z + Math.cos(th) * r); Lk = new THREE.Vector3(sp.x, 1.4, sp.z); fov = 44; }
+  camera.position.copy(P); camera.lookAt(Lk); if (Math.abs(camera.fov - fov) > .01) { camera.fov = fov; camera.updateProjectionMatrix(); }
+  $('fadeK').style.opacity = 0;   // 30 Oct: no fade to black between Cinema shots (read as flicker)
+  if (tt >= S.dur) { ['capB', 'capS'].forEach(i => $(i).classList.remove('on')); D.shot = null; }
+  idleT += dt;   // 30 Oct: controls no longer fade out in Cinema mode
+}
+$('dirBtn').onclick = () => { if (DIR) dirStop(); else dirStart(); };
+['pointermove', 'pointerdown', 'keydown', 'touchstart'].forEach(ev => addEventListener(ev, () => { idleT = 0; document.body.classList.remove('idle'); }, { passive: true }));
+{ let dx0 = 0, dy0 = 0, down = false; const cv = $('gl'); cv.addEventListener('pointerdown', e => { down = true; dx0 = e.clientX; dy0 = e.clientY; if (DIR) dirStop(); if (FOL) folStop(); VIEW = null; }, true);
+  cv.addEventListener('pointermove', e => { if (down && DIR && Math.hypot(e.clientX - dx0, e.clientY - dy0) > 8) dirStop(); }, true); addEventListener('pointerup', () => { down = false; }, true);
+  cv.addEventListener('wheel', () => { if (DIR) dirStop(); }, { capture: true, passive: true }); }
+$('skip').onclick = () => { if (CINE) cineEnd(); }; addEventListener('keydown', e => { if (e.key === 'Escape' && CINE) cineEnd(); }); $('intro').onclick = () => { if (DIR) dirStop(); if (!CINE) cineStart(); };
+build();
+let last = performance.now();
+function loop(now) { const dt = Math.min(0.1, (now - last) / 1000); last = now;
+  if (playing) { t += dt * speed; if (t >= T1) t = T0; }
+  SKY3D.discTexture().rotation = now / 1000 * 18; if (CINE) cineCam(dt); else if (DIR) dirCam(dt); else if (FOL) folCam(dt); else { if (VIEW) { VIEW.k = Math.min(1, VIEW.k + dt / 1.1); const e = ease(VIEW.k); camera.position.lerpVectors(VIEW.p0, VIEW.p1, e); controls.target.lerpVectors(VIEW.t0, VIEW.t1, e); if (VIEW.k >= 1) VIEW = null; } controls.update(); } draw(); placeLabels(); if (composer) composer.render(); else renderer.render(scene, camera); requestAnimationFrame(loop); }
+requestAnimationFrame(loop);
+if (!RM && !/nocine/.test(location.search) && location.hash !== '#explore') cineStart(); else if (!RM) dirStart();
+window.__at = { lab: () => M.sites.map(s => { const v = V({ x: s.x * KM, y: s.y * KM, z: 0 }).project(camera), el = labels[s.id]; return [s.id, Math.round((v.x + 1) / 2 * innerWidth), Math.round((1 - v.y) / 2 * innerHeight), el.hidden ? 'hidden' : el.style.left + ',' + el.style.top, el.textContent.slice(0, 20)]; }), look: (px, py, pz, tx, ty, tz) => { if (DIR) dirStop(); if (FOL) folStop(); VIEW = null; camera.position.set(px, py, pz); controls.target.set(tx, ty, tz); controls.update(); }, force: k => { if (DIR) { DIR.forceK = k; DIR.shot = null; } }, dir: () => DIR && DIR.shot ? { k: DIR.shot.k, t: DIR.shot.t, n: DIR.n } : null, cine: () => CINE ? { t: CINE.t, shot: CINE.shot } : null, cineT: v => { if (CINE) CINE.t = v; } };
+</script>
+<script>
+/*SCORE*/
+(function () { var b = document.getElementById('snd'); if (!b) return;
+  function set(on) { var ok = on ? Score.start() : (Score.stop(), true); if (on && !ok) { b.textContent = '♪ No audio'; return; }
+    b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); document.getElementById('sndStyle').hidden = !on; b.textContent = on ? '♪ Music on' : '♪ Music'; try { localStorage.setItem('sharedsky-sound', on ? '1' : '0'); } catch (e) {} }
+  b.addEventListener('click', function () { set(!Score.on()); });
+  var sb = document.getElementById('sndStyle'); function lab(n) { sb.textContent = '♪ Style: ' + n.charAt(0).toUpperCase() + n.slice(1); }
+  sb.addEventListener('click', function () { var L = Score.styles, n = L[(L.indexOf(Score.style()) + 1) % L.length]; Score.style(n); lab(n); try { localStorage.setItem('sharedsky-style', n); } catch (e) {} });
+  try { var sv = localStorage.getItem('sharedsky-style'); if (sv && Score.styles.indexOf(sv) >= 0) { Score.style(sv); lab(sv); } } catch (e) {}
+  document.addEventListener('visibilitychange', function () { if (document.hidden && Score.on()) set(false); }); })();
+</script>
+<script>/* 30 Oct: pinch (ctrl+wheel on laptops, gestures on iPhone) anywhere goes to the map instead of zooming the page */
+(function () { var cv = document.querySelector('canvas#gl'); if (!cv) return;
+  addEventListener('wheel', function (e) { var onLabel = e.target.closest && e.target.closest('#labels'); if (!e.ctrlKey && !onLabel) return; e.preventDefault(); if (e.target !== cv) cv.dispatchEvent(new WheelEvent('wheel', { deltaX: e.deltaX, deltaY: e.deltaY, deltaMode: e.deltaMode, ctrlKey: e.ctrlKey, clientX: e.clientX, clientY: e.clientY, bubbles: true, cancelable: true })); }, { passive: false, capture: true });
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (t) { addEventListener(t, function (e) { e.preventDefault(); }, { passive: false }); }); })();</script>
+</body></html>

@@ -1,0 +1,9 @@
+PASS U1 access p95/p05 >= 5 {'DFW': 237.6, 'HOU': 11.0}
+FAIL U2 f has the largest |Spearman| (access) {'DFW': {'f': 0.41, 'g': -0.75, 'h': 0.38, 'P': -0.53}, 'HOU': {'f': 0.44, 'g': -0.75, 'h': 0.36, 'P': -0.51}}
+PASS U3 registered point above the 75th percentile {'DFW': (3.05, 2.8), 'HOU': (1.28, 0.94)}
+PASS U4 fleet p95/p05 <= 1.6 at r = 3 {'DFW': 1.33, 'HOU': 1.5}
+PASS U5 charge rate has the largest |Spearman| (fleet, 4 cells) {'DFW r3': {'padOcc': 0.09, 'turnaround': 0.27, 'charge': -0.55, 'routeFactor': 0.01}, 'DFW r6': {'padOcc': 0.04, 'turnaround': 0.31, 'charge': -0.64, 'routeFactor': 0.08}, 'HOU r3': {'padOcc': 0.1, 'turnaround': 0.14, 'charge': -0.54, 'routeFactor': 0.1}, 'HOU r6': {'padOcc': -0.02, 'turnaround': 0.25, 'charge': -0.81, 'routeFactor': 0.13}}
+PASS U6 reference fleet within p5-p95 (4 cells) {'DFW r3': (14, 12.0, 16.0), 'DFW r6': (24, 24.0, 28.0), 'HOU r3': (8, 8.0, 12.0), 'HOU r6': (14, 12.0, 20.0)}
+
+5 of 6 predictions passed
+K2 reference fleets {'DFW r3': 14, 'DFW r6': 24, 'HOU r3': 8, 'HOU r6': 14}

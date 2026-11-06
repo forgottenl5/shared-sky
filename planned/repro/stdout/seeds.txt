@@ -1,0 +1,19 @@
+## Houston build-out, seeds 1-10 (mid and full; still-air and ±30 s wind variants)
+| Stage | Omaha per hour: mean (seed range) | A2 cut vs A0 [90 % interval] | A2 cut vs R | ±30 s wind check removes (A0) | delayed share A0 / A2 (±30 s wind) |
+|---|---|---|---|---|---|
+| mid (10 seeds) | 6.3 (2.5–9.5) | 83 % [77–89] | 42 % | 51 % | 3.1 % / 0.7 % |
+| full (10 seeds) | 33.9 (19.0–50.0) | 81 % [77–84] | 32 % | 58 % | 6.2 % / 1.6 % |
+
+## DFW real layout, seeds 1-10
+| seeds | A2 cut vs A0 [90 %] | vs T | vs R | Amazon share of A0 |
+|---|---|---|---|---|
+| 10 | 80 % [75–84] | 73 % | 33 % | 96 % |
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| S-B1 mid still below 10 an hour (B1 FAIL persists) | 6.3 | **PASS** |
+| S-B2 sharing-out cut >= 65 % at mid and full | 83 / 81 % | **PASS** |
+| S-B3 full ±30 s wind check still removes < 80 % (B3 FAIL persists) | 58 % | **PASS** |
+| S-B4 delayed share with sharing out <= half (full) | 1.6 vs 6.2 % | **PASS** |
+| S-F DFW: Amazon >= 60 %, cut vs A0 >= 45 %, vs R <= 50 %, vs T >= 40 % | 96 / 80 / 33 / 73 % | **PASS** |
+Runs read: build-out 192, DFW 40 (expected 108 + 84 = 192, and 12 + 28 = 40).

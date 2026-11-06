@@ -1,0 +1,1016 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Shared Sky Houston</title>
+<meta property="og:type" content="website"><meta property="og:title" content="Shared Sky · Houston delivery drones"><meta property="og:description" content="Wing, Zipline and Amazon delivery drones flown together in 3D from their FAA filings. In the model, giving each company its own height cuts planned conflicts by about 72%."><meta property="og:url" content="https://forgottenl5.github.io/shared-sky/houston.html"><meta property="og:image" content="https://forgottenl5.github.io/shared-sky/img/houston.jpg"><meta property="og:image:width" content="720"><meta property="og:image:height" content="405"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%2303060c%27/%3E%3Ccircle cx=%279%27 cy=%2720%27 r=%274%27 fill=%27%234fd8ff%27/%3E%3Ccircle cx=%2716%27 cy=%2711%27 r=%274%27 fill=%27%23ffbe3d%27/%3E%3Ccircle cx=%2723%27 cy=%2720%27 r=%274%27 fill=%27%23a98bff%27/%3E%3C/svg%3E">
+<link rel="stylesheet" href="vendor/fonts/fonts.css">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="A simulation, not real traffic: Wing, Zipline and Amazon delivery drones over a modelled Houston build-out. Where Amazon flies decides the answer: sharing out heights cuts planned conflicts between companies by about 72% (95% interval 67–76%) with Amazon at its best-sourced heights, assuming 10 m between companies is enough (55% if 15 m is needed), and 29% only if Amazon came home near the 400 ft (122 m) maximum its filings state.">
+<style>
+/* Deliberate single dark look: a night city is the subject. Full-bleed 3D scene; headline top-left, live scoreboard top-right,
+   one control dock at the bottom, a guided tour card, and a "Dig deeper" drawer for everything else. */
+:root { --bg:#03060c; --ink:#eaf1fb; --ink2:#9fb1c8; --ink3:#6f8299; --line:rgba(140,185,235,.20); --panel:rgba(5,10,19,.80); --panel2:rgba(9,16,28,.96);
+  --wing:#4fd8ff; --zip:#ffbe3d; --amz:#a98bff; --meet:#ff4d4d; --good:#6dffb3; --accent:#ffe9a8;
+  --mono: "JetBrains Mono",ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace; --sans: "Space Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color-scheme: dark; }
+* { box-sizing:border-box; }
+[hidden] { display:none !important; }
+html,body { margin:0; height:100%; background:var(--bg); } html { overflow:hidden; }
+body { color:var(--ink); font-family:var(--sans); overflow:hidden; }
+#stage { position:fixed; inset:0; } #stage canvas { z-index:0; } #vig { z-index:1; }
+canvas#gl { position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none; cursor:grab; }
+.ui { position:absolute; pointer-events:none; }
+.ui > * { pointer-events:auto; }
+.panel { background:linear-gradient(180deg, rgba(14,22,40,.78), rgba(5,9,18,.80)); border:1px solid var(--line); border-radius:14px; backdrop-filter:blur(12px) saturate(1.2); -webkit-backdrop-filter:blur(12px) saturate(1.2); box-shadow:0 10px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06); }
+#vig { position:fixed; inset:0; pointer-events:none; background:radial-gradient(ellipse 120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.55) 100%); }
+button { font:inherit; font-size:13px; color:var(--ink); background:rgba(140,185,235,.08); border:1px solid var(--line); border-radius:8px; padding:7px 11px; cursor:pointer; }
+button:hover { background:rgba(140,185,235,.18); }
+button.on { border-color:var(--accent); background:rgba(255,233,168,.16); color:#fff; }
+button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+button.cta { background:var(--accent); color:#1a1405; border-color:var(--accent); font-weight:600; }
+button.cta:hover { background:#fff3cc; }
+
+/* headline */
+.top .legend { pointer-events:auto; }
+.top { top:calc(14px + env(safe-area-inset-top,0px)); left:max(16px,env(safe-area-inset-left,0px)); max-width:min(470px,calc(100vw - 32px)); pointer-events:none; }
+.brand { font-family:var(--mono); font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); }
+.top h1 { margin:6px 0 4px; font-size:clamp(22px,2.9vw,32px); line-height:1.1; font-weight:700; background:linear-gradient(90deg,#fff 0%,#ffe9a8 60%,#ffb27a 100%); -webkit-background-clip:text; background-clip:text; color:transparent; letter-spacing:-.01em; text-shadow:0 2px 18px #000; }
+.top p { margin:0; font-size:13.5px; line-height:1.45; color:var(--ink2); text-shadow:0 1px 10px #000; }
+.legend { display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:10px; font-size:12px; color:var(--ink2); }
+.legend span { display:inline-flex; align-items:center; gap:6px; }
+.legend i { width:10px; height:10px; border-radius:50%; display:inline-block; box-shadow:0 0 8px currentColor; }
+
+/* scoreboard */
+.score { top:calc(14px + env(safe-area-inset-top,0px)); right:max(16px,env(safe-area-inset-right,0px)); width:min(320px,calc(100vw - 32px)); padding:12px 14px 10px; }
+.score h2 { margin:0; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink2); font-weight:600; display:flex; justify-content:space-between; gap:8px; }
+.score h2 span { font-family:var(--mono); letter-spacing:0; text-transform:none; color:var(--ink3); }
+.row { display:grid; grid-template-columns:1fr auto; gap:2px 10px; align-items:end; padding:7px 8px; margin:6px -8px 0; border-radius:8px; cursor:pointer; border:1px solid transparent; }
+.row:hover { background:rgba(140,185,235,.07); }
+.row.on { border-color:var(--line); background:rgba(255,233,168,.07); }
+.row .lbl { font-size:12.5px; color:var(--ink2); }
+.row.on .lbl { color:var(--ink); }
+.row .num { font-family:var(--mono); font-size:22px; line-height:1; font-variant-numeric:tabular-nums; color:var(--meet); text-align:right; }
+.row .num.zero { color:var(--good); }
+.row .bar { grid-column:1 / -1; height:5px; border-radius:3px; background:rgba(255,255,255,.06); overflow:hidden; }
+.row .bar b { display:block; height:100%; width:0; background:var(--meet); border-radius:3px; transition:width .25s linear; }
+.row .sub { grid-column:1 / -1; font-size:11px; color:var(--ink3); font-family:var(--mono); }
+.score .note { margin-top:8px; font-size:11.5px; color:var(--ink2); line-height:1.4; }
+.score .note b { color:var(--ink); font-weight:600; }
+
+/* dock */
+.dock { left:max(12px,env(safe-area-inset-left,0px)); right:max(12px,env(safe-area-inset-right,0px)); bottom:calc(12px + env(safe-area-inset-bottom,0px)); display:flex; flex-direction:column; gap:8px; pointer-events:none; }
+.dock .panel { pointer-events:auto; }
+.modes { display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; padding:10px 12px; }
+.seg { display:inline-flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; }
+.seg button { border:0; border-radius:0; border-right:1px solid var(--line); padding:8px 12px; background:transparent; }
+.seg button:last-child { border-right:0; }
+.seg button.on { background:rgba(255,233,168,.18); color:#fff; box-shadow:inset 0 -2px 0 var(--accent); }
+.glabel { font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink3); margin-right:6px; }
+.desc { flex:1 1 280px; min-width:220px; font-size:12.5px; line-height:1.4; color:var(--ink2); }
+.desc b { color:var(--ink); font-weight:600; }
+.play { display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; padding:8px 12px; }
+.clock { font-family:var(--mono); font-size:13px; color:var(--ink); font-variant-numeric:tabular-nums; min-width:11ch; }
+input[type=range] { flex:1 1 200px; min-width:140px; accent-color:var(--accent); }
+.grp { display:inline-flex; gap:6px; flex-wrap:wrap; }
+.spacer { flex:1 1 0; }
+.fine { font-size:11px; color:var(--ink3); padding:0 6px; line-height:1.4; pointer-events:auto; text-shadow:0 1px 6px #000; }
+
+/* intro + tour */
+.intro { inset:0; display:flex; align-items:center; justify-content:center; padding:16px; background:radial-gradient(ellipse at center, rgba(3,6,12,.35), rgba(3,6,12,.82)); pointer-events:auto; }
+.intro .card { max-width:540px; padding:26px 26px 22px; text-align:left; background:var(--panel2); }
+.intro .kicker { font-family:var(--mono); font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--accent); }
+.intro h2 { margin:10px 0 10px; font-size:clamp(24px,4vw,34px); line-height:1.12; letter-spacing:-.015em; }
+.intro h2 em { font-style:normal; color:var(--good); text-shadow:0 0 24px rgba(109,255,179,.55); }
+.intro p { margin:0 0 10px; color:var(--ink2); line-height:1.5; font-size:14.5px; }
+.intro .btns { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+.intro .btns button { font-size:14px; padding:10px 16px; }
+.sndpick { display:flex; gap:8px; align-items:center; font-size:13px; color:var(--ink2); margin-top:8px; cursor:pointer; } .sndpick input { accent-color:var(--accent); width:16px; height:16px; }
+.intro .small { font-size:11.5px; color:var(--ink3); margin-top:14px; }
+.tour { left:50%; transform:translateX(-50%); bottom:calc(150px + env(safe-area-inset-bottom,0px)); width:min(560px,calc(100vw - 24px)); padding:14px 16px 12px; background:var(--panel2); border-color:rgba(255,233,168,.35); }
+.tour .stepn { font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:.12em; text-transform:uppercase; }
+.tour p { margin:6px 0 10px; font-size:15px; line-height:1.5; }
+.tour p b { color:#fff; }
+.tour .nav { display:flex; gap:8px; align-items:center; }
+.dots { display:flex; gap:5px; flex:1; }
+.dots i { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.18); }
+.dots i.on { background:var(--accent); }
+
+.gseg { display:flex; gap:4px; flex-wrap:wrap; margin:10px 0 6px; } .gseg button.on { background:rgba(255,233,168,.14); color:#fff; border-color:rgba(255,233,168,.35); }
+.gmap { width:100%; max-width:440px; display:block; margin:6px auto; background:rgba(255,255,255,.02); border:1px solid var(--line); border-radius:10px; }
+.gnum { font-size:28px; font-weight:600; margin:8px 0 2px; } .gnum small { font-size:13px; font-weight:400; color:var(--ink2); }
+.gbars { display:flex; gap:10px; align-items:flex-end; height:120px; margin:10px 0 4px; } .gbars div { flex:1; text-align:center; font-size:12px; color:var(--ink2); }
+.gbars i { display:block; margin:0 auto 4px; width:70%; border-radius:4px 4px 0 0; background:var(--meet); min-height:2px; } .gbars div.cur { color:#fff; } .gbars div:not(.cur) i { opacity:.45; }
+/* drawer */
+.drawer { z-index:20; position:fixed; top:0; right:0; bottom:0; width:min(520px,100vw); background:var(--panel2); border-left:1px solid var(--line); display:flex; flex-direction:column; transform:translateX(102%); transition:transform .3s ease; pointer-events:auto; }
+.drawer.open { transform:none; visibility:visible; transition:transform .3s ease, visibility 0s; } .drawer:not(.open) { visibility:hidden; transition:transform .3s ease, visibility 0s .3s; }
+.dhead { display:flex; align-items:center; gap:10px; padding:calc(14px + env(safe-area-inset-top,0px)) 16px 10px; border-bottom:1px solid var(--line); }
+.dhead h2 { margin:0; font-size:16px; flex:1; }
+.tabs { display:flex; gap:4px; padding:8px 12px; border-bottom:1px solid var(--line); overflow-x:auto; }
+.tabs button { white-space:nowrap; border-color:transparent; background:transparent; color:var(--ink2); }
+.tabs button.on { background:rgba(255,233,168,.14); color:#fff; border-color:rgba(255,233,168,.35); }
+.dbody { overflow:auto; padding:16px 18px calc(28px + env(safe-area-inset-bottom,0px)); font-size:14px; line-height:1.55; color:var(--ink2); }
+.dbody h3 { color:var(--ink); font-size:15px; margin:20px 0 6px; }
+.dbody h3:first-child { margin-top:0; }
+.dbody p { margin:0 0 10px; }
+.dbody b, .dbody strong { color:var(--ink); }
+.dbody ul { margin:0 0 10px; padding-left:18px; } .dbody li { margin-bottom:5px; }
+.big3 { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:4px 0 14px; }
+.big3 > div { border:1px solid var(--line); border-radius:10px; padding:10px; }
+.big3 .v { font-family:var(--mono); font-size:24px; color:var(--good); line-height:1.1; }
+.big3 .k { font-size:12px; color:var(--ink2); margin-top:4px; line-height:1.35; }
+.big3 .ci { font-family:var(--mono); font-size:11px; color:var(--ink3); }
+.hbars { margin:6px 0 14px; }
+.hb { display:grid; grid-template-columns:150px 1fr 90px; gap:8px; align-items:center; font-size:12.5px; margin:5px 0; }
+.hb .t { height:14px; background:rgba(255,255,255,.05); border-radius:4px; position:relative; }
+.hb .t b { position:absolute; left:0; top:0; bottom:0; border-radius:4px; }
+.hb .t s { position:absolute; top:3px; bottom:3px; border-left:1.5px solid var(--ink); border-right:1.5px solid var(--ink); text-decoration:none; }
+.hb .t s::after { content:""; position:absolute; left:0; right:0; top:50%; border-top:1.5px solid var(--ink); }
+.hb .n { font-family:var(--mono); color:var(--ink); text-align:right; font-variant-numeric:tabular-nums; }
+.cap { font-size:12px; color:var(--ink3); margin:-6px 0 14px; }
+.tbl { width:100%; border-collapse:collapse; font-size:12.5px; margin:4px 0 14px; }
+.tbl th, .tbl td { text-align:left; padding:6px 6px; border-bottom:1px solid var(--line); vertical-align:top; }
+@media (max-width:760px) { .dbody .tbl { display:block; overflow-x:auto; -webkit-overflow-scrolling:touch; } .dbody .tbl td, .dbody .tbl th { min-width:84px; } }
+.tbl th { color:var(--ink3); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.06em; }
+.tag { display:inline-block; font-size:10.5px; font-family:var(--mono); padding:1px 6px; border-radius:4px; border:1px solid var(--line); white-space:nowrap; }
+.tag.ok { color:var(--good); border-color:rgba(109,255,179,.4); } .tag.bad { color:var(--meet); border-color:rgba(255,77,77,.45); } .tag.mid { color:var(--zip); border-color:rgba(255,190,61,.45); }
+.links a { display:block; padding:12px 14px; border:1px solid var(--line); border-radius:10px; color:var(--ink); text-decoration:none; margin-bottom:8px; }
+.links a:hover { background:rgba(140,185,235,.08); }
+.links a span { display:block; color:var(--ink2); font-size:12.5px; margin-top:2px; }
+.tip { position:absolute; pointer-events:none; background:var(--panel2); border:1px solid rgba(255,77,77,.55); border-radius:8px; padding:7px 10px; font-size:12.5px; line-height:1.4; transform:translate(-50%,calc(-100% - 14px)); white-space:nowrap; }
+.tip b { color:var(--meet); }
+.sideov { inset:0; pointer-events:none; }
+.sideov .hl { position:absolute; left:0; right:0; border-top:1px dashed rgba(159,177,200,.18); }
+.sideov .hl span { position:absolute; left:max(14px,env(safe-area-inset-left,0px)); top:-9px; font-family:var(--mono); font-size:11px; color:var(--ink3); background:var(--bg); padding:0 4px; }
+.sideov .bl { background:rgba(3,6,12,.72); border-radius:4px; padding:1px 6px 1px 12px; position:absolute; left:calc(max(14px,env(safe-area-inset-left,0px)) + 62px); transform:translateY(-50%); font-size:12.5px; font-weight:600; text-shadow:0 1px 8px #000,0 0 3px #000; padding-left:12px; white-space:nowrap; }
+.sideov .bl i { position:absolute; left:0; width:5px; border:2px solid; border-right:0; border-radius:3px 0 0 3px; }
+.sideov .sidecap { position:absolute; left:50%; transform:translateX(-50%); bottom:var(--capb,170px); font-size:12px; color:var(--ink2); text-shadow:0 1px 8px #000; white-space:nowrap; }
+.ridehud { left:50%; transform:translateX(-50%); top:calc(14px + env(safe-area-inset-top,0px) + 200px); width:min(520px,calc(100vw - 24px)); padding:10px 12px; font-size:13px; line-height:1.45; display:flex; gap:10px; align-items:center; }
+.ridehud > div { flex:1; }
+@media (max-width:820px) { .ridehud { top:auto; bottom:calc(env(safe-area-inset-bottom,0px) + 150px); font-size:12px; } }
+.legend button { font-size:12px; padding:3px 9px; display:inline-flex; align-items:center; gap:6px; background:transparent; }
+.legend button.off { opacity:.4; text-decoration:line-through; }
+.legend i { width:10px; height:10px; border-radius:50%; display:inline-block; }
+.loading { inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--mono); color:var(--ink2); font-size:13px; letter-spacing:.1em; }
+
+@media (max-width:820px) {
+  .top p { display:none; } .legend { gap:4px; margin-top:6px; } .legend > span { display:none; }
+  .top { max-width:calc(100vw - 210px); }
+  .top h1 { font-size:17px; }
+  .score { width:186px; padding:9px 10px 8px; }
+  .score .note { display:none; }
+  .row .num { font-size:17px; } .row .lbl { font-size:11.5px; } .row .sub { display:none; }
+  .desc { display:none; }
+  .fine { display:none; }
+  .seg button { padding:7px 9px; font-size:12px; }
+  .glabel { display:none; }
+  .modes { gap:8px; padding:8px; }
+  .play { gap:6px 8px; padding:8px; }
+  .play .grp:first-of-type { display:none; }
+  .play input[type=range] { flex:1 1 120px; }
+  .play .spacer { display:none; }
+  .play button { padding:6px 9px; font-size:12px; }
+  .tour p { font-size:14px; }
+  .tour { bottom:calc(170px + env(safe-area-inset-bottom,0px)); }
+  .hb { grid-template-columns:110px 1fr 70px; }
+  .big3 { grid-template-columns:1fr; }
+}
+@media (prefers-reduced-motion: reduce) { .drawer { transition:none; } .row .bar b { transition:none; } }
+
+/* ---------- first look (default on load; #explore skips it) ---------- */
+body.fl .score, body.fl .dock, body.fl .top p, body.fl #intro, body.fl #tour, body.fl #recenter { display:none !important; }
+body.fl .top { max-width:min(760px,calc(100vw - 32px)); }
+body.fl .top h1 { font-size:clamp(34px,6vw,68px); line-height:1.02; margin:8px 0 10px; letter-spacing:-.02em; }
+.hero { display:none; left:50%; transform:translateX(-50%); bottom:calc(22px + env(safe-area-inset-bottom,0px)); width:min(720px,calc(100vw - 24px)); text-align:center; padding:14px 6px 4px; background:radial-gradient(ellipse 70% 80% at 50% 55%, rgba(4,9,18,.78), rgba(4,9,18,.55) 55%, rgba(4,9,18,0) 100%); }
+body.fl .hero { display:block; }
+.hero .hcount { display:flex; align-items:baseline; justify-content:center; gap:14px; flex-wrap:wrap; text-shadow:0 2px 24px #000; }
+.hero .hn { font-family:var(--mono); font-size:clamp(56px,11vw,104px); line-height:.95; font-weight:500; color:var(--meet); font-variant-numeric:tabular-nums; transition:color .4s; text-shadow:0 0 28px rgba(255,77,77,.55), 0 2px 24px #000; }
+.hero .hn.zero { color:var(--good); text-shadow:0 0 28px rgba(109,255,179,.45), 0 2px 24px #000; }
+.hero .hn.pop { animation:pop .5s ease-out; }
+@keyframes pop { 0% { transform:scale(1.18); } 100% { transform:scale(1); } }
+.hero .hl { font-size:clamp(15px,2.2vw,19px); color:var(--ink); max-width:300px; text-align:left; line-height:1.25; }
+.hero .hseg { display:inline-flex; margin:14px 0 10px; padding:4px; gap:4px; border-radius:12px; background:rgba(5,10,19,.72); border:1px solid var(--line); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+.hero .hseg button { font-size:15px; padding:10px 16px; border:0; background:transparent; border-radius:9px; color:var(--ink2); }
+.hero .hseg button.on { background:var(--ink); color:#0a0f18; font-weight:600; }
+.hero .hsub { font-size:14px; line-height:1.45; color:var(--ink2); max-width:560px; margin:0 auto 12px; text-shadow:0 1px 12px #000; min-height:2.9em; }
+.hero .hlinks { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+.hero .hlinks button { font-size:14px; padding:9px 14px; }
+.hero .hfine { margin-top:10px; font-size:11px; color:var(--ink3); text-shadow:0 1px 8px #000; }
+@media (max-width:560px) { .hero .hl { text-align:center; } .hero .hseg button { font-size:13.5px; padding:9px 11px; } .hero .hsub { font-size:13px; } }
+
+/* loading: indeterminate bar (the page is one file, so real progress is not available) */
+.ldbar { display:block; height:2px; margin:10px auto 0; width:140px; border-radius:2px; background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.7), rgba(255,255,255,0)); background-size:200% 100%; animation:ldb 1.3s linear infinite; }
+@keyframes ldb { 0% { background-position:200% 0; } 100% { background-position:-200% 0; } }
+@media (prefers-reduced-motion: reduce) { .ldbar { animation:none; } }
+/* ---------- cinematic opening ---------- */
+.lb { position:fixed; left:0; right:0; height:11vh; background:#000; z-index:6; pointer-events:none; transition:transform 1.4s cubic-bezier(.7,0,.2,1); }
+.lb.t { top:0; transform:translateY(-100%); } .lb.b { bottom:0; transform:translateY(100%); }
+body.cine .lb { transform:none; }
+#fadeK { position:fixed; inset:0; background:#000; z-index:7; pointer-events:none; opacity:0; }
+#grain { position:fixed; inset:0; z-index:5; pointer-events:none; opacity:0; transition:opacity 1.5s; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); animation:grain .5s steps(4) infinite; }
+body.cine #grain { opacity:.07; }
+@keyframes grain { 0% { background-position:0 0; } 25% { background-position:-37px 23px; } 50% { background-position:29px -41px; } 75% { background-position:-19px -13px; } }
+body.cine .top, body.cine .hero, body.cine .score, body.cine .dock, body.cine #intro, body.cine #tour, body.cine #ride { display:none !important; }
+.cap { position:fixed; left:0; right:0; z-index:8; text-align:center; pointer-events:none; padding:0 20px; }
+.cap.main { top:50%; transform:translateY(-50%); transition:top 1s; }
+.cap.main.lo { top:auto; bottom:calc(11vh + 48px); transform:none; }
+.cap.main.lo .big { font-size:clamp(30px,5.4vw,64px); }
+.cap .k { font-family:var(--mono); font-size:clamp(11px,1.4vw,14px); letter-spacing:.32em; text-transform:uppercase; color:#c9b98a; opacity:0; transition:opacity 1s, letter-spacing 2.5s; }
+.cap .k.on { opacity:1; letter-spacing:.42em; }
+.cap .big { font-size:clamp(34px,7.4vw,92px); font-weight:600; letter-spacing:-.025em; line-height:1.02; color:#fff; margin:.18em 0; opacity:0; filter:blur(14px); transform:scale(1.04); transition:opacity 1.3s, filter 1.3s, transform 3s ease-out; text-shadow:0 4px 40px rgba(0,0,0,.8); }
+.cap .big.on { opacity:1; filter:blur(0); transform:scale(1); }
+.cap .big.red { color:var(--meet); text-shadow:0 0 40px rgba(255,77,77,.6), 0 4px 40px #000; }
+.cap .sm { font-size:clamp(14px,1.8vw,19px); color:var(--ink); max-width:620px; margin:0 auto; line-height:1.45; opacity:0; transition:opacity 1.2s; text-shadow:0 2px 16px #000; }
+.cap .sm.on { opacity:.92; }
+.cap.low { bottom:calc(11vh + 22px); }
+.cap.low .sm { font-size:12px; color:var(--ink3); }
+@media (max-width:700px) { body.cine.lo-on .cap.low { display:none; } }
+#skip { position:fixed; right:16px; bottom:calc(11vh + 14px); z-index:9; font-size:13px; padding:8px 14px; background:rgba(0,0,0,.45); border:1px solid rgba(255,255,255,.18); color:var(--ink2); border-radius:999px; display:none; }
+body.cine #skip { display:block; }
+body.fl.revealed .top, body.fl.revealed .hero { animation:rise 1.4s cubic-bezier(.2,.7,.2,1) both; }
+body.fl.revealed .hero { animation-delay:.35s; }
+@keyframes rise { from { opacity:0; transform:translate(var(--rx,0),24px); } to { opacity:1; transform:translate(var(--rx,0),0); } }
+.hero { --rx:-50%; }
+@media (prefers-reduced-motion: reduce) { #grain { animation:none; } }
+
+/* ---------- minimal explore view (default); "More" restores every panel ---------- */
+body.min:not(.full) #lede, body.min:not(.full) .legend > span, body.min:not(.full) .dock .modes, body.min:not(.full) .dock .fine,
+body.min:not(.full) .play .grp[aria-label=Speed], body.min:not(.full) #snd, body.min:not(.full) #sndStyle, body.min:not(.full) #tourBtn { display:none !important; }
+body.min:not(.full) .top h1 { font-size:clamp(17px,1.9vw,22px); }
+body.min:not(.full) .score { width:min(250px,calc(100vw - 32px)); padding:9px 12px 8px; cursor:pointer; }
+body.min:not(.full):not(.scoreOpen) .score .row:not(.on), body.min:not(.full):not(.scoreOpen) .score .note, body.min:not(.full):not(.scoreOpen) .score .row .sub { display:none; }
+.score h2 .cmp { display:none; color:var(--ink2); font-family:inherit; letter-spacing:.04em; }
+body.min:not(.full) .score h2 .cmp { display:inline; }
+body.min:not(.full) .play { padding:6px 8px; gap:6px 10px; }
+#moreBtn.on { background:var(--ink); color:#0a0f18; }
+body.min .ridehud { top:auto; bottom:calc(env(safe-area-inset-bottom,0px) + 74px); width:auto; max-width:calc(100vw - 24px); padding:6px 8px 6px 12px; font-size:12.5px; white-space:nowrap; }
+body.min .ridehud .rx, body.min .ridehud .rb { display:none; }
+.ridehud .mn { display:none; } body.min .ridehud .mn { display:inline; }
+body.min .ridehud #rideTxt { overflow:hidden; text-overflow:ellipsis; }
+@media (max-width:820px) {
+  body.min:not(.full) .legend { display:none; }
+  body.min:not(.full) .top { max-width:calc(100vw - 32px); }
+  body.min:not(.full) .score { top:calc(66px + env(safe-area-inset-top,0px)); right:12px; width:auto; min-width:150px; max-width:calc(100vw - 24px); }
+  body.min:not(.full) .score h2 { font-size:10px; flex-wrap:wrap; } body.min:not(.full) .score h2 #clock2 { display:none; }
+  body.min:not(.full) .play .grp[aria-label=Camera] button { padding:6px 8px; }
+  body.min .ridehud { left:12px; right:12px; transform:none; width:auto; max-width:none; bottom:calc(env(safe-area-inset-bottom,0px) + 118px); white-space:normal; font-size:12px; }
+  body.min .ridehud > div { min-width:0; }
+  body.min:not(.full) #deepBtn { margin-left:auto; }
+  body.min:not(.full) .play .clock { display:none; }
+  body.fl .legend { display:none; }
+  .hero .hsub { display:none; }
+  .hero .hfine { font-size:10.5px; }
+}
+
+/* ---------- director: the live view keeps cutting between shots ---------- */
+body.dir .lb { height:6vh; } body.dir.idle:not(.fl) .lb { transform:none; } /* bars only while the controls are hidden, so they never cover them */
+body.dir #grain { opacity:.05; }
+body.dir:not(.fl) .ui.top, body.dir:not(.fl) .ui.score, body.dir:not(.fl) .ui.dock, body.dir:not(.fl) #ride { transition:opacity .8s; }
+body.dir.idle:not(.fl) .ui.top, body.dir.idle:not(.fl) .ui.score, body.dir.idle:not(.fl) .ui.dock { opacity:0; pointer-events:none; }
+body.dir #ride { display:none !important; }
+body.dir .cap.main.lo { bottom:calc(6vh + 92px); }
+body.dir.idle:not(.fl) .cap.main.lo { bottom:calc(6vh + 26px); }
+body.fl.dir .cap.main.lo { display:none; }
+#dirBtn.on { border-color:var(--accent,#ffe9a8); color:#fff; }
+
+/* 30 Oct: pinch and ctrl+scroll zoom the map, never the whole page (the drawer still scrolls) */
+html, body { touch-action:none; overscroll-behavior:none; } .drawer, #drawer, .dbody, .tabs { touch-action:pan-x pan-y; }
+</style></head>
+<body>
+<div id="stage"><div id="vig"></div><canvas id="gl" aria-label="3D view of a modelled Houston build-out with delivery drones from Wing, Zipline and Amazon; red marks show planned conflicts between companies. In the model, giving each company its own flying heights cuts those conflicts by about 72% in Houston and 73% in DFW; the findings page has the numbers and what failed."></canvas></div>
+
+<div class="ui top">
+  <div class="brand">Shared Sky · Houston</div>
+  <h1 id="h1">Three delivery companies. One sky.</h1>
+  <p id="lede">Two hours of modelled drone deliveries over a 12 × 12 km patch of Houston. Each arrow is a drone (a ring while it hovers). <b style="color:var(--meet)">Red marks</b> are planned conflicts between drones of different companies.</p>
+  <div class="legend" role="group" aria-label="Show companies"><button data-op="0" style="color:var(--wing)"><i style="background:var(--wing)"></i>Wing</button><button data-op="1" style="color:var(--zip)"><i style="background:var(--zip)"></i>Zipline</button><button data-op="2" style="color:var(--amz)"><i style="background:var(--amz)"></i>Amazon</button><button id="trailsBtn">Trails</button><span style="color:var(--meet)"><i style="background:var(--meet)"></i>planned conflict</span><span style="color:var(--ink3)">tap a name to hide it</span></div>
+</div>
+
+<aside class="ui score panel" aria-label="Planned conflicts so far">
+  <h2>Planned conflicts so far <span id="clock2">0:00 of 2:00</span><span class="cmp" id="cmpT">compare ▾</span></h2>
+  <div id="rows"></div>
+  <div class="note" id="scoreNote"></div>
+</aside>
+
+<div class="ui dock">
+  <div class="panel modes">
+    <div><span class="glabel">Heights</span><div class="seg" id="segH" role="group" aria-label="Height rules"></div></div>
+    <div><span class="glabel">Day</span><div class="seg" id="segD" role="group" aria-label="Kind of day"><button data-d="normal" class="on">Normal</button><button data-d="bad">Bad day</button></div></div>
+    <div class="desc" id="desc"></div>
+  </div>
+  <div class="panel play">
+    <button id="pp" aria-label="Pause">❚❚</button>
+    <span class="clock" id="clock">0:00:00</span>
+    <input type="range" id="scrub" min="0" max="7200" step="1" value="0" aria-label="Time in the 2-hour run">
+    <div class="grp" role="group" aria-label="Speed"><button data-s="10">10×</button><button data-s="30" class="on">30×</button><button data-s="90">90×</button></div>
+    <div class="grp" role="group" aria-label="Camera"><button data-cam="orbit" class="on">Orbit</button><button data-cam="top">Map</button><button data-cam="side">Side view</button><button data-cam="ride">Ride a drone</button><button id="snd" aria-pressed="false" title="Music and conflict chimes">♪ Sound off</button><button id="sndStyle" hidden title="Change the music style (only changes the music)" aria-label="Music style">Horizon</button><button id="recenter" hidden>Re-centre</button></div><button id="dirBtn" class="on" aria-pressed="true" title="Automatic camera that cuts between shots">🎬 Cinema</button>
+    <span class="spacer"></span>
+    <button id="tourBtn">Tour</button><button id="moreBtn" aria-pressed="false">More</button><button id="deepBtn" class="cta">Dig deeper</button>
+  </div>
+  <div class="fine">Personal simulation project from public data; not affiliated with Wing, Zipline, Amazon or the FAA; not flight data or advice. Heights and speeds come from FAA filings; the sites are a modelled build-out, not real locations, the low blocks under the drones are a stand-in, and the downtown towers are real buildings from OpenStreetMap (© OpenStreetMap contributors), shown as a backdrop outside the simulated area. Heights are drawn 10× taller so the layers show. Drag to turn; right-drag, Shift-drag, two fingers or arrow keys to move around; double-click to fly there; scroll or pinch to zoom; tap a red mark for details. Drones are drawn as arrows many times their real size.</div>
+</div>
+
+<div class="ui tour panel" id="tour" hidden>
+  <div class="stepn" id="stepn"></div>
+  <p id="steptxt"></p>
+  <div class="nav"><div class="dots" id="dots"></div><button id="tBack">Back</button><button id="tNext" class="cta">Next</button><button id="tEnd" aria-label="Close tour">✕</button></div>
+</div>
+
+<div class="ui intro" id="intro">
+  <div class="card panel">
+    <div class="kicker">Shared Sky · drone traffic simulation</div>
+    <h2>With Amazon at its best-sourced heights, sharing out heights cuts planned conflicts between drone companies by <em>72%</em>.</h2>
+    <p>Where Amazon flies decides it. Amazon told Richardson council it flies out at about 69 m (225 ft); its FAA filings for Florida, Detroit and Kansas City put the return trip anywhere in 85–115 m, which includes Zipline’s 101 m cruise. Only if Amazon came home near the 400 ft (122 m) maximum in its filings, a height above every FAA-filed return band (at most 377 ft) that only an informal Amazon staff remark supports, would the benefit fall to about 29%. The 72% (95% interval 67–76% across 10 random layouts of Wing and Zipline sites; it does not cover model error) assumes 10 m of height between companies is enough; if 15 m were needed it would be 55%. The headline uses the filed Houston site counts, with Amazon’s real sites and Wing and Zipline sites placed at random; the animation below is a denser test patch: sites every 3 km, about 7 times as tightly packed as the filed layout, so it shows roughly 40 times more planned conflicts per square km than the headline study (120 in 2 hours over 144 km² against 45.8 an hour over 4,624 km²).</p>
+    <p class="small" style="margin-top:0"><b>A model of a possible future build-out, not today’s traffic.</b> With only the sites flying in Houston today, the companies’ plans almost never meet (HOUTODAY: 1–2 planned conflicts in 60 simulated hours); the question is what happens as they build out. Five of Amazon’s six Houston sites are real, geocoded locations (one, STX5, only to street level, up to about 1 km off); Wing’s and Zipline’s are placed at random because their full site lists are not public. The model flies planned paths only; it does not simulate collisions or avoidance. A “planned conflict” means two planned paths of different companies within 30 m sideways and less than 10 m vertically, <b>with no coordination between companies</b>. Some operators already share flight plans before take-off (the industry standard is ASTM F3548; Wing and Flytrex report doing so in DFW), so this is a reference point for how much height sharing removes, not a picture of today’s practice. The shared-out layers are 10–20 m apart, so the cut assumes 10 m between companies is enough (see Results for 15 m and 20 m).</p>
+    <p class="small" style="margin-top:0"><b>Personal showcase.</b> A personal, unaffiliated simulation project, built for learning and as a portfolio piece, using only publicly available FAA filings and public reports. Not affiliated with, endorsed by or reviewed by Wing, Zipline, Amazon or the FAA. Results come from a model, not real flight data, and are not safety, operational or legal advice.</p>
+    <label class="sndpick"><input type="checkbox" id="sndOn"> Play music and a soft chime for each planned conflict</label>
+    <div class="btns"><button class="cta" id="goTour">Take the 1-minute tour</button><button id="goWatch">Just watch</button></div>
+    <div class="small">Built with the Shared Sky engine · studies written down before they ran (since 22 Oct 2026), failed predictions reported · forgottenl5</div>
+  </div>
+</div>
+
+<div class="lb t"></div><div class="lb b"></div><div id="grain"></div><div id="fadeK"></div>
+<div class="cap main" id="capM" aria-live="polite"><div class="k" id="capK"></div><div class="big" id="capB"></div><div class="sm" id="capS"></div></div>
+<div class="cap low"><div class="sm" id="capF"></div></div>
+<button id="skip">Skip intro ›</button>
+
+<div class="ui hero" id="hero">
+  <div class="hcount"><span class="hn" id="heroN">0</span><span class="hl" id="heroL">planned conflicts between drone companies so far</span></div>
+  <div class="hseg" role="group" aria-label="Choose how the companies share the sky"><button id="hFiled" class="on" aria-pressed="true">As filed, no coordination (future build-out)</button><button id="hFix" aria-pressed="false">Shared heights + plan sharing</button></div>
+  <div class="hsub" id="heroSub" aria-live="polite"></div>
+  <div class="hlinks"><button class="cta" id="hExplore">Explore the full simulation</button><button id="hTour">1-minute tour</button><button id="hReplay">▶ Replay intro</button></div>
+  <div class="hfine">A simulation from public FAA filings over a modelled build-out, not real traffic. Not affiliated with Wing, Zipline, Amazon or the FAA.</div>
+</div>
+
+<aside class="ui drawer" id="drawer" aria-label="Dig deeper" aria-hidden="true">
+  <div class="dhead"><h2>Dig deeper</h2><button id="dClose" aria-label="Close">✕</button></div>
+  <div class="tabs" id="tabs" role="tablist">
+    <button data-tab="res" class="on">Results</button><button data-tab="grow">Build-out</button><button data-tab="bad">Bad days</button><button data-tab="how">How it works</button><button data-tab="chk">What's checked</button><button data-tab="more">Go further</button>
+  </div>
+  <div class="dbody" id="dbody"></div>
+</aside>
+
+<div class="ui sideov" id="side" hidden></div>
+<div class="ui ridehud panel" id="ride" hidden><div id="rideTxt"></div><button id="rideNext">Next drone</button></div>
+<div class="tip" id="tip" hidden></div>
+<div class="ui loading" id="loading">Loading 2 hours of flights… (a few MB the first time)<span class="ldbar"></span></div>
+
+<script type="application/json" id="data">/*DATA*/</script>
+<script src="vendor/three/build/three.min.js"></script>
+<script src="vendor/three/examples/js/shaders/CopyShader.js"></script>
+<script src="vendor/three/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="vendor/three/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="vendor/three/examples/js/postprocessing/RenderPass.js"></script>
+<script src="vendor/three/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="vendor/three/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script>/* no WebGL or three.js blocked: say so instead of an endless loading screen */ (function () { var ok = false; try { var c = document.createElement("canvas"); ok = typeof THREE !== "undefined" && !!window.WebGLRenderingContext && !!(c.getContext("webgl") || c.getContext("experimental-webgl")); } catch (e) {} if (!ok) document.addEventListener("DOMContentLoaded", function () { document.body.insertAdjacentHTML("beforeend", '<div role="alert" style="position:fixed;inset:0;display:grid;place-items:center;background:#03060c;color:#eaf1fb;font:16px/1.5 system-ui,sans-serif;z-index:99;padding:24px;text-align:center"><div><b>This browser cannot show the 3D view</b><br>(WebGL is off, or the 3D library could not load).<br><br>The results are on the <a style="color:#ffe9a8" href="findings.html">findings page</a>.</div></div>'); }); })();</script>
+<script>
+(function () {
+'use strict';
+var $ = function (id) { return document.getElementById(id); };
+var RAW = JSON.parse($('data').textContent), Z = RAW.meta.zone_m / 2, TEND = RAW.meta.t1 - RAW.meta.t0, EX = 10, VIEW = 9500;
+var OPN = ['Wing', 'Zipline', 'Amazon'], OPC = [[0.31, 0.85, 1.0], [1.0, 0.75, 0.24], [0.66, 0.55, 1.0]], LET = { w: 'Wing', z: 'Zipline', a: 'Amazon' };
+
+// ---------- scenarios ----------
+var SC = {}, NAMES = {
+  filed: 'Filed profile', sourced: 'Best-sourced Amazon', reported: 'High return (staff remark)', shared: 'Shared out', checked: 'Shared out + plan sharing', layered: 'Zipline on top + 5 m blocks',
+  holdFiled: 'Filed profile', holdReported: 'High return (staff remark)', holdShared: 'Shared out' };
+Object.keys(RAW.sc).forEach(function (k) {
+  var s = RAW.sc[k], fl = s.flights.map(function (a) {
+    var n = (a.length - 1) / 4, K = new Float32Array(n * 4), t = a[1];
+    K[0] = t; K[1] = a[2]; K[2] = a[3]; K[3] = a[4];
+    for (var i = 1; i < n; i++) { var o = 5 + (i - 1) * 4; t += a[o]; K[i * 4] = t; K[i * 4 + 1] = a[o + 1]; K[i * 4 + 2] = a[o + 2]; K[i * 4 + 3] = a[o + 3]; }
+    return { o: a[0], t0: K[0], t1: t, K: K, n: n };
+  });
+  fl.sort(function (a, b) { return a.t0 - b.t0; });
+  var ev = s.events.map(function (e) { return { c: e[0], t: e[1], x: e[2], y: e[3], z: e[4], ops: e[5] }; });
+  SC[k] = { k: k, fl: fl, ev: ev, wide: s.wide, close: s.close, delays: s.delays, holds: s.holds };
+});
+var SHORT = { filed: 'Filed', sourced: 'Sourced', reported: 'High return', shared: 'Shared', checked: '+ sharing', layered: 'Layer fix', holdFiled: 'Filed', holdReported: 'High return', holdShared: 'Shared' };
+var GROUPS = { normal: ['filed', 'sourced', 'reported', 'shared', 'checked', 'layered'], bad: ['holdFiled', 'holdReported', 'holdShared'] };
+var DESC = {
+  sourced: '<b>Best-sourced Amazon.</b> The same flights, with Amazon at its best-sourced heights: 69 m out (its stated Richardson average) and back anywhere in its filed 85–115 m return band, a different height on each flight. That band contains Zipline’s 101 m, so returns often meet Zipline. Wing and Zipline unchanged.',
+  reported: '<b>High-return case (staff remark only).</b> The same flights, with Amazon at 69 m out (its stated Richardson average) and 122 m back. 122 m is the 400 ft maximum stated in Amazon’s filings, above every filed return band (at most 115 m). Its only source: Amazon representatives said “they return at 400 ft” at a May 2025 meeting, as summarised on the Creek Hollow homeowners’ association web page (a neighbourhood near Amazon’s Richardson site; I have not seen a recording or minutes). Its return trip then clears Zipline by 21 m, which alone removes about three-quarters of the planned conflicts. Shown as the optimistic end.',
+  holdReported: '<b>Bad day, high-return case (staff remark only).</b> The same holds and plan check, with Amazon returning at 122 m. Most of the bad-day planned conflicts go away without any other change.',
+  filed: '<b>Filed profile.</b> Each company at fixed heights from its FAA noise-assessment filings: Wing anywhere in 46–91 m, Amazon 61 m out and 105 m back (its Omaha profile, one choice inside its Texas-filed 55–115 m band), Zipline 101 m. Amazon’s return trip and Zipline sit 4 m apart.',
+  shared: '<b>Shared out.</b> The same flights, each company given its own height inside the band it already filed: Wing 46–71 m, Amazon out 81 m, Zipline 101 m, Amazon back 115 m.',
+  checked: '<b>Shared out + realistic plan sharing.</b> Before take-off each flight reserves blocks of airspace along its planned path (30 m wide, 10 m above and below, growing with time), first filed first served; a flight whose blocks overlap another company’s waits and tries again. Volumes as the COORD1 study (inspired by ASTM F3548; sizes assumed), here in still air.',
+  layered: '<b>Zipline on top + 5 m blocks.</b> The same plan sharing, with the layers reordered (Wing 46–71 m, Amazon out 83 m, Amazon back 95 m, Zipline 107 m) and each reserved block 5 m above and below instead of 10 m, so neighbouring layers no longer block each other on paper (LAYER2). Whether 5 m blocks are safe enough is not tested.',
+  holdFiled: '<b>Bad day (stress test), filed profile.</b> 1 in 5 drones in the zone stops and hovers for 2 minutes somewhere on its route. Plan check on. A drone hovering at these heights can sit in another company’s layer.',
+  holdShared: '<b>Bad day, shared out.</b> The same holds, same plan check, with heights shared out. Hovering drones mostly stay in their own company’s layer.' };
+var day = 'normal', cur = 'filed';
+
+// ---------- renderer ----------
+var canvas = $('gl'), renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); renderer.setClearColor(0x03060c, 1);
+var scene = new THREE.Scene(); scene.fog = new THREE.FogExp2(0x070818, 0.00004);
+var camera = new THREE.PerspectiveCamera(50, 1, 10, 90000);
+var composer = null, bloom = null, renderPass = null, ortho = new THREE.OrthographicCamera(-7000, 7000, 850, -850, 1, 80000), view = camera, sideW = 7200, SIDEY = 620;
+if (THREE.EffectComposer && THREE.UnrealBloomPass) { composer = new THREE.EffectComposer(renderer); renderPass = new THREE.RenderPass(scene, camera); composer.addPass(renderPass); bloom = new THREE.UnrealBloomPass(new THREE.Vector2(800, 600), 0.85, 0.6, 0.1); composer.addPass(bloom); }
+function W(x, y, z) { return [x, z * EX, -y]; }   // engine (x east, y north, z up) -> scene
+
+var glowVS = 'attribute float size; attribute vec3 color; varying vec3 vc; uniform float scale; uniform float minPx; uniform float orthoD; void main(){ vc=color; vec4 mv=modelViewMatrix*vec4(position,1.0); float dz=orthoD>0.0?orthoD:-mv.z; gl_PointSize=max(minPx*step(0.001,size), size*scale/dz); gl_Position=projectionMatrix*mv; }';
+var glowFS = 'varying vec3 vc; uniform float gain; void main(){ float d=length(gl_PointCoord-0.5)*2.0; if(d>1.0) discard; float a=pow(1.0-d,1.5); gl_FragColor=vec4(vc*(0.45+1.5*a)*gain,a); }';
+function glowMat(minPx, gain) { return new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { scale: { value: 600 }, minPx: { value: minPx }, gain: { value: gain }, orthoD: { value: 0 } }, vertexShader: glowVS, fragmentShader: glowFS }); }
+var mats = [];
+
+// ---------- city backdrop (synthetic) ----------
+var downtown = new THREE.Group(), labels = [], zoneEdge = null, zoneLine = null;
+var rs = 12345; function rr() { rs = (rs * 1664525 + 1013904223) >>> 0; return rs / 4294967296; }
+(function city() {
+  var P = 170, N = Math.floor(2 * VIEW / P), boxes = [], lights = [], lc = [];
+  for (var i = 0; i < N; i++) for (var j = 0; j < N; j++) {
+    var cx = -VIEW + (i + 0.5) * P, cz = -VIEW + (j + 0.5) * P; if (rr() < 0.18) continue;
+    var dc = Math.hypot(cx - 1800, cz + 2400) / 2500, h = 3 + 6 * rr() + 10 * Math.exp(-dc * dc) * rr();
+    var w = P * (0.45 + 0.3 * rr()), d = P * (0.45 + 0.3 * rr()); boxes.push([cx, cz, w, d, h]);
+    var nl = 1 + Math.floor(rr() * 3);
+    for (var q = 0; q < nl; q++) { lights.push(cx + (rr() - 0.5) * w, h * EX * (0.3 + 0.7 * rr()), cz + (rr() - 0.5) * d); var warm = rr() < 0.65; lc.push(warm ? 1 : 0.55, warm ? 0.78 : 0.8, warm ? 0.45 : 1); }
+  }
+  var im = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: 0x071222 }), boxes.length), m4 = new THREE.Matrix4(), q4 = new THREE.Quaternion();
+  boxes.forEach(function (b, k) { m4.compose(new THREE.Vector3(b[0], b[4] * EX / 2, b[1]), q4, new THREE.Vector3(b[2], b[4] * EX, b[3])); im.setMatrixAt(k, m4); });
+  scene.add(im);
+  // neon wireframe edges, coloured by height (same style as the first Shared Sky city), dimmer in the suburbs so drones stay readable
+  var ep = [], ec = [], cc = new THREE.Color(), CR = [[-1, -1], [1, -1], [1, 1], [-1, 1]];
+  function wire(cx, cz, w, d, h, dimL, floors, out, col) {
+    for (var c = 0; c < 4; c++) { var a = CR[c], b = CR[(c + 1) % 4], X0 = cx + a[0] * w / 2, Z0 = cz + a[1] * d / 2, X1 = cx + b[0] * w / 2, Z1 = cz + b[1] * d / 2, H = h * EX;
+      out.push(X0, H, Z0, X1, H, Z1, X0, 0, Z0, X0, H, Z0);
+      [[1], [1], [0], [1]].forEach(function (yy) { cc.setHSL(0.56 - 0.06 * yy[0] * Math.min(1, h / 150), 0.8, (0.14 + 0.2 * yy[0]) * dimL); col.push(cc.r, cc.g, cc.b); });
+      if (floors) for (var fy = 25; fy < h; fy += 25) { out.push(X0, fy * EX, Z0, X1, fy * EX, Z1); cc.setHSL(0.57, 0.8, 0.07 * dimL); col.push(cc.r, cc.g, cc.b, cc.r, cc.g, cc.b); } }
+  }
+  boxes.forEach(function (b) { wire(b[0], b[1], b[2], b[3], b[4], 0.75, false, ep, ec); });
+  var eg = new THREE.BufferGeometry(); eg.setAttribute('position', new THREE.Float32BufferAttribute(ep, 3)); eg.setAttribute('color', new THREE.Float32BufferAttribute(ec, 3));
+  scene.add(new THREE.LineSegments(eg, new THREE.LineBasicMaterial({ vertexColors: true })));
+  // downtown Houston: real building footprints and heights from OpenStreetMap (© OpenStreetMap contributors, ODbL), placed outside the simulated area as a backdrop
+  var OSMB = /*OSM*/, DX = -11800, DZ = -11800, fp = [], dp = [], dcl = [];
+  OSMB.b.forEach(function (b) { var h = b[0], H = h * EX, n = (b.length - 1) / 2, ring = [], k;
+    for (k = 0; k < n; k++) ring.push(new THREE.Vector2(DX + b[1 + 2 * k], DZ + b[2 + 2 * k]));
+    for (k = 0; k < n; k++) { var a = ring[k], c = ring[(k + 1) % n];
+      fp.push(a.x, 0, a.y, c.x, 0, c.y, c.x, H, c.y, a.x, 0, a.y, c.x, H, c.y, a.x, H, a.y);
+      dp.push(a.x, H, a.y, c.x, H, c.y); cc.setHSL(0.56 - 0.06 * Math.min(1, h / 150), 0.8, h > 40 ? 0.34 : 0.16); dcl.push(cc.r, cc.g, cc.b, cc.r, cc.g, cc.b);
+      if (h >= 40) { dp.push(a.x, 0, a.y, a.x, H, a.y); cc.setHSL(0.57, 0.8, 0.12); dcl.push(cc.r, cc.g, cc.b, cc.r, cc.g, cc.b); } }
+    var tri = THREE.ShapeUtils.triangulateShape(ring, []); tri.forEach(function (t) { t.forEach(function (q) { fp.push(ring[q].x, H, ring[q].y); }); }); });
+  var fg = new THREE.BufferGeometry(); fg.setAttribute('position', new THREE.Float32BufferAttribute(fp, 3));
+  var dfill = new THREE.Mesh(fg, new THREE.MeshBasicMaterial({ color: 0x03060d, fog: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }));
+  var dg0 = new THREE.BufferGeometry(); dg0.setAttribute('position', new THREE.Float32BufferAttribute(dp, 3)); dg0.setAttribute('color', new THREE.Float32BufferAttribute(dcl, 3));
+  downtown.add(dfill); downtown.add(new THREE.LineSegments(dg0, new THREE.LineBasicMaterial({ vertexColors: true, fog: false })));
+  var dl = label('Downtown Houston · real buildings (OSM)', '#c9b98a', 30); dl.position.set(DX + 1400, 3300, DZ + 1400); dl.userData.hideNarrow = true; labels.push([dl, 170]); downtown.add(dl);
+  scene.add(downtown);
+  var lg = new THREE.BufferGeometry(), ls = new Float32Array(lights.length / 3).fill(14); lg.setAttribute('position', new THREE.Float32BufferAttribute(lights, 3)); lg.setAttribute('color', new THREE.Float32BufferAttribute(lc, 3)); lg.setAttribute('size', new THREE.BufferAttribute(ls, 1));
+  var lm = glowMat(1.2, 0.35); mats.push(lm); var lp = new THREE.Points(lg, lm); lp.frustumCulled = false; scene.add(lp);
+  // street grid + counted-zone outline
+  var gp = [], gc = [];
+  for (var s = -VIEW; s <= VIEW; s += 850) { gp.push(-VIEW, 1, s, VIEW, 1, s, s, 1, -VIEW, s, 1, VIEW); for (var u2 = 0; u2 < 4; u2++) gc.push(0.22, 0.17, 0.06); }
+  var zz = [[-Z, -Z], [Z, -Z], [Z, Z], [-Z, Z]];
+  for (var e = 0; e < 4; e++) { var a = zz[e], b2 = zz[(e + 1) % 4]; gp.push(a[0], 3, a[1], b2[0], 3, b2[1]); gc.push(0.55, 0.5, 0.3, 0.55, 0.5, 0.3); }
+  var gg = new THREE.BufferGeometry(); gg.setAttribute('position', new THREE.Float32BufferAttribute(gp, 3)); gg.setAttribute('color', new THREE.Float32BufferAttribute(gc, 3));
+  scene.add(new THREE.LineSegments(gg, new THREE.LineBasicMaterial({ vertexColors: true })));
+  var sky = new THREE.Mesh(new THREE.SphereGeometry(60000, 48, 24), new THREE.ShaderMaterial({ side: THREE.BackSide, depthWrite: false, fog: false,
+    vertexShader: 'varying vec3 vp; void main(){ vp=normalize(position); gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
+    fragmentShader: 'varying vec3 vp; void main(){ float h=clamp(vp.y,-0.2,1.0); vec3 top=vec3(0.006,0.012,0.035), mid=vec3(0.03,0.04,0.11), hor=vec3(0.16,0.09,0.22), warm=vec3(0.32,0.16,0.10);'
+      + ' float g=exp(-abs(h)*9.0); vec3 c=mix(mid,top,smoothstep(0.0,0.6,h)); c=mix(c,hor,g*0.85); float sw=exp(-pow(atan(vp.z,vp.x)+2.36,2.0)*1.4); c+=warm*g*g*sw*0.9; gl_FragColor=vec4(c,1.0); }' }));
+  scene.add(sky);
+  var stp = [], stc = [], sts = []; for (var k = 0; k < 2200; k++) { var u = rr() * 2 * Math.PI, v = 0.06 + 0.94 * Math.pow(rr(), 0.7), r0 = 55000, cv = Math.sqrt(1 - v * v); stp.push(r0 * cv * Math.cos(u), r0 * v, r0 * cv * Math.sin(u)); var bb = 0.4 + 0.6 * rr(); stc.push(bb * 0.8, bb * 0.85, bb); sts.push(rr() < 0.04 ? 3 : 1.6); }
+  var stg = new THREE.BufferGeometry(); stg.setAttribute('position', new THREE.Float32BufferAttribute(stp, 3)); stg.setAttribute('color', new THREE.Float32BufferAttribute(stc, 3)); stg.setAttribute('size', new THREE.Float32BufferAttribute(sts, 1));
+  var stm = glowMat(1, 0.5); stm.fog = false; stm.uniforms.minPx.value = 1.4; mats.push(stm); var stars = new THREE.Points(stg, stm); stars.frustumCulled = false; scene.add(stars);
+  zoneEdge = new THREE.Mesh(new THREE.RingGeometry(Z * Math.SQRT2 - 1, Z * Math.SQRT2, 4, 1), new THREE.MeshBasicMaterial({ color: 0xffe9a8, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+  var zg = new THREE.BufferGeometry(), zp = []; [[-Z, -Z], [Z, -Z], [Z, Z], [-Z, Z], [-Z, -Z]].forEach(function (q) { zp.push(q[0], 6, q[1]); }); zg.setAttribute('position', new THREE.Float32BufferAttribute(zp, 3));
+  zoneLine = new THREE.Line(zg, new THREE.LineDashedMaterial({ color: 0xffe9a8, dashSize: 260, gapSize: 140, transparent: true, opacity: 0.8 })); zoneLine.computeLineDistances(); scene.add(zoneLine);
+  var ground = new THREE.Mesh(new THREE.PlaneGeometry(VIEW * 4, VIEW * 4), new THREE.MeshBasicMaterial({ color: 0x02050b })); ground.rotation.x = -Math.PI / 2; ground.position.y = -1; scene.add(ground);
+})();
+
+// height scale at the zone's south-west corner, plus height-band labels
+function label(text, color, px) {
+  var c = document.createElement('canvas'), g = c.getContext('2d'); px = px || 30; g.font = '600 ' + px + 'px system-ui,sans-serif';
+  var w = Math.ceil(g.measureText(text).width) + 16; c.width = w; c.height = px + 14; g.font = '600 ' + px + 'px system-ui,sans-serif'; g.fillStyle = color; g.textBaseline = 'middle'; g.fillText(text, 8, c.height / 2);
+  var t = new THREE.CanvasTexture(c); t.minFilter = THREE.LinearFilter; var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false, fog: false }));
+  sp.userData.aspect = w / c.height; return sp;
+}
+var scaleGroup = new THREE.Group();
+(function () {
+  var x0 = -Z - 250, z0 = Z + 250, pts = [x0, 0, z0, x0, 130 * EX, z0];
+  [0, 25, 50, 75, 100, 125].forEach(function (h) { pts.push(x0, h * EX, z0, x0 + 160, h * EX, z0); var L = label(h + ' m', '#9fb1c8', 28); L.position.set(x0 - 330, h * EX, z0); labels.push([L, 120]); scaleGroup.add(L); });
+  var g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+  scaleGroup.add(new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color: 0x6f8299 })));
+  var el2 = label('drones fade out here · the simulation continues beyond', '#8a9ab0', 26); el2.position.set(0, 80, Z + 1500); labels.push([el2, 130]); scaleGroup.add(el2);
+  var zl = label('counted zone · 12 km', '#c9b98a', 30); zl.position.set(-Z + 1300, 60, Z + 260); labels.push([zl, 150]); scaleGroup.add(zl);
+})();
+scene.add(scaleGroup);
+
+// sites
+(function () {
+  var sp = [], sc = [], sz = [], bp = [], bc = [];
+  RAW.sites.forEach(function (s) { var p = W(s[1], s[2], 0), c = OPC[s[0]]; sp.push(p[0], 12, p[2]); sc.push(c[0], c[1], c[2]); sz.push(80);
+    bp.push(p[0], 0, p[2], p[0], 14 * EX, p[2]); bc.push(c[0] * 0.5, c[1] * 0.5, c[2] * 0.5, 0, 0, 0); });
+  var g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(sp, 3)); g.setAttribute('color', new THREE.Float32BufferAttribute(sc, 3)); g.setAttribute('size', new THREE.Float32BufferAttribute(sz, 1));
+  var m = glowMat(3, 0.55); mats.push(m); var p = new THREE.Points(g, m); p.frustumCulled = false; scene.add(p);
+  var bg = new THREE.BufferGeometry(); bg.setAttribute('position', new THREE.Float32BufferAttribute(bp, 3)); bg.setAttribute('color', new THREE.Float32BufferAttribute(bc, 3));
+  scene.add(new THREE.LineSegments(bg, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false })));
+})();
+
+// drones + trails
+var MAXD = 4000, TR = 6, TRDT = 3, EDGE0 = Z + 600, EDGE1 = Z + 2400;
+var arrowVS = 'attribute float px; attribute vec3 color; attribute float ang; attribute float kind; attribute float alpha; varying vec3 vc; varying float va; varying float vk; varying float vang; uniform float pr; void main(){ vc=color; va=alpha; vk=kind; vang=ang; vec4 mv=modelViewMatrix*vec4(position,1.0); gl_PointSize=px*pr; gl_Position=projectionMatrix*mv; }';
+var arrowFS = [
+ 'varying vec3 vc; varying float va; varying float vk; varying float vang;',
+ 'float e(vec2 a, vec2 b, vec2 p){ vec2 d=b-a; return (d.x*(p.y-a.y)-d.y*(p.x-a.x))/length(d); }',
+ 'float arrow(vec2 p){ vec2 T=vec2(0.0,0.92), L=vec2(-0.66,-0.72), R=vec2(0.66,-0.72), N=vec2(0.0,-0.3);',
+ '  float tri=min(min(e(T,L,p),e(L,R,p)),e(R,T,p)); float notch=min(min(e(N,L,p),e(L,R,p)),e(R,N,p)); return min(tri,-notch); }',
+ 'void main(){ vec2 q=(gl_PointCoord-0.5)*2.0; q.y=-q.y; float c=cos(vang), s=sin(vang); vec2 p=vec2(q.x*c-q.y*s, q.x*s+q.y*c);',
+ '  float din, dout; if(vk<0.5||vk>1.5){ din=arrow(p*1.32); dout=arrow(p*1.0); } else { float r=length(q); din=min(r-0.30,0.56-r); dout=min(r-0.12,0.78-r); }',
+ '  float w=fwidth(p.x)*1.5+0.02; float ai=smoothstep(-w,w,din), ao=smoothstep(-w,w,dout); if(ao<0.01) discard;',
+ '  vec3 ol = vk>1.5 ? vec3(1.0) : vec3(0.0,0.01,0.03); gl_FragColor=vec4(mix(ol, vc*1.15, ai), ao*va); }'].join('\n');
+
+var dpos = new Float32Array(MAXD * 3), dcol = new Float32Array(MAXD * 3), dsz = new Float32Array(MAXD), dang = new Float32Array(MAXD), dkind = new Float32Array(MAXD), dalpha = new Float32Array(MAXD);
+var dg = new THREE.BufferGeometry(); dg.setAttribute('position', new THREE.BufferAttribute(dpos, 3).setUsage(THREE.DynamicDrawUsage)); dg.setAttribute('color', new THREE.BufferAttribute(dcol, 3).setUsage(THREE.DynamicDrawUsage)); dg.setAttribute('px', new THREE.BufferAttribute(dsz, 1).setUsage(THREE.DynamicDrawUsage)); dg.setAttribute('ang', new THREE.BufferAttribute(dang, 1).setUsage(THREE.DynamicDrawUsage)); dg.setAttribute('kind', new THREE.BufferAttribute(dkind, 1).setUsage(THREE.DynamicDrawUsage)); dg.setAttribute('alpha', new THREE.BufferAttribute(dalpha, 1).setUsage(THREE.DynamicDrawUsage));
+var dm = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, extensions: { derivatives: true }, uniforms: { pr: { value: 1 } }, vertexShader: arrowVS, fragmentShader: arrowFS }); var drones = new THREE.Points(dg, dm); drones.frustumCulled = false; scene.add(drones);
+
+// ---------- close-up drone models: within about 3 km of the camera each arrow becomes a 3D model of that company's aircraft type, drawn about 100 times real size ----------
+/*MODELS3D*/
+var MAXM = 260, MR0 = 2300, MR1 = 3200, MS = 110, M3MAT = SKY3D.materials(); SKY3D.addLights(scene);
+var MODELS = [SKY3D.wing, SKY3D.zip, SKY3D.amz].map(function (fn, o) { var c = OPC[o], G = fn([c[0] * 0.95, c[1] * 0.95, c[2] * 0.95]);
+  return ['body', 'disc', 'lights'].map(function (part) { var im = new THREE.InstancedMesh(G[part], M3MAT[part], MAXM); im.count = 0; im.frustumCulled = false; scene.add(im); return im; }); }), mCount = [0, 0, 0], mObj = new THREE.Object3D();
+function smooth01(x) { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); }
+var tpos = new Float32Array(MAXD * TR * 6), tcol = new Float32Array(MAXD * TR * 6);
+var tg = new THREE.BufferGeometry(); tg.setAttribute('position', new THREE.BufferAttribute(tpos, 3).setUsage(THREE.DynamicDrawUsage)); tg.setAttribute('color', new THREE.BufferAttribute(tcol, 3).setUsage(THREE.DynamicDrawUsage));
+var trails = new THREE.LineSegments(tg, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false })); trails.frustumCulled = false; scene.add(trails);
+
+// planned conflicts: glow points + flash beams
+var MAXE = 400, epos = new Float32Array(MAXE * 3), ecol = new Float32Array(MAXE * 3), esz = new Float32Array(MAXE);
+var eg2 = new THREE.BufferGeometry(); eg2.setAttribute('position', new THREE.BufferAttribute(epos, 3).setUsage(THREE.DynamicDrawUsage)); eg2.setAttribute('color', new THREE.BufferAttribute(ecol, 3).setUsage(THREE.DynamicDrawUsage)); eg2.setAttribute('size', new THREE.BufferAttribute(esz, 1).setUsage(THREE.DynamicDrawUsage));
+var em = glowMat(8, 1.6); mats.push(em); var evPts = new THREE.Points(eg2, em); evPts.frustumCulled = false; scene.add(evPts);
+var bpos = new Float32Array(MAXE * 6), bcol = new Float32Array(MAXE * 6);
+var bg2 = new THREE.BufferGeometry(); bg2.setAttribute('position', new THREE.BufferAttribute(bpos, 3).setUsage(THREE.DynamicDrawUsage)); bg2.setAttribute('color', new THREE.BufferAttribute(bcol, 3).setUsage(THREE.DynamicDrawUsage));
+var beams = new THREE.LineSegments(bg2, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false })); beams.frustumCulled = false; scene.add(beams);
+
+var linkG = new THREE.BufferGeometry(), linkP = new Float32Array(6); linkG.setAttribute('position', new THREE.BufferAttribute(linkP, 3).setUsage(THREE.DynamicDrawUsage));
+var link = new THREE.Line(linkG, new THREE.LineDashedMaterial({ color: 0xffffff, dashSize: 40, gapSize: 30, transparent: true, opacity: 0.7, depthWrite: false })); link.frustumCulled = false; link.visible = false; scene.add(link);
+function rideHud() { var el = $('ride'); if (!rideF) { el.hidden = true; link.visible = false; return; } el.hidden = false;
+  var txt = '<b style="color:' + ['var(--wing)', 'var(--zip)', 'var(--amz)'][rideF.o] + '">Following a ' + OPN[rideF.o] + ' drone</b> · ' + Math.round(rideP[2]) + ' m up';
+  if (nearF) { var dz = nearP[2] - rideP[2], hz = Math.hypot(nearP[0] - rideP[0], nearP[1] - rideP[1]);
+    txt += '<br class="rb"><span class="mn"> · </span>Nearest other company: <b>' + Math.round(nearD) + ' m</b> <span class="rx">away (' + OPN[nearF.o] + ', ' + Math.round(hz) + ' m sideways, ' + (Math.abs(dz) < 1 ? 'same height' : Math.round(Math.abs(dz)) + ' m ' + (dz > 0 ? 'higher' : 'lower')) + ')</span>' + (nearD < 30 ? ' <b style="color:var(--meet)">planned conflict</b>' : '');
+    var a = W(rideP[0], rideP[1], rideP[2]), b = W(nearP[0], nearP[1], nearP[2]); linkP.set(a, 0); linkP.set(b, 3); linkG.attributes.position.needsUpdate = true; link.computeLineDistances(); link.visible = nearD < 3000; }
+  else { txt += '<br class="rb"><span class="mn"> · </span>No other company nearby'; link.visible = false; }
+  $('rideTxt').innerHTML = txt + '<span class="rx"><br><span style="color:var(--ink3)">Other drones of the same company and drones over 800 m away are dimmed.</span></span>'; }
+// ---------- flight positions ----------
+var tmp = [0, 0, 0], pv = new THREE.Vector3();
+function posAt(f, t, out) {
+  var K = f.K, n = f.n;
+  if (t <= K[0]) { out[0] = K[1]; out[1] = K[2]; out[2] = K[3]; return; }
+  if (t >= K[(n - 1) * 4]) { var o = (n - 1) * 4; out[0] = K[o + 1]; out[1] = K[o + 2]; out[2] = K[o + 3]; return; }
+  var lo = 0, hi = n - 1; while (hi - lo > 1) { var mid = (lo + hi) >> 1; if (K[mid * 4] <= t) lo = mid; else hi = mid; }
+  var a = lo * 4, b = hi * 4, w = (t - K[a]) / ((K[b] - K[a]) || 1);
+  out[0] = K[a + 1] + (K[b + 1] - K[a + 1]) * w; out[1] = K[a + 2] + (K[b + 2] - K[a + 2]) * w; out[2] = K[a + 3] + (K[b + 3] - K[a + 3]) * w;
+}
+var simT = 0, playing = true, speed = 30, active = [], nActive = 0;
+var showOp = [true, true, true], showTrails = true, rideF = null, rideP = [0, 0, 0], nearD = 1e9, nearF = null, nearP = null;
+function updateDrones() {
+  var S = SC[cur], fl = S.fl, n = 0, ti = 0; active.length = 0; mCount[0] = mCount[1] = mCount[2] = 0; rideF = cam.mode === 'ride' ? cam.ride : null; nearD = 1e9; nearF = null; nearP = null;
+  if (rideF) { posAt(rideF, simT, tmp); rideP = [tmp[0], tmp[1], tmp[2]]; }
+  for (var i = 0; i < fl.length; i++) { var f = fl[i]; if (f.t0 > simT) break; if (f.t1 < simT) continue;
+    posAt(f, simT, tmp); if (Math.abs(tmp[0]) > VIEW || Math.abs(tmp[1]) > VIEW || n >= MAXD) continue;
+    if (!showOp[f.o]) continue;
+    var c = OPC[f.o], p = W(tmp[0], tmp[1], tmp[2]), ex = tmp[0], ey = tmp[1], ez = tmp[2];
+    dpos[n * 3] = p[0]; dpos[n * 3 + 1] = p[1]; dpos[n * 3 + 2] = p[2]; dcol[n * 3] = c[0]; dcol[n * 3 + 1] = c[1]; dcol[n * 3 + 2] = c[2];
+    posAt(f, simT + 4, tmp); var hm = Math.hypot(tmp[0] - ex, tmp[1] - ey), q2 = W(tmp[0], tmp[1], tmp[2]);
+    pv.set(p[0], p[1], p[2]).project(view); var sx = pv.x * innerWidth, sy = pv.y * innerHeight; pv.set(q2[0], q2[1], q2[2]).project(view); var hx = pv.x * innerWidth - sx, hy = pv.y * innerHeight - sy;
+    dang[n] = Math.atan2(hx, hy); dkind[n] = (hm < 8 || hx * hx + hy * hy < 0.25) ? 1 : 0;
+    var dist = view === ortho ? 9000 : view.position.distanceTo(new THREE.Vector3(p[0], p[1], p[2]));
+    dsz[n] = Math.max(11, Math.min(24, 70000 / dist)); var edge = Math.max(Math.abs(ex), Math.abs(ey)), fade = Math.max(0, Math.min(1, (EDGE1 - edge) / (EDGE1 - EDGE0))); if (fade <= 0.02) continue;
+    if (rideF) { if (f === rideF) { dsz[n] += 8; dkind[n] = 2 + dkind[n] * 0; } else if (f.o === rideF.o || Math.hypot(ex - rideP[0], ey - rideP[1]) > 800) fade = 0.3; }
+    if (f === rideF) { dkind[n] = 2; fade = 1; }
+    dalpha[n] = fade; if (rideF && f !== rideF && fade < 1) dalpha[n] = Math.min(fade, 0.3); if (rideF && f !== rideF && f.o !== rideF.o) { var dd = Math.hypot(ex - rideP[0], ey - rideP[1], (ez - rideP[2])); if (dd < nearD) { nearD = dd; nearF = f; nearP = [ex, ey, ez]; } }
+    if (view !== ortho && dist < MR1 && mCount[f.o] < MAXM) { var mw = smooth01((MR1 - dist) / (MR1 - MR0)), dxs = q2[0] - p[0], dzs = q2[2] - p[2];
+      if (hm >= 8) f.yaw = Math.atan2(-dzs, dxs); mObj.position.set(p[0], p[1], p[2]); mObj.rotation.set(0, f.yaw || 0, 0); var ms = MS * mw * Math.max(0.15, dalpha[n]); mObj.scale.set(ms, ms, ms); mObj.updateMatrix();
+      MODELS[f.o].forEach(function (im) { im.setMatrixAt(mCount[f.o], mObj.matrix); }); mCount[f.o]++; if (dkind[n] !== 2) dalpha[n] *= (1 - mw); }
+    active.push(f);
+    var px = p[0], py = p[1], pz = p[2];
+    for (var k = 1; k <= TR && showTrails; k++) { var tt = simT - k * TRDT; if (tt < f.t0) break; posAt(f, tt, tmp); var q = W(tmp[0], tmp[1], tmp[2]), o = ti * 6, f0 = Math.pow(1 - (k - 1) / TR, 1.6) * 0.5 * fade, f1 = Math.pow(1 - k / TR, 1.6) * 0.5 * fade;
+      tpos[o] = px; tpos[o + 1] = py; tpos[o + 2] = pz; tpos[o + 3] = q[0]; tpos[o + 4] = q[1]; tpos[o + 5] = q[2];
+      tcol[o] = c[0] * f0; tcol[o + 1] = c[1] * f0; tcol[o + 2] = c[2] * f0; tcol[o + 3] = c[0] * f1; tcol[o + 4] = c[1] * f1; tcol[o + 5] = c[2] * f1;
+      px = q[0]; py = q[1]; pz = q[2]; ti++; if (ti >= MAXD * TR) break; }
+    n++; }
+  nActive = n; MODELS.forEach(function (L, o) { L.forEach(function (im) { im.count = mCount[o]; im.instanceMatrix.needsUpdate = true; }); }); SKY3D.discTexture().rotation = performance.now() / 1000 * 22;
+  dg.setDrawRange(0, n); ['position', 'color', 'px', 'ang', 'kind', 'alpha'].forEach(function (a) { dg.attributes[a].needsUpdate = true; }); rideHud();
+  tg.setDrawRange(0, ti * 2); tg.attributes.position.needsUpdate = true; tg.attributes.color.needsUpdate = true;
+}
+var FLASH = 25, NRING = 40, rings = [];
+for (var ri = 0; ri < NRING; ri++) { var rm = new THREE.Mesh(new THREE.RingGeometry(0.86, 1, 64), new THREE.MeshBasicMaterial({ color: 0xff4d4d, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })); rm.rotation.x = -Math.PI / 2; rm.visible = false; scene.add(rm); rings.push(rm); }
+var EVS = 1;
+function updateEvents() {
+  var ev = SC[cur].ev, n = 0;
+  for (var i = 0; i < ev.length && n < MAXE; i++) { var e = ev[i]; if (e.t > simT) break; var age = simT - e.t, p = W(e.x, e.y, e.z);
+    epos[n * 3] = p[0]; epos[n * 3 + 1] = p[1]; epos[n * 3 + 2] = p[2];
+    var fl = age < FLASH ? 1 - age / FLASH : 0;
+    esz[n] = (150 + 900 * fl * fl + (e.c ? 60 : 0)) * EVS; var g = 0.55 + 0.45 * fl; ecol[n * 3] = 1 * g; ecol[n * 3 + 1] = (0.2 + 0.5 * fl * fl) * g; ecol[n * 3 + 2] = (0.2 + 0.3 * fl * fl) * g;
+    var bo = n * 6, bb = 0.08 + 0.9 * fl; bpos[bo] = p[0]; bpos[bo + 1] = 0; bpos[bo + 2] = p[2]; bpos[bo + 3] = p[0]; bpos[bo + 4] = p[1]; bpos[bo + 5] = p[2];
+    bcol[bo] = 0.1 * bb; bcol[bo + 1] = 0.02 * bb; bcol[bo + 2] = 0.02 * bb; bcol[bo + 3] = 1 * bb; bcol[bo + 4] = 0.25 * bb; bcol[bo + 5] = 0.25 * bb;
+    n++; }
+  var rk = 0; for (var j = 0; j < ev.length && rk < NRING; j++) { var e2 = ev[j]; if (e2.t > simT) break; var ag = simT - e2.t; if (ag >= FLASH * 1.6) continue; var R2 = rings[rk++], u2 = ag / (FLASH * 1.6), q3 = W(e2.x, e2.y, e2.z);
+    R2.visible = true; R2.position.set(q3[0], q3[1], q3[2]); var sc2 = 60 + 900 * Math.pow(u2, 0.6); R2.scale.set(sc2, sc2, sc2); R2.material.opacity = 0.9 * (1 - u2) * (1 - u2); }
+  for (; rk < NRING; rk++) rings[rk].visible = false;
+  eg2.setDrawRange(0, n); eg2.attributes.position.needsUpdate = true; eg2.attributes.color.needsUpdate = true; eg2.attributes.size.needsUpdate = true;
+  bg2.setDrawRange(0, n * 2); bg2.attributes.position.needsUpdate = true; bg2.attributes.color.needsUpdate = true;
+  return n;
+}
+function countTo(ev, t, close) { var n = 0; for (var i = 0; i < ev.length; i++) { if (ev[i].t > t) break; if (!close || ev[i].c) n++; } return n; }
+function countWide(ev, t) { var n = 0; for (var i = 0; i < ev.length; i++) { if (ev[i].t > t) break; if (!ev[i].c) n++; } return n; }
+
+// ---------- scoreboard + controls ----------
+function fmtClock(t) { t = Math.max(0, Math.floor(t)); var h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), s = t % 60; return h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s; }
+function fmtHM(t) { t = Math.max(0, Math.floor(t)); var h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60); return h + ':' + (m < 10 ? '0' : '') + m; }
+function buildRows() {
+  var R = $('rows'); R.innerHTML = '';
+  GROUPS[day].forEach(function (k) {
+    var d = document.createElement('div'); d.className = 'row' + (k === cur ? ' on' : ''); d.dataset.k = k; d.tabIndex = 0; d.setAttribute('role', 'button');
+    d.innerHTML = '<span class="lbl">' + NAMES[k] + '</span><span class="num">0</span><span class="bar"><b></b></span><span class="sub"></span>';
+    d.addEventListener('click', function () { userAct(); setScenario(k); }); d.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); userAct(); setScenario(k); } });
+    R.appendChild(d); });
+  var H = $('segH'); H.innerHTML = '';
+  GROUPS[day].forEach(function (k) { var b = document.createElement('button'); b.textContent = (window.innerWidth < 560 ? SHORT : NAMES)[k]; b.dataset.k = k; if (k === cur) b.classList.add('on'); b.addEventListener('click', function () { userAct(); setScenario(k); }); H.appendChild(b); });
+  var note = day === 'normal'
+    ? 'A planned conflict: drones of <b>two different companies</b> within 30 m sideways and less than 10 m up or down. “Tight” is 15 m and 5 m.'
+    : 'Bad day: <b>' + SC.holdFiled.holds.toLocaleString() + '</b> drones stop and hover for 2 minutes. Plan check on in both.';
+  $('scoreNote').innerHTML = note;
+}
+function updateScore() {
+  var ks = GROUPS[day], max = Math.max.apply(null, ks.map(function (k) { return SC[k].wide; })) || 1;
+  Array.prototype.forEach.call($('rows').children, function (row) { var S = SC[row.dataset.k], w = countWide(S.ev, simT), c = countTo(S.ev, simT, true);
+    var num = row.querySelector('.num'); num.textContent = w; num.classList.toggle('zero', w === 0 && simT > 600);
+    row.querySelector('.bar b').style.width = (100 * w / max) + '%'; row.querySelector('.sub').textContent = c + ' tight · ' + S.wide + ' by the end'; });
+  $('clock').textContent = fmtClock(simT); $('clock2').textContent = fmtHM(simT) + ' of ' + fmtHM(TEND);
+  if (!scrubbing) $('scrub').value = Math.floor(simT);
+}
+function setScenario(k) { cur = k; Array.prototype.forEach.call($('rows').children, function (r) { r.classList.toggle('on', r.dataset.k === k); });
+  Array.prototype.forEach.call($('segH').children, function (b) { b.classList.toggle('on', b.dataset.k === k); }); $('desc').innerHTML = DESC[k]; hideTip(); }
+function setDay(d) { if (d === day) return; var idx = GROUPS[day].indexOf(cur); day = d; Array.prototype.forEach.call(document.querySelectorAll('#segD button'), function (b) { b.classList.toggle('on', b.dataset.d === d); });
+  cur = GROUPS[d][Math.min(idx < 0 ? 0 : idx, GROUPS[d].length - 1)]; buildRows(); setScenario(cur); }
+document.querySelectorAll('#segD button').forEach(function (b) { b.addEventListener('click', function () { userAct(); setDay(b.dataset.d); }); });
+function setPlaying(p) { playing = p; $('pp').textContent = p ? '❚❚' : '▶'; $('pp').setAttribute('aria-label', p ? 'Pause' : 'Play'); }
+$('pp').addEventListener('click', function () { userAct(); if (simT >= TEND) simT = 0; setPlaying(!playing); });
+var scrubbing = false;
+$('scrub').addEventListener('input', function (e) { userAct(); scrubbing = true; simT = +e.target.value; hideTip(); });
+$('scrub').addEventListener('change', function () { scrubbing = false; });
+function setSpeed(s) { speed = s; document.querySelectorAll('[data-s]').forEach(function (b) { b.classList.toggle('on', +b.dataset.s === s); }); }
+document.querySelectorAll('[data-s]').forEach(function (b) { b.addEventListener('click', function () { userAct(); setSpeed(+b.dataset.s); }); });
+
+// ---------- camera ----------
+var cam = { mode: 'orbit', th: 0.75, ph: 1.05, r: 30000, auto: true, drag: false, ride: null, tgt: new THREE.Vector3(0, 400, 0) }, camPos = new THREE.Vector3(), camLook = new THREE.Vector3(), camInit = false;
+var PRE = { orbit: { ph: 0.42, r: 12500 }, side: { ph: 0.0, r: 15000 }, top: {} };
+function setCam(m) { if (DIR && m !== 'dir') dirStop(true); cam.mode = m; if (PRE[m] && PRE[m].r) { cam.ph = PRE[m].ph; cam.r = PRE[m].r; } if (m === 'ride') cam.ride = null; cam.auto = true;
+  document.querySelectorAll('[data-cam]').forEach(function (b) { b.classList.toggle('on', b.dataset.cam === m); }); }
+document.querySelectorAll('[data-cam]').forEach(function (b) { b.addEventListener('click', function () { userAct(); setCam(b.dataset.cam); }); });
+var ptrs = new Map(), pinch0 = 0, downX = 0, downY = 0, mid0 = null;
+var panning = false;
+canvas.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+canvas.addEventListener('pointerdown', function (e) { panning = e.button === 2 || e.shiftKey || e.ctrlKey || e.metaKey; ptrs.set(e.pointerId, [e.clientX, e.clientY]); canvas.setPointerCapture(e.pointerId); downX = e.clientX; downY = e.clientY; cam.drag = true; canvas.style.cursor = 'grabbing';
+  if (ptrs.size === 2) { var v = Array.from(ptrs.values()); pinch0 = Math.hypot(v[0][0] - v[1][0], v[0][1] - v[1][1]); mid0 = [(v[0][0] + v[1][0]) / 2, (v[0][1] + v[1][1]) / 2]; } });
+canvas.addEventListener('pointermove', function (e) { if (!ptrs.has(e.pointerId)) return; var pr = ptrs.get(e.pointerId), dx = e.clientX - pr[0], dy = e.clientY - pr[1]; ptrs.set(e.pointerId, [e.clientX, e.clientY]);
+  if (ptrs.size === 2) { var v = Array.from(ptrs.values()), d = Math.hypot(v[0][0] - v[1][0], v[0][1] - v[1][1]), mid = [(v[0][0] + v[1][0]) / 2, (v[0][1] + v[1][1]) / 2]; if (pinch0 && d > 0) zoom(pinch0 / d); pinch0 = d; if (mid0) pan(mid[0] - mid0[0], mid[1] - mid0[1]); mid0 = mid; return; }
+  if (panning || (cam.mode === 'top' && ptrs.size === 1)) { pan(dx, dy); return; }
+  if (cam.mode === 'orbit' || cam.mode === 'side') { cam.th -= dx * 0.005; if (cam.mode === 'orbit') cam.ph = Math.max(0.03, Math.min(1.45, cam.ph + dy * 0.004)); cam.auto = false; } });
+function endPtr(e) { ptrs.delete(e.pointerId); if (ptrs.size < 2) { pinch0 = 0; mid0 = null; } if (!ptrs.size) { cam.drag = false; canvas.style.cursor = 'grab'; if (Math.abs(e.clientX - downX) + Math.abs(e.clientY - downY) < 6) pick(e.clientX, e.clientY); } }
+canvas.addEventListener('pointerup', endPtr); canvas.addEventListener('pointercancel', endPtr);
+function pan(dx, dy) { if (cam.mode === 'ride' || cam.mode === 'side') return; cam.auto = false; var t = cam.tgt;
+  if (cam.mode === 'top') { var s1 = topH * 0.0011; t.x -= dx * s1; t.z -= dy * s1; }
+  else { var s2 = cam.r * 0.0007 / Math.max(0.35, Math.sin(cam.ph) + 0.2), c = Math.cos(cam.th), sn = Math.sin(cam.th); t.x -= (c * dx) * s2; t.z -= (-sn * dx) * s2; t.x -= sn * dy * s2; t.z -= c * dy * s2; }
+  t.x = Math.max(-12000, Math.min(12000, t.x)); t.z = Math.max(-12000, Math.min(12000, t.z)); $('recenter').hidden = false; }
+var ray = new THREE.Raycaster(), gplane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), ndc = new THREE.Vector2(), hit = new THREE.Vector3();
+canvas.addEventListener('dblclick', function (e) { if (cam.mode !== 'orbit' && cam.mode !== 'top') return; ndc.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1); ray.setFromCamera(ndc, view);
+  if (ray.ray.intersectPlane(gplane, hit)) { cam.tgt.x = Math.max(-12000, Math.min(12000, hit.x)); cam.tgt.z = Math.max(-12000, Math.min(12000, hit.z)); cam.auto = false; if (cam.mode === 'orbit') cam.r = Math.max(2500, cam.r * 0.6); $('recenter').hidden = false; } });
+document.addEventListener('keydown', function (e) { if (/INPUT|TEXTAREA/.test(document.activeElement.tagName)) return; var k = e.key, st = 40; var m = { ArrowLeft: [st, 0], a: [st, 0], ArrowRight: [-st, 0], d: [-st, 0], ArrowUp: [0, st], w: [0, st], ArrowDown: [0, -st], s: [0, -st] }[k];
+  if (m && (cam.mode === 'orbit' || cam.mode === 'top')) { e.preventDefault(); pan(m[0], m[1]); } });
+function recenter() { cam.tgt.set(0, 400, 0); cam.r = PRE.orbit.r; cam.ph = PRE.orbit.ph; topH = 16500; cam.auto = true; $('recenter').hidden = true; }
+function zoom(f) { sideW = Math.max(1500, Math.min(14000, sideW * f)); cam.r = Math.max(1200, Math.min(32000, cam.r * f)); topH = Math.max(2500, Math.min(34000, topH * f)); rideD = Math.max(200, Math.min(4000, rideD * f)); }
+var topH = 16500, rideD = 700, rideH = [1, 0];
+canvas.addEventListener('wheel', function (e) { e.preventDefault(); zoom(1 + e.deltaY * 0.0012); }, { passive: false });
+function setView(c) { if (view === c) return; view = c; if (renderPass) renderPass.camera = c; var o = c === ortho; mats.forEach(function (m) { m.uniforms.orthoD.value = o ? 9000 : 0; }); scene.fog.density = o ? 0 : 0.00004; scaleGroup.visible = !o; downtown.visible = !o; camInit = false; }
+var BANDS = { filed: [[0, 'Wing 46–91 m', 46, 91], [2, 'Amazon out 61 m', 61], [1, 'Zipline 101 m', 101], [2, 'Amazon back 105 m', 105]], shared: [[0, 'Wing 46–71 m', 46, 71], [2, 'Amazon out 81 m', 81], [1, 'Zipline 101 m', 101], [2, 'Amazon back 115 m', 115]] };
+BANDS.checked = BANDS.holdShared = BANDS.shared; BANDS.layered = [[0, 'Wing 46–71 m', 46, 71], [2, 'Amazon out 83 m', 83], [2, 'Amazon back 95 m', 95], [1, 'Zipline 107 m', 107]]; BANDS.holdFiled = BANDS.filed; BANDS.sourced = [[0, 'Wing 46–91 m', 46, 91], [2, 'Amazon out 69 m', 69], [1, 'Zipline 101 m', 101], [2, 'Amazon back 85–115 m', 85, 115]];
+BANDS.reported = BANDS.holdReported = [[0, 'Wing 46–91 m', 46, 91], [2, 'Amazon out 69 m', 69], [1, 'Zipline 101 m', 101], [2, 'Amazon back 122 m', 122]];
+var sideOn = null, sideKey = '';
+function yScreen(h) { pv.set(0, h * EX, 0).project(ortho); return (1 - pv.y) / 2 * window.innerHeight; }
+function sideOverlay(on) { var el = $('side'); if (!on) { if (sideOn !== false) { el.hidden = true; sideOn = false; } return; } sideOn = true; el.hidden = false;
+  el.style.setProperty('--capb', (document.querySelector('.dock').offsetHeight + 22) + 'px'); var key = cur + '|' + window.innerWidth + 'x' + window.innerHeight; if (key === sideKey) return; sideKey = key; var hcol = ['var(--wing)', 'var(--zip)', 'var(--amz)'];
+  var html = [0, 25, 50, 75, 100, 125].map(function (h) { return '<div class="hl" style="top:' + yScreen(h) + 'px"><span>' + h + ' m</span></div>'; }).join('');
+  var lastY = -1e9, order = BANDS[cur].slice().sort(function (a, b) { return b[2] - a[2]; });
+  html += order.map(function (b) { var y0 = yScreen(b[3] ? (b[2] + b[3]) / 2 : b[2]), y = Math.max(y0, lastY + 19); lastY = y; var band = b[3] ? '<i style="top:' + (yScreen(b[3]) - y + 9) + 'px;height:' + (yScreen(b[2]) - yScreen(b[3])) + 'px;border-color:' + hcol[b[0]] + '"></i>' : '';
+    return '<div class="bl" style="top:' + y + 'px;color:' + hcol[b[0]] + '">' + band + b[1] + '</div>'; }).join('');
+  el.innerHTML = html + '<div class="sidecap">Side view, looking across the whole area. Heights drawn about 10× taller.</div>'; }
+function updateCamera(dt) {
+  if (cam.mode === 'dir') { setView(camera); sideOverlay(false); scaleGroup.visible = false; dirCam(dt); return; }
+  if (cam.mode === 'cine') { setView(camera); sideOverlay(false); scaleGroup.visible = false; cineCam(dt); return; }
+  var tp = new THREE.Vector3(), tl = cam.tgt.clone();
+  if (cam.mode === 'side') { if (cam.auto && !cam.drag) cam.th += dt * 0.03; var a = window.innerWidth / window.innerHeight;
+    ortho.left = -sideW; ortho.right = sideW; var Hh = window.innerHeight, yt = document.querySelector('.top').getBoundingClientRect().bottom + 34, yb = document.querySelector('.dock').getBoundingClientRect().top - 34; if (yb - yt < 120) { yt = 60; yb = Hh - 60; }
+    var spx = 1300 / (yb - yt); ortho.top = 1300 + yt * spx - SIDEY; ortho.bottom = -(Hh - yb) * spx - SIDEY; ortho.updateProjectionMatrix();
+    ortho.position.set(Math.sin(cam.th) * 30000, SIDEY, Math.cos(cam.th) * 30000); ortho.lookAt(0, SIDEY, 0); setView(ortho); sideOverlay(true); return; }
+  setView(camera); sideOverlay(false); scaleGroup.visible = cam.mode !== 'top';
+  if (cam.mode === 'orbit') { if (cam.auto && !cam.drag) cam.th += dt * (cam.mode === 'side' ? 0.035 : 0.045);
+    if (cam.mode === 'side') tl.set(0, 780, 0);
+    tp.set(tl.x + Math.sin(cam.th) * Math.cos(cam.ph) * cam.r, tl.y + Math.sin(cam.ph) * cam.r, tl.z + Math.cos(cam.th) * Math.cos(cam.ph) * cam.r); }
+  else if (cam.mode === 'top') { tp.set(cam.tgt.x, topH, cam.tgt.z + 1); tl.set(cam.tgt.x, 0, cam.tgt.z); }
+  else { var f = cam.ride; if (!f || simT > f.t1 - 5 || simT < f.t0) { f = null; var best = null, bs = -1; for (var i = 0; i < active.length; i++) { var g = active[i], left = g.t1 - simT; if (left > 120 && left > bs && (g.t1 - g.t0) > 300) { bs = left; best = g; } if (bs > 400) break; } cam.ride = f = best; }
+    if (f) { posAt(f, simT, tmp); var p = W(tmp[0], tmp[1], tmp[2]); posAt(f, simT - 6, tmp); var q = W(tmp[0], tmp[1], tmp[2]), dx = p[0] - q[0], dz = p[2] - q[2], L = Math.hypot(dx, dz) || 1;
+      if (L > 1) { var kh = 1 - Math.exp(-dt * 2.5); rideH[0] += (dx / L - rideH[0]) * kh; rideH[1] += (dz / L - rideH[1]) * kh; } var hl = Math.hypot(rideH[0], rideH[1]) || 1, hx = rideH[0] / hl, hz = rideH[1] / hl;
+      camPos.set(p[0] - hx * rideD, p[1] + rideD * 0.3, p[2] - hz * rideD); camLook.set(p[0] + hx * 500, p[1] - 40, p[2] + hz * 500); camera.position.copy(camPos); camera.lookAt(camLook); camInit = true;
+      var tf0 = 62; if (Math.abs(camera.fov - tf0) > 0.05) { camera.fov += (tf0 - camera.fov) * 0.08; camera.updateProjectionMatrix(); } return; } else { tp.copy(camPos); tl.copy(camLook); } }
+  var k = camInit ? 1 - Math.exp(-dt * (cam.mode === 'ride' ? 4 : 2.6)) : 1; camInit = true; camPos.lerp(tp, k); camLook.lerp(tl, k);
+  camera.position.copy(camPos); camera.lookAt(camLook);
+  var tf = cam.mode === 'ride' ? 62 : 50; if (Math.abs(camera.fov - tf) > 0.05) { camera.fov += (tf - camera.fov) * 0.08; camera.updateProjectionMatrix(); }
+  labels.forEach(function (L) { L[0].visible = !(L[0].userData.hideNarrow && window.innerWidth < 820); var d = camera.position.distanceTo(L[0].position), s = L[1] * Math.max(0.35, d / 9000); L[0].scale.set(s * L[0].userData.aspect, s, 1); });
+}
+
+// ---------- pick a planned conflict ----------
+var tipEv = null;
+function pick(cx, cy) { var ev = SC[cur].ev, best = null, bd = 22 * 22; for (var i = 0; i < ev.length; i++) { var e = ev[i]; if (e.t > simT) break; var p = W(e.x, e.y, e.z); pv.set(p[0], p[1], p[2]).project(view); if (pv.z > 1) continue;
+    var sx = (pv.x + 1) / 2 * window.innerWidth, sy = (1 - pv.y) / 2 * window.innerHeight, d = (sx - cx) * (sx - cx) + (sy - cy) * (sy - cy); if (d < bd) { bd = d; best = e; } }
+  if (!best) { hideTip(); return; } tipEv = best; var o = best.ops.split('').map(function (c) { return LET[c] || c; });
+  $('tip').innerHTML = '<b>' + (best.c ? 'Tight conflict' : 'Planned conflict') + '</b> · ' + o[0] + ' and ' + o[1] + '<br>' + best.z + ' m up (' + Math.round(best.z * 3.281) + ' ft) · ' + fmtClock(best.t) + ' into the run'; $('tip').hidden = false; placeTip(); }
+function placeTip() { if (!tipEv) return; var p = W(tipEv.x, tipEv.y, tipEv.z); pv.set(p[0], p[1], p[2]).project(view); var t = $('tip'); t.style.left = ((pv.x + 1) / 2 * window.innerWidth) + 'px'; t.style.top = ((1 - pv.y) / 2 * window.innerHeight) + 'px'; }
+function hideTip() { tipEv = null; $('tip').hidden = true; }
+
+// ---------- tour ----------
+var STEPS = [
+  { t: 'This is a modelled Houston build-out, <b>not real sites or today’s traffic</b>. Wing (<span style="color:var(--wing)">blue</span>), Zipline (<span style="color:var(--zip)">gold</span>) and Amazon (<span style="color:var(--amz)">violet</span>) fly about 7,000 deliveries through this 12 × 12 km area in 2 hours, from sites spread across a much larger region.', go: function () { setDay('normal'); setScenario('filed'); setCam('orbit'); setSpeed(30); jump(1500); } },
+  { t: 'Each company describes its flying heights in FAA filings. Amazon’s Texas filing allows 55–115 m; its Omaha noise profile, shown here from the side (heights drawn 10× taller), puts <b>Amazon coming home at 105 m, 4 m above Zipline at 101 m</b>, inside the 10 m that counts as close.', go: function () { setCam('side'); setSpeed(10); } },
+  { t: '<b style="color:var(--meet)">Red marks are planned conflicts</b>: planned paths of two different companies within 30 m sideways and 10 m up or down. The model has no avoidance, so this counts how often companies’ plans overlap, not crashes.', go: function () { setCam('orbit'); setScenario('filed'); setSpeed(90); jump(0); } },
+  { t: 'Now the same flights with <b>Amazon at its best-sourced heights</b>: 69 m out, as Amazon told Richardson, and back anywhere in its filed 85–115 m band. That band contains Zipline’s 101 m, so returns still meet Zipline often.', go: function () { setScenario('sourced'); } },
+  { t: 'Now give <b>every company its own height inside the band it already filed</b>. With Amazon at its best-sourced heights this cuts planned conflicts by about <b>72%</b> (real Houston layout, 10 runs); against the Omaha profile, 79%. Only in the high-return case (staff remark only) is it as low as 29%.', go: function () { setScenario('shared'); } },
+  { t: 'Add <b>realistic plan sharing</b>: before take-off each flight reserves blocks of airspace along its path and waits if they overlap another company’s. Planned conflicts <b style="color:var(--good)">nearly vanish</b>. The cost is waiting: the study makes about 1 in 5 flights wait about 6 minutes in windy hours (COORD1). The shared-out layers are only 10–14 m apart, closer than two blocks, so neighbouring layers block each other on paper.', go: function () { setScenario('checked'); } },
+  { t: 'The fix for that waiting: <b>put Zipline on the top layer and make each reserved block 5 m thick</b>. In the study the share of flights that wait falls to about 4% (LAYER2), with no more flown conflicts. Whether 5 m blocks are safe enough is not tested.', go: function () { setScenario('layered'); } },
+  { t: 'A <b>stress test</b>, far above any real failure rate: 1 in 5 drones in the zone stops and hovers for 2 minutes, plan check on. At the filed heights, a hovering Amazon drone can sit in Zipline’s layer and planned conflicts come back.', go: function () { setDay('bad'); setScenario('holdFiled'); jump(0); setCam('orbit'); } },
+  { t: 'If Amazon came home near the 400 ft (122 m) maximum its filings state (the <b>high-return case (staff remark only)</b>), most of those bad-day planned conflicts would go away (6.8× fewer). The lesson in this model: <b>keep each company’s return trip clear of the others’ cruise</b>. With real plan sharing the gap also has to be wider than the airspace blocks each flight reserves (COORD2).', go: function () { setScenario('holdReported'); } },
+  { t: 'That’s the story. Explore on your own: switch heights, scrub the clock, ride a drone. <b>Dig deeper</b> has the numbers, how the model works, and what is still unchecked.', go: function () { setCam('orbit'); setSpeed(30); } }
+];
+var step = -1;
+function showStep(i) { step = i; $('tour').hidden = false; $('stepn').textContent = 'Tour · ' + (i + 1) + ' of ' + STEPS.length; $('steptxt').innerHTML = STEPS[i].t;
+  $('dots').innerHTML = STEPS.map(function (_, k) { return '<i class="' + (k === i ? 'on' : '') + '"></i>'; }).join(''); $('tBack').disabled = i === 0;
+  $('tNext').textContent = i === STEPS.length - 1 ? 'Dig deeper' : 'Next'; setPlaying(true); STEPS[i].go(); placeTour(); }
+function endTour() { step = -1; $('tour').hidden = true; }
+$('tNext').addEventListener('click', function () { if (step === STEPS.length - 1) { endTour(); openDrawer(); } else showStep(step + 1); });
+$('tBack').addEventListener('click', function () { if (step > 0) showStep(step - 1); });
+$('tEnd').addEventListener('click', endTour);
+$('tourBtn').addEventListener('click', function () { closeDrawer(); showStep(0); });
+function userAct() { /* manual control keeps the tour card open but stops nothing */ }
+function jump(t) { simT = t; hideTip(); }
+$('goTour').addEventListener('click', function () { $('intro').hidden = true; startSound(); showStep(0); });
+$('goWatch').addEventListener('click', function () { $('intro').hidden = true; startSound(); setCam('orbit'); setDay('normal'); setScenario('filed'); jump(0); setSpeed(30); });
+
+// ---------- drawer ----------
+function hb(label, v, max, col, lo, hi, txt) { var w = 100 * v / max, s = lo !== undefined ? '<s style="left:' + (100 * lo / max) + '%;width:' + (100 * (hi - lo) / max) + '%"></s>' : '';
+  return '<div class="hb"><span>' + label + '</span><span class="t"><b style="width:' + Math.max(w, v > 0 ? 0.6 : 0) + '%;background:' + col + '"></b>' + s + '</span><span class="n">' + (txt || v) + '</span></div>'; }
+var F = SC.filed, Sh = SC.shared, Ck = SC.checked, HF = SC.holdFiled, HS = SC.holdShared;
+var TABS = {
+  res: '<h3>Where Amazon flies decides the answer</h3><table class="tbl"><tr><th>Amazon’s heights</th><th>Source</th><th>Planned conflicts an hour, as filed</th><th>Sharing out cuts (10 m between companies)</th><th>if 15 m needed</th><th>if 20 m needed</th></tr><tr><td>61 m out, 105 m back</td><td>Omaha noise profile (FAA)</td><td>45.8</td><td><b>79%</b> (76–82)</td><td>55%</td><td>67%</td></tr><tr><td><b>69 m out, back anywhere in 85–115 m (best-sourced)</b></td><td>Out: Amazon to Richardson council (Mar 2026). Back: inbound band in FAA final EAs for Florida, Detroit, Kansas City (2026)</td><td>34.6</td><td><b>72%</b> (67–76)</td><td>55%</td><td>67%</td></tr><tr><td>69 m out, 122 m back (high-return case)</td><td><b>Staff remark only.</b> Amazon representatives said “they return at 400 ft” at a May 2025 meeting, as summarised on the Creek Hollow homeowners’ association web page (a neighbourhood near Amazon’s Richardson site; I have not seen a recording or minutes). 122 m is the 400 ft maximum stated in Amazon’s filings, above every filed return band (at most 115 m)</td><td>13.4</td><td><b>29%</b> (16–39)</td><td>36%</td><td>59%</td></tr><tr><td>Shared out</td><td>Wing 46–71 m, Amazon 81 / 115 m, Zipline 101 m</td><td>9.6</td><td></td><td></td><td></td></tr></table><p class="small">Real Houston layout: Amazon’s five geocoded sites, 75 Wing and 65 Zipline sites at random, 68 × 68 km; 10 runs, 2 measured hours each (HEADLINE2, 25 Oct). Brackets: 95% interval from the spread between runs. A planned conflict here is within 30 m sideways and less than 10 m vertically; the 15 m and 20 m columns count with a stricter vertical rule, so they show how much of the benefit survives if companies need more room. I predicted the cut would fall below 50% at 15 m in both metros; Houston kept 55% (DFW 45%), so that prediction failed. Earlier versions of this page gave 3-run figures (71% Houston, 66% DFW) counted past the 2 h window, and before that led with the 122 m case, whose only source is a secondhand staff remark.</p>' +
+    '<p>Sharing out heights means each company gets its own slice inside its own filed band: Wing 46–71 m, Amazon out 81 m, Zipline 101 m, Amazon back 115 m. Plan sharing then removes nearly all of the rest; the cost is waiting (see below). Amazon’s FAA filings give a typical return of 345 ft (105 m, the filed profile); a secondhand staff remark puts it at 400 ft (see above); recorded Remote ID tracks would settle which row is closest to reality.</p>' +
+    '<h3>In the dense test patch (12 km, sites every 3 and 4 km, six runs)</h3>' + hb('Filed profile', 778, 778, 'var(--meet)') + hb('Texas band', 582, 778, 'var(--meet)') + hb('High return (staff remark)', 189, 778, 'var(--meet)') + hb('Shared out', 146, 778, 'var(--meet)') + hb('+ simple ±5 s check', 0, 778, 'var(--good)') +
+    '<div class="cap">Planned conflicts between companies, sites every 3 km and 4 km, three random seeds each, 2 h, 12 km zone.</div>' +
+    '<h3>What changes the answer</h3><table class="tbl"><tr><th>If…</th><th>Sharing out cuts</th><th>Source</th></tr>' +
+    '<tr><td>Amazon at its Omaha profile (61 / 105 m), dense test patch</td><td><b>81%</b> (95% interval 78–84%)</td><td>COUNTFIX</td></tr>' +
+    '<tr><td>Amazon anywhere in its Texas band (55–115 m)</td><td><b>75%</b></td><td>AMZBAND</td></tr>' +
+    '<tr><td>Real Houston layout at the filed site counts (Amazon’s five geocoded sites, 75 Wing nests, 65 Zipline sites, 68 × 68 km): Omaha profile / Texas band / high-return case (staff remark only)</td><td><b>79% / 71% / 27%</b> (3 runs; the 10-run headline above supersedes it)</td><td>HOUREAL</td></tr>' +
+    '<tr><td>Same real layout, customers placed where people live (Census 2020 population)</td><td><b>77% / 71% / 23%</b></td><td>CENSUS</td></tr>' +
+    '<tr><td>Same, and no route may cross an airport square with a 0 ft FAA ceiling (strictest reading)</td><td><b>78% / 70% / 25%</b></td><td>CENSUS</td></tr>' +
+    '<tr><td>Real Dallas–Fort Worth layout at the filed site counts (six of Amazon’s seven DFW sites geocoded, 75 Wing, 75 Zipline at 400 a day; 10 runs)</td><td><b>80% / 73% / 33%</b></td><td>DFWREAL, SEEDS</td></tr>' +
+    '<tr><td>Amazon returns at 111, 115 or 122 m</td><td><b>23–25%</b></td><td>PRELAUNCH</td></tr>' +
+    '<tr><td>Close means within 15 m vertically (real layouts, best-sourced Amazon)</td><td><b>55%</b> Houston, <b>45%</b> DFW (an older layout gave 44–46%)</td><td>HEADLINE2, ROBUST</td></tr>' +
+    '<tr><td>Dallas–Fort Worth’s mix of companies (filed heights, random layout; the real DFW layout gives 80%, row above). The earlier 50–54% came from an older, coarser counter</td><td><b>75%</b></td><td>ROBUST, rerun 27 Oct</td></tr>' +
+    '<tr><td>Each drone holds height to within 3 m / 5 m (filed heights)</td><td><b>72% / 63%</b></td><td>PRELAUNCH</td></tr>' +
+    '<tr><td>30 random city layouts at 4 km; 6 km spacing (filed heights)</td><td><b>83%</b> (worst tenth ≥ 72%); <b>81%</b></td><td>PRELAUNCH</td></tr>' +
+    '<tr><td>Different Zipline drop-box layouts (filed heights)</td><td>within 2 points</td><td>PRELAUNCH</td></tr></table>' +
+    '<p><b>Also worth knowing.</b> <b>Today</b>, with only the sites reported flying in Houston (Wing’s 13 Houston delivery hubs as of July 2026, per DroneLife, 8 Jul 2026, Amazon’s Richmond site, Zipline in Cypress), the filed plans almost never meet: no planned conflicts between companies in 54 simulated hours (18 runs, counting the plan-check variants of the same flights) at 20% of the filed volume (the Build-out tab’s “today” stage, every height plan, calm and windy), and 1–2 in 60 hours at the full filed volume (HOUTODAY, run when 5 Wing stores were open). Amazon’s Richmond site and Zipline’s Cypress area are too far apart to overlap. They start to meet once between a quarter and half of the filed sites are open; see the Build-out tab (BUILDOUT). The problem appears with build-out, which is what this page models. And some operators already share flight plans before take-off (ASTM F3548), so “as filed” is a no-coordination reference, not what happens today.</p>' +
+    '<h3>Checked since (24–26 Oct)</h3><ul>' +
+    '<li><b>Ten runs instead of three.</b> Sharing out still cuts planned conflicts by 83% at mid build-out and 81% at full (90% range 77–84%) (SEEDS).</li>' +
+    '<li><b>Real Walmart stores instead of random spots.</b> Growing Wing onto the nearest Walmarts changes little: 34 planned conflicts an hour at full build-out against 36 with random spots; sharing out cuts 78% against the Omaha profile and 72% against best-sourced. One prediction failed: at mid build-out real sites gave slightly fewer planned conflicts (5.2 an hour against 6.3), not more (REALSITES).</li>' +
+    '<li><b>Twenty real 2025 wind hours per band.</b> The cut holds at 79–82% from still air to the windiest hours. A plan check made in still air leaves 69% of planned conflicts when flown in a typical wind (WIND20).</li>' +
+    '<li><b>Fixed landing pads at sites.</b> Pads 30 m apart remove 86–99% of same-company meetings near sites. But Zipline’s Houston sites would need more than 20 docks: with 20, drones wait about 4 minutes on average (PADS).</li><li><b>Amazon at today’s reported volume (25 Oct).</b> With Amazon at about 200 flights a day (20% of its filed cap, the figure it gave Richardson council) instead of 1,000, planned conflicts at full build-out fall from 33 to 9 an hour, and Amazon is still about 80% of what is left. Sharing out cuts 62%. Two predictions failed: I expected Amazon to be under half of what remains, and Wing–Zipline meetings to be unchanged by Amazon’s volume (TODAYVOL).</li><li><b>AI review (24–25 Oct).</b> Three AI reviewers (fresh sessions of the AI assistant used to build this project, each given a role: research methods, drone-industry practice, public critic) read the code and pages. They are not people or industry experts, and no human outside reviewer has looked at the work yet. Their findings led to the headline rerun with 10 runs and bounded counting (HEADLINE2), the “planned conflict” wording, the no-coordination caveat up front, and the 15 m and 20 m columns. Every finding and what was done about it: planned/REVIEW_2026-10-25.md.</li><li><b>Air taxis near take-off sites (26 Oct).</b> Today no modelled drone comes near the Texas Medical Center helipad (the one vertical-flight site modelled in Houston). At full build-out about 2 in 5 air-taxi or helicopter take-offs and landings there (41%) would have at least one delivery drone inside the “well clear” volume (2,000 ft / 250 ft, the values ASTM F3442 recommends; I have not read the paywalled standard) and about 1 in 45 one inside the near-mid-air-collision volume (500 ft sideways and 100 ft vertically, my definition; planned paths, no avoidance; the 1 in 45 rests on a dozen events and assumes 12 air-taxi movements an hour), mostly 0.5–0.8 km out where the climb path crosses drone heights. Drones yielding to the aircraft’s booked departure or approach removes all of them for about one 2-minute drone delay per movement; a 2 km no-drone circle also works but drops about 36 deliveries an hour (AIRTAXI1).</li></ul>' +
+    '<h3>In the run you are watching</h3>' + hb('As filed', F.wide, F.wide, 'var(--meet)', undefined, undefined, F.wide + ' / ' + F.close) + (SC.sourced ? hb('Best-sourced Amazon', SC.sourced.wide, F.wide, 'var(--meet)', undefined, undefined, SC.sourced.wide + ' / ' + SC.sourced.close) : '') + hb('High return (staff remark)', SC.reported.wide, F.wide, 'var(--meet)', undefined, undefined, SC.reported.wide + ' / ' + SC.reported.close) + hb('Shared out', Sh.wide, F.wide, 'var(--meet)', undefined, undefined, Sh.wide + ' / ' + Sh.close) + hb('+ plan sharing', Ck.wide, F.wide, 'var(--good)', undefined, undefined, Ck.wide + ' / ' + Ck.close) + (SC.layered ? hb('+ layer fix', SC.layered.wide, F.wide, 'var(--good)', undefined, undefined, SC.layered.wide + ' / ' + SC.layered.close) : '') +
+    '<div class="cap">Planned conflicts / tight conflicts. Sites every 3 km, seed 1, still air.' + (Ck.delays && Ck.delays.checked ? ' With plan sharing ' + Math.round(100 * Ck.delays.delayed / Ck.delays.checked) + '% of checked flights wait' + (SC.layered && SC.layered.delays && SC.layered.delays.checked ? '; with the layer fix ' + Math.round(100 * SC.layered.delays.delayed / SC.layered.delays.checked) + '%' : '') + ' (this dense patch; the study figures above are for the real layouts in windy hours).' : '') + '</div>' +
+    '<h3>What does the plan check cost?</h3><p>With shared-out heights, 1.5–2.3% of flights wait about 40 s each at these densities. Against the filed plans that is 4.4× fewer delayed flights; in the high-return case (staff remark only), only 1.3× fewer. With this minimal check Amazon waits most (9–14% of its flights), mainly because it is the smallest fleet among two big ones: each conflict delays one flight, so the few Amazon flights carry a large share. With equal fleet sizes the gap shrinks by about 70% (FLEET). A smaller 2:1 lean against Amazon in its meetings with Wing remains; its cause is not tested.</p>' +
+    '<h3>A realistic check costs more</h3><p>The check above is minimal (±5 s, 30 m cells). With reserved airspace blocks sized like real plan-sharing systems (COORD1, inspired by ASTM F3548: the standard itself was not read and the block sizes are my assumptions), shared-out heights still remove 96–99% of planned conflicts in windy hours, but about 1 in 5 flights in Houston and 1 in 6 in DFW wait, about 6 minutes on average, and Amazon waits on about 80–86% of its flights. I had predicted at most 5% delayed; it was 17–19%. The cause is in the layout: the shared-out layers are 10–14 m apart, closer than two 10 m reserved blocks, so neighbouring layers block each other on paper. Layers 20 m apart cut that delay by about 60% (COORD2); 5 m blocks with Zipline on top cut it to about 4% of flights, and Amazon’s delayed share from 83% to 26% in Houston (80% to 18% in DFW) (LAYER2, 6 of 6 predictions passed). Wait times also rise with demand, and above today’s filings the cost moves into cancellations (DENS1).</p>',
+  bad: '<p>Plans go wrong: a drone stops to hover, returns home, or a whole area has to hold. Each was tested with the plan check on.</p>' +
+    '<h3>Hover for 2 minutes (stress test: 1 in 5 drones in the zone, far above any real rate; read the results per hover)</h3>' + hb('As filed', 3.93, 3.93, 'var(--meet)', undefined, undefined, '3.93') + hb('High return (staff remark)', 0.58, 3.93, 'var(--meet)', undefined, undefined, '0.58') + hb('Shared out', 0.42, 3.93, 'var(--good)', undefined, undefined, '0.42') +
+    '<div class="cap">Planned conflicts per 100 hovers. Lifting Amazon’s return: <b>6.8× fewer</b> (4.8–9.9). Sharing out everything on top: <b>1.4×</b> (0.8–2.4, not clearly different from no gain). Against the filed plans, sharing out gives 9.4× (6.3–14.7).</div>' +
+    '<h3>Fly home at a common emergency height</h3>' + hb('All at 120 m', 1.54, 1.54, 'var(--meet)', undefined, undefined, '1.54') + hb('Own height', 0.14, 1.54, 'var(--good)', undefined, undefined, '0.14') +
+    '<div class="cap">Planned conflicts per 100 return-home events, shared-out heights. A common return height is <b>10.7× worse</b> (5.4–24). In the high-return case it is still <b>8.6× worse</b> (4.5–18.6), so this result barely depends on where Amazon flies. Our reading, not separately tested: returning drones climbing through other companies’ layers cause most of it.</div>' +
+    '<h3>A whole area holds (2 km radius, 2 minutes)</h3>' + hb('As filed', 5.33, 5.33, 'var(--meet)', undefined, undefined, '5.33') + hb('Shared out', 0.82, 5.33, 'var(--good)', undefined, undefined, '0.82') +
+    '<div class="cap">Planned conflicts per 100 held drones, against the filed plans: <b>6.5× fewer</b> (95% interval 4.9–8.8), counted 4 times a second over 10 runs, 3 km spacing only (RECOUNT1; the first count, once per second over 3 runs, gave 7.0×). Not yet measured reliably for the high-return case.</div>' +
+    '<p><b>The clearest bad-day result:</b> sending every drone home at its own company’s height beats one common height, whatever Amazon’s heights. Treat it as a stress test: no operator or regulator proposes a single common return height, and 120 m sits 5 m from Amazon’s allocated 115 m return, which makes the common height look worse.</p>' +
+    '<p><b>The practical lesson, in this model:</b> most of the bad-day risk, like the normal-day risk, comes from one company’s return trip sitting within 10 m of another’s cruise. Keeping every company’s cruise and return heights at least 10 m apart does most of the work on paper; full height sharing adds a little more. With real plan sharing the layers also need gaps wider than the reserved airspace blocks (COORD2). This is a model result, not operational advice.</p>' +
+    '<p>Earlier work (Kuo, Xue, Pradeep, de Alvear Cárdenas and Lee, “Safety Assessment of Conformance Monitoring for Situational Awareness in UTM Operations”, NASA/TM-20240015613, Dec 2024) studied off-plan drones with everyone at one height. We did not find published work on how heights between companies interact with emergency heights (searched 22–23 October 2026).</p>',
+  how: '<h3>Flights built from FAA filings</h3><table class="tbl"><tr><th>Company</th><th>Heights</th><th>Speed</th><th>Hovers</th><th>Source of these values</th></tr>' +
+    '<tr><td style="color:var(--wing)">Wing</td><td>46–91 m</td><td>26.4 m/s</td><td>30 s at 7 m (pick-up and drop)</td><td>FAA environmental assessment for Wing in DFW (draft, 2023, §2.2.2): 150–300 ft en route, about 59 mph, hover about 30 s at 23 ft; the Houston draft assessment (2026) gives the same 150–300 ft band</td></tr>' +
+    '<tr><td style="color:var(--zip)">Zipline</td><td>101 m</td><td>31.3 m/s</td><td>120 s and 75 s (filed); 20 drop boxes per dock (filed), placed within 5 km of it (assumed)</td><td>FAA draft environmental assessment for Zipline’s Texas metros (Sept 2026, §2.2.3–2.2.4): 330 ft, typical 70 mph, about 120 s pick-up and 75 s drop hovers</td></tr>' +
+    '<tr><td style="color:var(--amz)">Amazon</td><td>Texas filing: en route 180–377 ft (55–115 m), up to 1,000 flights per site per day, 7.5-mile range, six Houston sites. Omaha noise profile: 61 m out, 105 m back. Amazon told Richardson council about 69 m out (Mar 2026); FAA filings: typical return 345 ft (105 m), band 279–377 ft; a staff remark of 400 ft (secondhand).</td><td>30 m/s</td><td>filed climb, transition and drop timings</td><td>Heights: Texas final environmental assessment (Jan 2026) and the Florida, Detroit and Kansas City final assessments (2026); speed 58.3 knots and the timings: Omaha Appendix E; 69 m: Amazon to Richardson council (Mar 2026)</td></tr></table>' +
+    '<p>Sources: FAA environmental assessments for Wing (Houston 2026: 150–300 ft cruise, 75 nests, 400 flights per nest per day), Zipline (Texas metros draft, Sept 2026: Houston 65 launch sites, 20 drop boxes each, 330 ft), and Amazon (Texas final environmental assessment, Jan 2026, decision 5 Feb 2026; Omaha Appendix E for the timing profile). The site counts in the model (75 : 65 : 6) match these Houston filings. Other data: wind from Open-Meteo historical weather (open-meteo.com, CC BY 4.0); population from the US Census Bureau 2020 centres of population; FAA UAS facility maps; downtown buildings © OpenStreetMap contributors (ODbL).</p>' +
+    '<p class="small">Facts from news and company reports (not FAA filings): Amazon at about 69 m out and about 200 flights a day, as told to Richardson council (<a href="https://communityimpact.com/dallas-fort-worth/richardson/government/2026/03/10/amazon-introduces-drone-delivery-changes-after-richardson-resident-concerns/" target="_blank" rel="noopener">Community Impact, 10 Mar 2026</a>); the 400 ft staff remark (<a href="https://creekhollow.net/amazon-prime-air/" target="_blank" rel="noopener">homeowners’ association summary</a>); Wing and Flytrex sharing plans in DFW (<a href="https://secure.businesswire.com/news/home/20260625541966/en/Flytrex-Scales-Shared-Airspace-Framework-for-Drone-Deliveries-Reaching-Nearly-10000-Overlapping-Flights-Per-Month-With-Other-Operators" target="_blank" rel="noopener">Flytrex press release</a>, <a href="https://dronelife.com/2026/06/25/flytrex-and-wing-report-zero-airspace-conflicts-for-multi-operator-drone-delivery/" target="_blank" rel="noopener">DroneLife, 25 Jun 2026</a>); Joby flying at Toyota’s Plano HQ (<a href="https://ir.jobyaviation.com/news-events/press-releases/detail/191/joby-launches-eipp-flights-in-texas" target="_blank" rel="noopener">Joby, Sept 2026</a>). These are company statements and press reports, not independent measurements.</p>' +
+    '<h3>What the heights are, and are not</h3><p>The heights, speeds and hover times come from the noise-assessment profiles in each company’s FAA environmental filings. They describe a representative flight for noise purposes, not how fleets are flown day to day. If a company flies differently, the result changes. The Wing test (46, 61 or 76 m fixed, or random) shows the headline is not sensitive to that choice for Wing; Amazon’s heights were tested too (AMZBAND, PRELAUNCH, AMZSRC) and they do matter: see the Results tab.</p>'+
+    '<h3>The city</h3><ul><li>A 44 km square with sites placed at random every 3 km (also tested at 4 km), in the filed ratio of Wing to Zipline to Amazon sites. That is about three times as many sites as the filed Houston build-out (about 420 against 146) packed into a smaller area, about 7 times as dense, so absolute counts in the animation are inflated; the studies use the ratios. Only the central 12 × 12 km is counted; flights come from about 420 sites across the region, 37 of them in or next to the counted zone.</li><li>Customers are random inside each site’s service area; routes are straight lines. Placing customers by Census population and keeping routes off airport squares were both tested and leave the results within a few points (CENSUS).</li><li>1 hour warm-up, then 2 hours measured. Buildings on screen are decoration; the model flies above them. The downtown backdrop uses real OpenStreetMap footprints (5,529 buildings); heights come from OSM where tagged (302 buildings, tallest 305 m), otherwise 12 m.</li></ul>' +
+    '<h3>Counting a planned conflict</h3><ul><li>Planned conflict: planned paths of two companies within 30 m sideways and less than 10 m vertically at the same moment; tight conflict: within 15 m and 5 m.</li><li>Filed caps on overlapping service areas (Zipline: 1,000 deliveries a day over any area; Wing: 400) are not applied in the scenarios, so busy overlap areas fly above those caps and absolute counts are too high. CAPS1 applied them: current-practice conflicts fell by about 90% (Houston) and 82% (DFW), and sharing out heights still cut the rest by 72% (Houston) and 59% (DFW). Read the counts as upper bounds and the percentages as the result.</li><li>Positions are checked 4 times per simulated second (1 per second missed about 40% of tight conflicts; fixed on 23 Oct).</li><li>Only pairs from different companies, inside the counted zone, each episode counted once (a pair that separates for one check and closes again counts again).</li></ul>' +
+    '<h3>The plan checks</h3><p><b>Realistic plan sharing</b> (the hero toggle and the “+ sharing” and “Layer fix” scenarios): each flight reserves 4D blocks along its plan, 30 m wide and 10 m above and below (5 m with the layer fix), growing with time to allow for timing error; first filed goes first, and a flight whose blocks overlap another company’s waits and retries (planned/coord.js, COORD1 volumes V2). <b>Simple check</b> (bad-day scenarios and the Build-out tab): first filed goes first. Each plan is checked in 30 m cells, ±5 s, with 10 m vertical separation. A clashing flight waits 30 s and retries, up to 40 times. This is a deliberately minimal check. Real strategic coordination (ASTM F3548) reserves 4D volumes sized to each operator’s own timing uncertainty and re-plans when a flight drifts from its plan, so where this page says a check “fails in wind”, that applies to this minimal ±5 s check, not to real systems.</p>' +
+    '<h3>How results are kept honest</h3><ul><li>Since 22 Oct 2026 every study is written down and fingerprinted (sha256) before it runs, and its analysis script is committed before the runs. Exceptions: VALLOC, VALLOC2 and ROBUST, which include the first height-sharing study, were committed together with their results, so their order cannot be checked; FLEET’s analysis was written after its runs. Earlier work (before 22 Oct) is not fingerprinted.</li><li>Failed predictions are reported, never re-scored. A failing feature gets at most two fixes.</li><li>Ranges on this page are the spread between runs, seed bootstrap intervals (headline) or conditional binomial intervals (bad-day ratios), as labelled. The binomial and Poisson intervals ignore run-to-run spread and are too narrow.</li><li>The registrations and their fingerprints are in the project’s repository (private for now; available on request) with commit times (check them with planned/verify_prereg.py; see VERIFY.md). They are not timestamped by an outside party.</li></ul>',
+  chk: '<table class="tbl"><tr><th>Claim</th><th>Checked against</th><th>Status</th></tr>' +
+    '<tr><td>Heights, speeds, hover times, daily volumes</td><td>FAA filings</td><td><span class="tag mid">copied in</span></td></tr>' +
+    '<tr><td>Planned conflicts grow roughly with the square of traffic</td><td>We ran TU Delft’s open-source BlueSky simulator on a Vienna street benchmark against an earlier version of this engine (with avoidance): the growth slope was about 2 in both, but absolute counts differed 2–4 times, so 2 of the 3 predictions failed. This checks the growth law only, not the headline cut. On the Texas layouts the growth exponent is 1.65–2.4 (DENS1; my 1.7–2.3 prediction failed narrowly).</td><td><span class="tag mid">growth law matches</span></td></tr>' +
+    '<tr><td>The 4 m Amazon–Zipline gap causes most planned conflicts</td><td>Derived from filings (Omaha profile). Amazon’s filings give a typical 105 m return (this row); staff once told residents 400 ft; at its best-sourced heights the gap is wider and sharing out still cuts most planned conflicts (AMZSRC)</td><td><span class="tag mid">model only</span></td></tr>' +
+    '<tr><td>A plan check removes nearly all planned conflicts</td><td>Wing and Flytrex report about 8,000 flights in overlapping airspace with zero conflicts (Jan–Feb 2026). Our zero is built into the check, so this is weak support. A realistic check with reserved blocks removes 96–99%, at a delay cost (COORD1).</td><td><span class="tag mid">consistent, weak</span></td></tr>' +
+    '<tr><td>How often drones pass over homes near a hub</td><td>From a Richardson resident’s count of 122 passes and Amazon’s stated volume, we estimate 40–55% of hub passes go over one street; the model gives about 2.5% (about 2% with Census-placed customers, up to about 10% with the hospital no-fly zone). About two shared departure paths, one over the street, reproduce it (CORRIDOR): a fit, not proof</td><td><span class="tag bad">fails with straight routes</span></td></tr>' +
+    '<tr><td>Exact counts of planned conflicts</td><td>Differ between engines</td><td><span class="tag bad">not dependable</span></td></tr></table>' +
+    '<h3>What this means</h3><p>Trust the <b>ratios</b> (filed vs shared, own vs common return height) more than the raw counts. The biggest known weakness is straight-line routes: real drones funnel into corridors near their hubs. A test with all three companies on departure corridors (CORR2) cut planned conflicts by 71% in Houston and 82% in DFW, against 72% and 73% with straight routes, so the headline held in that one corridor design (the difference between 82% and 73% in DFW is within the spread between runs, so do not read it as corridors helping more there). A known no-fly zone explains about a fifth of the Richardson gap; where customers live does not explain the rest (RICHPOP). About two shared departure paths out of the hub reproduce it (CORRIDOR), a fit that real tracks would confirm or rule out.</p>' +
+    '<h3>Already known vs possibly new</h3><ul><li>Reserved-airspace cost and surge results agree with NASA and Airbus/EUROCONTROL work, so they are confirmations, not discoveries.</li><li>Layered airspace by heading is well studied (TU Delft, Sunil et al.). Melgosa et al. (Drones 10(9):656, Aug 2026, doi:10.3390/drones10090656) found rigid layers gave more conflicts than free routing with altitude reassignment, a caution for any fixed allocation like ours.</li><li>We did not find published work that combines several operators’ FAA-filed profiles to find where their planned flights meet, or that proposes a height allocation inside their filed bands (searched 22 October 2026). That is not a claim to be first.</li></ul>' +
+    '<h3>Out of scope</h3><p>This page says nothing about noise, how often drones pass over any one home, battery range, weather, or the number of drones a company can run. Those are different questions and need different models. The one real-world check on overflights fails with straight routes and is matched only by a fitted corridor (see above), so no overflight number from this model should be quoted.</p>'+
+    '<h3>Does it hold at other traffic levels?</h3><p>The headline uses the filed Houston site counts on one real layout, 10 runs (HEADLINE2). In the dense 12 km test patch the share removed by height sharing was 83% with sites every 4 km (30 runs), 80% at 3 km (15 runs) and 81% at 6 km (30 runs), counted 4 times a second (PRELAUNCH); an older once-per-second count gave 80% at 2 km (VALLOC). Planned conflicts grow roughly with the square of demand (exponent 1.65–1.7 in Houston, 2.3–2.4 in DFW; DENS1), so denser build-outs produce many more of them.</p>'+
+    '<h3>Still open</h3><ul><li>Amazon’s actual heights near Houston sites, and Zipline’s (both from local reports or Remote ID).</li><li>Real drone tracks near a hub (Remote ID recordings).</li><li>A human outside reviewer: none yet (the reviews so far were AI-assisted). Nobody at Wing, Zipline or Amazon has commented.</li><li>Collision risk: the model counts planned overlaps; it has no navigation error or collision probability (height-keeping errors of 3 m and 5 m were tested in Houston: the cut falls to 72% and 63%). No absolute number on this page can be priced or used as a safety figure.</li><li>Weather: the scenarios fly in wind but not in rain. In 2025 about 22% of Houston and 13% of DFW daytime hours had measurable rain (mostly drizzle), and 4–5% had heavy rain or gusts of 55 km/h or more at 10 m (WX1). No company’s rain or gust limit is public, and the weather data cannot see thunderstorms, so these are lower bounds on lost hours.</li><li>Energy use and a fully sourced site list.</li><li>Peak hours: demand is spread evenly over operating hours; lunch and dinner peaks would raise peak-hour counts more than proportionally.</li><li>Model simplifications not yet tested: Wing’s remote pick-up points (autoloaders) are not modelled; Amazon’s day is 16.5 h (Kansas City filing) rather than the Texas EA’s 15 h, so its hourly rate is about 10% low; some Zipline trips via a pick-up box exceed its filed 20-mile round trip.</li><li>Regulation: the FAA’s proposed BVLOS rule (Part 108; notice of proposed rulemaking of 7 Aug 2025, docket FAA-2025-1908, Federal Register 90 FR 38212) would rely on certified third-party providers of strategic deconfliction (a proposed Part 146); not modelled.</li></ul>',
+  more: '<div class="links"><a href="findings.html">What the simulation found →<span>The main results on one page, with charts, what failed and what is still open.</span></a>' +
+    '<a href="lab.html" target="_blank" rel="noopener">Run your own scenario in the Shared Sky Lab →<span>Change heights, density, plan-check rules and bad-day events; the same engine runs in your browser.</span></a><a href="about.html">About and how it was built →<span>Who made this, how (including the AI assistance), the data used, and how to cite it.</span></a></div>' +
+    '<p>The full study record (registrations, code fingerprints, code and results) is in a repository that is private for now; it is available on request.</p><h3>About this project</h3><p>A personal, unaffiliated simulation project, built for learning and as a portfolio piece, using only publicly available FAA filings and public reports. Not affiliated with, endorsed by or reviewed by Wing, Zipline, Amazon or the FAA. Results come from a model, not real flight data, and are not safety, operational or legal advice.</p><h3>Questions, corrections, data</h3><p>If you spot a mistake, want the run data, or have real flight tracks that could check the model: a contact route is being set up. Until then the study record is available on request.</p><h3>About this page</h3><p>Every drone path on screen comes from the Shared Sky engine (sites every 3 km, seed 1), and so does every red mark. Nothing is hand-placed. The counts on the scoreboard are this run’s; the study totals are in Results.</p><p>forgottenl5 · October 2026</p>'
+};
+// ---------- build-out tab (BUILDOUT study) ----------
+var GROW = /*GROW*/, gState = { st: 'mid', h: 'A0', c: 'none' };
+var G_ST = [['today', 'Today'], ['early', 'Early'], ['mid', 'Mid'], ['full', 'Full build-out']], G_H = [['A0', 'Omaha profile'], ['R', 'High return (staff remark)'], ['A2', 'Heights shared out']],
+  G_C = [['none', 'No plan check'], ['still5', 'Plan check ±5 s, calm air'], ['wind5', 'Plan check ±5 s, typical wind'], ['wind30', 'Plan check ±30 s, typical wind']];
+TABS.grow = '<h3>From today to full build-out</h3><p>Houston stage by stage, from the sites flying today to everything the three companies have filed. Pick a stage, a height plan and a fix.</p>' +
+  '<div class="gseg" id="gSt"></div><svg class="gmap" id="gMap" viewBox="-43 -43 86 86" role="img" aria-label="Map of delivery sites at this stage"></svg>' +
+  '<p class="small" id="gSites"></p><div class="gseg" id="gH"></div><div class="gseg" id="gC"></div><div class="gnum" id="gNum"></div><div class="gbars" id="gBars"></div>' +
+  '<p class="small">Planned conflicts between drones of different companies per hour, inside an 84 × 84 km square, from 6 simulated hours per setting. Bars keep one scale so stages compare. Typical wind = Houston’s median 2025 hour (5.5 m/s at 120 m).</p>' +
+  '<h3>What it shows</h3><ul><li>Today (at 20% of filed volume): no planned conflicts between companies; the sites are too far apart.</li><li>Planned conflicts appear between a quarter and half of the filed sites and grow roughly with the square of traffic: 6.3 an hour at mid, 36 at full (Omaha profile, no coordination). 76–87% are Amazon and Zipline.</li>' +
+  '<li>Sharing out heights removes 83–87% (29–44% in the high-return case (staff remark only)) and is not affected by wind.</li><li>A ±5 s plan check with no wind allowance removes all of them in calm air but only 16% in a typical wind, because wind shifts arrival times; ±30 s removes 62%, with 6.7% of flights delayed. Heights shared out plus a ±30 s check leaves 15 of 216 planned conflicts with 1.5% delayed.</li></ul>' +
+  '<p class="small"><b>Assumptions.</b> Stages are shares of the filed sites (a quarter, half, all) and of filed volume (20, 50, 75, 100%), not dates. Real positions: Wing’s 13 stores (July 2026), Amazon’s geocoded sites in a fixed order (Richmond first), Zipline in Cypress; every other site is placed at random. Source: BUILDOUT study, written down before it ran; 3 of 5 predictions passed. Corrected 24 Oct after an AI review found a plan-check bug beyond 30 km; numbers here are from the corrected rerun.</p>';
+function drawGrow() {
+  function seg(id, list, key) { var el = $(id); el.innerHTML = list.map(function (o) { return '<button data-v="' + o[0] + '"' + (gState[key] === o[0] ? ' class="on"' : '') + '>' + o[1] + '</button>'; }).join('');
+    el.querySelectorAll('button').forEach(function (b) { b.onclick = function () { gState[key] = b.dataset.v; drawGrow(); }; }); }
+  var G_STA = G_ST.filter(function (o) { return GROW.stages[o[0]]; }); seg('gSt', G_STA, 'st'); seg('gH', G_H, 'h'); seg('gC', G_C, 'c');
+  var S = GROW.stages[gState.st], col = { w: 'var(--wing)', z: 'var(--zip)', a: 'var(--amz)' }, svg = '';
+  svg += '<rect x="-42" y="-42" width="84" height="84" fill="none" stroke="rgba(255,255,255,.18)" stroke-dasharray="1 1" stroke-width=".25"/>';
+  svg += '<circle cx="' + GROW.centre[0] + '" cy="' + (-GROW.centre[1]) + '" r="1.6" fill="none" stroke="#c9b98a" stroke-width=".35"/><text x="' + (GROW.centre[0] + 2.3) + '" y="' + (-GROW.centre[1] + 1) + '" font-size="2.6" fill="#c9b98a">Downtown</text>';
+  S.sites.forEach(function (p) { var x = p[1], y = -p[2]; svg += p[3] ? '<circle cx="' + x + '" cy="' + y + '" r="1.25" fill="' + col[p[0]] + '" stroke="#05080f" stroke-width=".35"/>' : '<circle cx="' + x + '" cy="' + y + '" r=".8" fill="none" stroke="' + col[p[0]] + '" stroke-width=".45" opacity=".85"/>'; });
+  $('gMap').innerHTML = svg;
+  var n = S.counts; $('gSites').innerHTML = '<span style="color:var(--wing)">●</span> Wing ' + n.wing + ' · <span style="color:var(--zip)">●</span> Zipline ' + n.zipline + ' · <span style="color:var(--amz)">●</span> Amazon ' + n.amazon + ' · volume ' + Math.round(n.vol * 100) + '% of filed. Filled = real position; hollow = placed at random (positions not public).';
+  var v = S.res[gState.h][gState.c]; $('gNum').innerHTML = (v.perHour < 0.1 ? '0' : v.perHour < 10 ? v.perHour.toFixed(1) : Math.round(v.perHour)) + ' <small>planned conflicts an hour' + (gState.c === 'none' ? '' : ' · ' + v.delayedPct + '% of flights delayed by the check') + '</small>';
+  var max = GROW.stages.full.res.A0.none.perHour;
+  $('gBars').innerHTML = G_STA.map(function (o) { var x = GROW.stages[o[0]].res[gState.h][gState.c].perHour, h = Math.max(2, Math.round(100 * Math.min(1, x / max)));
+    return '<div class="' + (o[0] === gState.st ? 'cur' : '') + '"><span>' + (x < 0.1 ? '0' : x < 10 ? x.toFixed(1) : Math.round(x)) + '</span><i style="height:' + h + 'px"></i>' + o[1].replace(' build-out', '') + '</div>'; }).join('');
+}
+function setTab(t) { document.querySelectorAll('#tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.tab === t); }); $('dbody').innerHTML = TABS[t]; $('dbody').scrollTop = 0; if (t === 'grow') drawGrow(); }
+document.querySelectorAll('#tabs button').forEach(function (b) { b.addEventListener('click', function () { setTab(b.dataset.tab); }); });
+function openDrawer() { $('drawer').classList.add('open'); $('drawer').setAttribute('aria-hidden', 'false'); }
+function closeDrawer() { $('drawer').classList.remove('open'); $('drawer').setAttribute('aria-hidden', 'true'); }
+$('deepBtn').addEventListener('click', function () { endTour(); openDrawer(); }); $('dClose').addEventListener('click', closeDrawer);
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeDrawer(); hideTip(); } });
+setTab('res');
+
+// ---------- sound: generative score (common/score.js, WebAudio, no files) + a chime per planned conflict ----------
+/*SCORE*/
+var soundOn = false;
+function chime(veryClose) { Score.chime(veryClose); }
+function setSound(on) { soundOn = on; $('sndStyle').hidden = !on; try { localStorage.setItem('sharedsky-sound', on ? '1' : '0'); } catch (e) {} $('snd').textContent = on ? '♪ Sound on' : '♪ Sound off'; $('snd').setAttribute('aria-pressed', String(on)); $('snd').classList.toggle('on', on);
+  if (on) Score.start(); else Score.stop(); }
+function startSound() { if ($('sndOn').checked) setSound(true); }
+try { if (localStorage.getItem('sharedsky-sound') === '0') $('sndOn').checked = false; } catch (e) {}
+$('snd').addEventListener('click', function () { setSound(!soundOn); });
+$('sndStyle').addEventListener('click', function () { var L = Score.styles, n = L[(L.indexOf(Score.style()) + 1) % L.length]; Score.style(n); this.textContent = '♪ Style: ' + n.charAt(0).toUpperCase() + n.slice(1); try { localStorage.setItem('sharedsky-style', n); } catch (e) {} });
+try { var sv = localStorage.getItem('sharedsky-style'); if (sv && Score.styles.indexOf(sv) >= 0) { Score.style(sv); $('sndStyle').textContent = '♪ Style: ' + sv.charAt(0).toUpperCase() + sv.slice(1); } } catch (e) {}
+var prevT = 0;
+function chimes() { if (!soundOn || scrubbing) { prevT = simT; return; } var d = simT - prevT; if (SC[cur]) { var evm = SC[cur].ev, nm = 0; for (var q = 0; q < evm.length; q++) { if (evm[q].t > simT) break; if (evm[q].t > simT - 150) nm++; } Score.mood(Math.min(1, nm / 8)); } if (d > 0 && d < 20) { var ev = SC[cur].ev, n = 0; for (var i = 0; i < ev.length; i++) { var e = ev[i]; if (e.t > simT) break; if (e.t > prevT && n < 3) { chime(!!e.c); n++; } } } prevT = simT; }
+// ---------- loop ----------
+function resize() { var w = window.innerWidth, h = window.innerHeight; renderer.setSize(w, h, false); if (composer) composer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix();
+  var sc = h * 0.75 * renderer.getPixelRatio(); mats.forEach(function (m) { m.uniforms.scale.value = sc; }); dm.uniforms.pr.value = renderer.getPixelRatio(); }
+window.addEventListener('resize', resize); resize();
+function placeTour() { $('tour').style.bottom = (document.querySelector('.dock').offsetHeight + 24) + 'px'; } window.addEventListener('resize', placeTour);
+buildRows(); setScenario('filed'); simT = 1500;
+var last = performance.now(), frames = 0, endHold = 0;
+function frame(now) {
+  requestAnimationFrame(frame); var dt = Math.max(0, Math.min(0.1, (now - last) / 1000)); last = now; frames++;
+  if (playing && !scrubbing) { simT += dt * speed; if (simT >= TEND) { simT = TEND; endHold += dt; if (endHold > 4) { endHold = 0; simT = 0; } } else endHold = 0; }
+  updateDrones(); updateEvents(); updateCamera(dt); placeTip(); chimes(); if (zoneLine) zoneLine.material.dashOffset = -(now / 40) % 400;
+  if (composer) composer.render(); else renderer.render(scene, view);
+  if (frames % 4 === 0) updateScore();
+}
+document.querySelectorAll('.legend [data-op]').forEach(function (b) { b.addEventListener('click', function () { var o = +b.dataset.op; showOp[o] = !showOp[o]; b.classList.toggle('off', !showOp[o]); b.setAttribute('aria-pressed', String(showOp[o])); }); });
+$('trailsBtn').addEventListener('click', function () { showTrails = !showTrails; $('trailsBtn').classList.toggle('off', !showTrails); });
+$('recenter').addEventListener('click', recenter);
+$('rideNext').addEventListener('click', function () { var cands = active.filter(function (g) { return g !== cam.ride && g.t1 - simT > 120 && showOp[g.o]; }); if (cands.length) cam.ride = cands[Math.floor(Math.random() * cands.length)]; });
+// ---------- cinematic opening (first visit; skip with the button or Esc) ----------
+var CINE = null, CITY = (document.querySelector('.brand').textContent.split('·')[1] || '').trim();
+function ease(x) { x = Math.max(0, Math.min(1, x)); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+function V(a) { return new THREE.Vector3(a[0], a[1], a[2]); }
+function capSet(k, b, sm, red) { var K = $('capK'), B = $('capB'), S = $('capS');
+  [K, B, S].forEach(function (el) { el.classList.remove('on'); });
+  setTimeout(function () { K.textContent = k || ''; B.innerHTML = b || ''; S.innerHTML = sm || ''; B.classList.toggle('red', !!red);
+    if (k) K.classList.add('on'); if (b) setTimeout(function () { B.classList.add('on'); }, 450); if (sm) setTimeout(function () { S.classList.add('on'); }, 1300); }, 500); }
+function opsName(o) { var N = { w: 'Wing', z: 'Zipline', a: 'Amazon' }; return (o || '').split('').map(function (c) { return N[c] || c; }).join(' × '); }
+function cineFade(t0, t, len) { var u = (t - t0) / len; return u < 0 || u > 1 ? 0 : (u < .5 ? u * 2 : 2 - u * 2); }
+function cinePickDrone() { var fl = SC[cur].fl, best = null, bs = 1e9; for (var i = 0; i < fl.length; i++) { var f = fl[i]; if (f.t0 > simT - 20 || f.t1 - simT < 200) continue; posAt(f, simT, tmp); var d = Math.hypot(tmp[0] + 1500, tmp[1] + 1500); if (tmp[2] > 40 && d < bs) { bs = d; best = f; } } return best; }
+function cinePickConflict() { var ev = SC.filed.ev, best = null; for (var i = 0; i < ev.length; i++) { var e = ev[i]; if (e.c || e.t < 1200 || e.t > TEND - 900) continue; if (Math.abs(e.x) < 3500 && Math.abs(e.y) < 3500) { best = e; break; } } return best || ev[0]; }
+function cineStart() { CINE = { t: 0, shot: -1, f: null, e: null, th: 0 }; document.body.classList.add('cine'); cam.mode = 'cine'; playing = true; simT = 1700; speed = 14; $('fadeK').style.opacity = 1; capSet('', '', ''); $('capF').textContent = 'A simulation from public FAA filings over a modelled build-out. Not real traffic.'; $('capF').classList.add('on'); }
+function cineEnd(pose) { if (!CINE) return; CINE = null; document.body.classList.remove('cine'); $('capM').classList.remove('lo'); ['capK', 'capB', 'capS', 'capF'].forEach(function (id) { $(id).classList.remove('on'); }); $('fadeK').style.opacity = 0; if (bloom) bloom.strength = 0.85; EVS = 1;
+  camera.fov = 50; camera.updateProjectionMatrix(); cam.mode = 'orbit'; cam.tgt.set(0, 400, 0); cam.r = 10500; cam.ph = 0.34; cam.auto = true; if (pose) { cam.th = pose; } speed = 30; heroLast = -1;
+  document.body.classList.add('revealed'); dirStart(true); }
+function cineCam(dt) {
+  var C = CINE; if (!C) { cam.mode = 'orbit'; return; } C.t += dt; var t = C.t, P, L, fov = 50, fk = 0;
+  // shot 1 (0-7.5 s): rise past the downtown towers, the swarm beyond
+  if (t < 7.5) { if (C.shot < 0) { C.shot = 0; capSet(CITY ? CITY + ' · a simulation' : 'A simulation', 'Three delivery companies.', ''); }
+    var u = ease(t / 7.5); P = V([-17200 + 4300 * u, 700 + 3900 * u, -16400 + 3600 * u]); L = V([-11800 + 6000 * u * u, 1500 - 1100 * u, -11800 + 6000 * u * u]); fov = 38 - 4 * u;
+    fk = Math.max(0, 1 - t / 1.6) + cineFade(6.9, t, 1.2); }
+  // shot 2 (7.5-13.5 s): chase one drone through its own height layer
+  else if (t < 13.5) { if (C.shot < 1) { C.shot = 1; speed = 4; C.f = cinePickDrone(); camInit = false; capSet('', 'One sky.', 'Wing, Zipline and Amazon, each flying at the heights it filed with the FAA.'); }
+    var f = C.f; if (!f || simT > f.t1 - 2) { f = C.f = cinePickDrone(); } if (f) { posAt(f, simT, tmp); var p = W(tmp[0], tmp[1], tmp[2]); posAt(f, simT - 5, tmp); var q = W(tmp[0], tmp[1], tmp[2]), dx = p[0] - q[0], dz = p[2] - q[2], Lh = Math.hypot(dx, dz) || 1;
+      var u2 = (t - 7.5) / 6, D = 1300 - 350 * u2, sw = -0.6 + u2 * 1.0; var hx = dx / Lh, hz = dz / Lh, sx = hx * Math.cos(sw) - hz * Math.sin(sw), sz = hx * Math.sin(sw) + hz * Math.cos(sw);
+      P = V([p[0] - sx * D, p[1] + 520 - 120 * u2, p[2] - sz * D]); L = V([p[0] + hx * 700, p[1] - 120, p[2] + hz * 700]); } else { P = camPos.clone(); L = camLook.clone(); } fov = 52; fk = cineFade(13.0, t, 1.0); }
+  // shot 3 (13.5-21 s): slow motion around one planned conflict
+  else if (t < 21) { if (C.shot < 2) { C.shot = 2; if (cur !== 'filed') setScenario('filed'); C.e = cinePickConflict(); simT = C.e.t - 9; speed = 2.2; C.th = 0.6; EVS = 0.3; $('capM').classList.add('lo'); document.body.classList.add('lo-on'); capSet('', '', ''); }
+    var e = C.e, pe = W(e.x, e.y, e.z), u3 = (t - 13.5) / 7.5; C.th += dt * 0.11; var R = 2000 - 700 * ease(u3);
+    if (simT >= e.t && !C.hit) { C.hit = t; setTimeout(function () { capSet('Planned conflict · ' + opsName(C.e.ops), 'Within 30 m sideways, 10 m up or down.', 'Two companies’ planned paths come this close. In this scenario nobody checks plans across companies. The model has no avoidance: it counts overlapping plans, not crashes.', true); }, 0); }
+    if (C.hit && bloom) bloom.strength = 0.85 + 0.45 * Math.exp(-(t - C.hit) * 1.6);
+    var sh = 0; /* no camera shake: a planned conflict is not an impact */
+    P = V([pe[0] + Math.sin(C.th) * R + (Math.random() - .5) * sh, pe[1] + 260 + 220 * (1 - u3), pe[2] + Math.cos(C.th) * R + (Math.random() - .5) * sh]); L = V([pe[0], pe[1] - 230, pe[2]]); fov = 42;
+    fk = Math.max(0, 1 - (t - 13.5) / 0.8); }
+  // shot 4 (21-27 s): pull back to the whole sky and speed up time
+  else if (t < 27) { if (C.shot < 3) { C.shot = 3; C.p0 = camera.position.clone(); C.l0 = camLook.clone(); C.th1 = C.th + 0.9; EVS = 1; $('capM').classList.remove('lo'); document.body.classList.remove('lo-on'); capSet('', 'Own heights for each company: 72% fewer.', 'The study result (real Houston layout, 10 runs). Next: two hours of a denser test patch.'); }
+    var u4 = ease((t - 21) / 6), th = C.th1, end = V([Math.sin(th) * Math.cos(0.34) * 10500, 400 + Math.sin(0.34) * 10500, Math.cos(th) * Math.cos(0.34) * 10500]);
+    P = C.p0.clone().lerp(end, u4); P.y += Math.sin(u4 * Math.PI) * 2500; L = C.l0.clone().lerp(V([0, 400, 0]), u4); fov = 42 + 8 * u4; speed = 2.2 + 40 * u4 * u4; if (bloom) bloom.strength = 0.85;
+    if (t > 26 && !C.cleared) { C.cleared = true; capSet('', '', ''); } }
+  else { var th2 = C.th1; camPos.copy(camera.position); camLook.copy(L || camLook); cineEnd(th2); return; }
+  camPos.copy(P); camLook.copy(L); camera.position.copy(P); camera.lookAt(L); camInit = true;
+  if (Math.abs(camera.fov - fov) > 0.01) { camera.fov = fov; camera.updateProjectionMatrix(); }
+  $('fadeK').style.opacity = Math.min(1, fk).toFixed(3);
+}
+// ---------- director: an automatic camera that keeps cutting between shots (drag, scroll or pick a camera to take over) ----------
+var DIR = null, idleT = 0;
+function rnd(a, b) { return a + Math.random() * (b - a); }
+function dirStart(cont) { DIR = { shot: null, t: 0, last: null, n: 0, cont: !!cont }; cam.mode = 'dir'; document.body.classList.add('dir'); $('capM').classList.add('lo'); playing = true; speed = 30; EVS = 1;
+  $('dirBtn').classList.add('on'); $('dirBtn').setAttribute('aria-pressed', 'true'); document.querySelectorAll('[data-cam]').forEach(function (b) { b.classList.remove('on'); }); }
+function dirStop(keepMode) { if (!DIR) return; DIR = null; document.body.classList.remove('dir', 'idle'); $('capM').classList.remove('lo'); ['capK', 'capB', 'capS'].forEach(function (id) { $(id).classList.remove('on'); });
+  $('fadeK').style.opacity = 0; EVS = 1; if (bloom) bloom.strength = 0.85; if (speed < 10) speed = 30; camera.fov = 50; camera.updateProjectionMatrix();
+  var p = camera.position, dx = p.x, dz = p.z, dy = p.y - 400, r = Math.max(1200, Math.min(32000, Math.hypot(dx, dy, dz)));
+  cam.tgt.set(0, 400, 0); cam.r = r; cam.ph = Math.max(0.03, Math.min(1.45, Math.asin(Math.max(-1, Math.min(1, dy / r))))); cam.th = Math.atan2(dx, dz); cam.auto = false; camPos.copy(p); camInit = true;
+  if (!keepMode) { cam.mode = 'orbit'; document.querySelector('[data-cam=orbit]').classList.add('on'); }
+  $('dirBtn').classList.remove('on'); $('dirBtn').setAttribute('aria-pressed', 'false'); }
+function nextConflict() { var ev = SC[cur].ev; for (var i = 0; i < ev.length; i++) { var e = ev[i]; if (e.c || e.t <= simT + 3) continue; if (Math.abs(e.x) > 5000 || Math.abs(e.y) > 5000) continue; return e; } return null; }
+function dirPick() { var D = DIR, kinds = ['orbit', 'chase', 'conflict', 'reveal', 'skim', 'chase', 'conflict', 'downtown'], k;
+  if (D.forceK) { k = D.forceK; D.forceK = null; } else
+  if (D.n === 0) k = 'orbit'; else { do { k = kinds[Math.floor(Math.random() * kinds.length)]; } while (k === D.last); }
+  if (k === 'conflict' && (cur === 'checked' || !nextConflict())) k = 'chase';
+  var S = { k: k, t: 0, dur: 10 }; D.last = k; D.n++;
+  if (k === 'orbit') { S.th = rnd(0, 6.28); S.dir = Math.random() < .5 ? -1 : 1; S.r = rnd(7000, 10000); S.ph = rnd(0.2, 0.32); S.cx = rnd(-1500, 1500); S.cz = rnd(-1500, 1500); S.dur = 11; speed = 30; capSet('Live · ' + fmtHM(simT) + ' into the run', '', ''); }
+  else if (k === 'reveal') { S.th = rnd(0, 6.28); S.dur = 11; speed = 40; capSet('The whole sky', '', ''); }
+  else if (k === 'skim') { S.th = rnd(0, 6.28); S.dur = 10; speed = 20; capSet('Just above the rooftops', '', ''); }
+  else if (k === 'downtown') { S.dur = 10; speed = 30; capSet((CITY ? 'Downtown ' + CITY : 'Downtown') + ' · real buildings (OSM)', '', ''); }
+  else if (k === 'chase') { S.f = cinePickDrone(); if (!S.f) return dirPick(); S.dur = 10; S.sw = rnd(-0.8, 0.8); speed = 10; posAt(S.f, simT, tmp); capSet('Following a ' + OPN[S.f.o] + ' drone · ' + Math.round(tmp[2]) + ' m up', '', ''); }
+  else if (k === 'conflict') { var e = nextConflict(); S.e = e; if (e.t - simT > 12) simT = e.t - 11; speed = 2.4; S.th = rnd(0, 6.28); S.dur = 99; EVS = 0.3; capSet('Next planned conflict · ' + opsName(e.ops), '', ''); }
+  D.shot = S; }
+function dirCam(dt) {
+  var D = DIR; if (!D) { cam.mode = 'orbit'; return; }
+  if (!D.shot) dirPick(); var S = D.shot; S.t += dt; var t = S.t, u = Math.min(1, t / S.dur), P, L, fov = 48;
+  if (S.k === 'orbit') { var th = S.th + S.dir * t * 0.06; P = V([S.cx + Math.sin(th) * Math.cos(S.ph) * S.r, 400 + Math.sin(S.ph) * S.r, S.cz + Math.cos(th) * Math.cos(S.ph) * S.r]); L = V([S.cx, 300, S.cz]); fov = 46; }
+  else if (S.k === 'reveal') { var e1 = ease(u), ph = 1.15 - 0.8 * e1, r = 17000 - 7000 * e1, th2 = S.th + t * 0.035; P = V([Math.sin(th2) * Math.cos(ph) * r, 400 + Math.sin(ph) * r, Math.cos(th2) * Math.cos(ph) * r]); L = V([0, 300, 0]); fov = 44; }
+  else if (S.k === 'skim') { var dx = Math.sin(S.th), dz = Math.cos(S.th), d0 = -6500 + 9000 * u; P = V([dx * d0 - dz * 900, 1500 + 300 * Math.sin(u * 3), dz * d0 + dx * 900]); L = V([dx * (d0 + 4000), 700, dz * (d0 + 4000)]); fov = 58; }
+  else if (S.k === 'downtown') { var e2 = ease(u); P = V([-14200 + 5000 * e2, 500 + 2600 * e2, -12600 + 4000 * e2]); L = V([-11800 + 9000 * e2, 1400 - 900 * e2, -11000 + 9000 * e2]); fov = 40; }
+  else if (S.k === 'chase') { var f = S.f; if (!f || simT > f.t1 - 2) { f = S.f = cinePickDrone(); } if (f) { posAt(f, simT, tmp); var p = W(tmp[0], tmp[1], tmp[2]); posAt(f, simT - 5, tmp); var q = W(tmp[0], tmp[1], tmp[2]), hx = p[0] - q[0], hz = p[2] - q[2], Lh = Math.hypot(hx, hz) || 1; hx /= Lh; hz /= Lh;
+      var sw = S.sw + u * 0.6, sx = hx * Math.cos(sw) - hz * Math.sin(sw), sz = hx * Math.sin(sw) + hz * Math.cos(sw), Dd = 720 - 160 * u; P = V([p[0] - sx * Dd, p[1] + 230, p[2] - sz * Dd]); L = V([p[0] + hx * 700, p[1] - 120, p[2] + hz * 700]); } else { P = camera.position.clone(); L = camLook.clone(); } fov = 52; }
+  else if (S.k === 'conflict') { var e = S.e, pe = W(e.x, e.y, e.z), R = 2000 - 600 * ease(Math.min(1, t / 8)); S.th += dt * 0.12;
+    if (simT >= e.t && !S.hit) { S.hit = t; capSet('Planned conflict · ' + opsName(e.ops), 'Within 30 m sideways, 10 m up or down.', 'Planned paths, not a crash', true); }
+    if (S.hit) { if (bloom) bloom.strength = 0.85 + 0.45 * Math.exp(-(t - S.hit) * 1.6); if (t - S.hit > 4.5) { speed = Math.min(30, speed + dt * 30); } if (t - S.hit > 6.5 && S.dur > 90) S.dur = t + 0.6; } else if (t > 25 && S.dur > 90) S.dur = t + 0.6;
+    var sh = 0;
+    P = V([pe[0] + Math.sin(S.th) * R + (Math.random() - .5) * sh, pe[1] + 300 + 200 * (1 - Math.min(1, t / 8)), pe[2] + Math.cos(S.th) * R + (Math.random() - .5) * sh]); L = V([pe[0], pe[1] - 230, pe[2]]); fov = 42; u = S.hit ? Math.min(1, t / S.dur) : 0.5; }
+  camPos.copy(P); camLook.copy(L); camera.position.copy(P); camera.lookAt(L); camInit = true;
+  if (Math.abs(camera.fov - fov) > 0.01) { camera.fov = fov; camera.updateProjectionMatrix(); }
+  $('fadeK').style.opacity = 0;   // 30 Oct: no fade to black between Cinema shots (read as flicker)
+  if (t >= S.dur) { if (S.k === 'conflict') { EVS = 1; if (bloom) bloom.strength = 0.85; speed = 30; } ['capB', 'capS'].forEach(function (id) { $(id).classList.remove('on'); }); D.shot = null; }
+  idleT += dt;   // 30 Oct: controls no longer fade out in Cinema mode
+}
+$('dirBtn').addEventListener('click', function () { if (DIR) dirStop(); else dirStart(); });
+['pointermove', 'pointerdown', 'keydown', 'touchstart'].forEach(function (ev) { window.addEventListener(ev, function () { idleT = 0; document.body.classList.remove('idle'); }, { passive: true }); });
+(function () { var dx0 = 0, dy0 = 0, down = false; canvas.addEventListener('pointerdown', function (e) { down = true; dx0 = e.clientX; dy0 = e.clientY; }, true);
+  canvas.addEventListener('pointermove', function (e) { if (down && DIR && Math.hypot(e.clientX - dx0, e.clientY - dy0) > 8) dirStop(); }, true);
+  window.addEventListener('pointerup', function () { down = false; }, true);
+  canvas.addEventListener('wheel', function () { if (DIR) dirStop(); }, { capture: true, passive: true }); })();
+$('skip').addEventListener('click', function () { if (CINE) { camPos.copy(camera.position); cineEnd(0.75); simT = Math.max(simT, 1500); } });
+window.addEventListener('keydown', function (e) { if (e.key === 'Escape' && CINE) $('skip').click(); });
+// ---------- minimal explore view ----------
+document.body.classList.add('min'); $('intro').hidden = true;
+$('moreBtn').addEventListener('click', function () { var on = document.body.classList.toggle('full'); this.classList.toggle('on', on); this.setAttribute('aria-pressed', String(on)); this.textContent = on ? 'Less' : 'More'; if (typeof placeTour === 'function') placeTour(); });
+document.querySelector('.score h2').addEventListener('click', function () { var o = document.body.classList.toggle('scoreOpen'); $('cmpT').textContent = o ? 'close ▴' : 'compare ▾'; });
+// ---------- first look ----------
+var FL = location.hash !== '#explore', heroLast = -1;
+var HSUB = { filed: 'Every light is a modelled delivery drone at its company’s FAA-filed heights. <b style="color:var(--meet)">Red flashes</b> are planned conflicts: two companies’ paths within 30 m sideways and 10 m up or down.',
+  checked: 'Same drones, heights shared out, and every plan reserves airspace blocks before take-off (realistic plan sharing, still air). <b style="color:var(--good)">Planned conflicts nearly vanish</b>; the cost is waiting' + (Ck && Ck.delays && Ck.delays.checked ? ': in this run ' + Math.round(100 * Ck.delays.delayed / Ck.delays.checked) + '% of checked flights wait' : '') + '. The study makes about 1 in 5 flights wait about 6 minutes in windy hours (COORD1).' };
+function heroPick(k) { setScenario(k); $('hFiled').classList.toggle('on', k === 'filed'); $('hFix').classList.toggle('on', k === 'checked'); $('hFiled').setAttribute('aria-pressed', String(k === 'filed')); $('hFix').setAttribute('aria-pressed', String(k === 'checked')); $('heroSub').innerHTML = HSUB[k] || ''; heroLast = -1; heroCount(); }
+function heroCount() { if (!FL) return; var n = countWide(SC[cur].ev, simT), el = $('heroN'); if (n !== heroLast) { el.textContent = n; if (n > heroLast && heroLast >= 0) { el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); } heroLast = n; } el.classList.toggle('zero', n === 0); }
+function heroExit(tour) { FL = false; document.body.classList.remove('fl'); $('intro').hidden = true; if (tour) showStep(0); }
+$('hFiled').addEventListener('click', function () { heroPick('filed'); });
+$('hFix').addEventListener('click', function () { heroPick('checked'); });
+$('hExplore').addEventListener('click', function () { heroExit(false); });
+$('hTour').addEventListener('click', function () { heroExit(true); });
+if (FL) { document.body.classList.add('fl'); $('intro').hidden = true; setDay('normal'); heroPick('filed'); cam.r = 10500; cam.ph = 0.34;
+  var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches; if (!RM && !/nocine/.test(location.search)) cineStart(); else document.body.classList.add('revealed'); }
+if (!FL && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) dirStart();
+$('hReplay').addEventListener('click', function () { if (DIR) dirStop(true); document.body.classList.remove('revealed'); cineStart(); });
+setInterval(heroCount, 120);
+$('loading').hidden = true;
+requestAnimationFrame(frame);
+window.__sky = { force: function (k) { if (DIR) { var o = Math.random; DIR.last = null; var kk = ['x']; DIR.shot = null; DIR.forceK = k; } }, dir: function () { return DIR && DIR.shot ? { k: DIR.shot.k, t: DIR.shot.t, n: DIR.n, hit: DIR.shot.hit, et: DIR.shot.e ? DIR.shot.e.t : null, sim: simT, sp: speed, dur: DIR.shot.dur } : null; }, cine: function () { return CINE ? { t: CINE.t, shot: CINE.shot } : null; }, cineT: function (v) { if (CINE) CINE.t = v; }, tgt: function () { return cam.tgt.toArray().map(Math.round); }, dbg: function () { var f = cam.ride; if (!f) return "no ride"; posAt(f, simT, tmp); var p = W(tmp[0], tmp[1], tmp[2]); pv.set(p[0], p[1], p[2]).project(view); return JSON.stringify({ z: tmp[2], scr: [Math.round((pv.x + 1) / 2 * innerWidth), Math.round((1 - pv.y) / 2 * innerHeight)], cam: camera.position.toArray().map(Math.round), p: p.map(Math.round), rideF: !!rideF, t0: f.t0, t1: f.t1, simT: simT }); }, SC: SC, get t() { return simT; }, set t(v) { simT = v; }, setScenario: setScenario, setDay: setDay, setCam: setCam, get n() { return nActive; } };
+})();
+</script>
+<script>/* 30 Oct: pinch (ctrl+wheel on laptops, gestures on iPhone) anywhere goes to the map instead of zooming the page */
+(function () { var cv = document.querySelector('canvas#gl'); if (!cv) return;
+  addEventListener('wheel', function (e) { var onLabel = e.target.closest && e.target.closest('#labels'); if (!e.ctrlKey && !onLabel) return; e.preventDefault(); if (e.target !== cv) cv.dispatchEvent(new WheelEvent('wheel', { deltaX: e.deltaX, deltaY: e.deltaY, deltaMode: e.deltaMode, ctrlKey: e.ctrlKey, clientX: e.clientX, clientY: e.clientY, bubbles: true, cancelable: true })); }, { passive: false, capture: true });
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (t) { addEventListener(t, function (e) { e.preventDefault(); }, { passive: false }); }); })();</script>
+</body></html>

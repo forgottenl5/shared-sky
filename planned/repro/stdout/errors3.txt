@@ -1,0 +1,5 @@
+PASS G1 metro-wide risk change, no check, L2, downtown at urban-canyon error: houston S1 +0.1 %; houston A2 +0.1 %; dfw S1 +0.1 %; dfw A2 +0.1 %
+PASS G2 share of encounters within 30 m that are downtown: houston S1 0.33 %; houston A2 0.32 %; dfw S1 0.14 %; dfw A2 0.10 %
+PASS G3 risk change, no check, if every place had urban-canyon sideways error: houston S1 +4 %; houston A2 +5 %; dfw S1 -6 %; dfw A2 +0 %
+FAIL G4 residual risk change with V2 if every place had urban-canyon sideways error (lower bound, 90 m search): houston S1 +13 %; houston A2 +7 %; dfw S1 +17 %; dfw A2 -11 %
+3 of 4 passed

@@ -1,0 +1,7 @@
+PASS X1 DFW L1 28, DFW L2 146, DFW L3 554, Houston L1 23, Houston L2 87, Houston L3 354
+PASS X2 DFW 13.2/h, Houston 8.8/h
+PASS X3 DFW 15.0x, Houston 14.8x
+PASS X4 DFW terminal 14.0/h = 1.06x en route, Houston terminal 4.6/h = 0.52x en route
+FAIL X5 DFW L1 64 %, DFW L2 63 %, DFW L3 61 %, Houston L1 70 %, Houston L2 72 %, Houston L3 73 %; arm B en-route E2 total 2662
+PASS X6 DFW terminal cut -9 %, Houston terminal cut -9 %
+5 of 6 passed; wrote planned/airtaxi_enc1_results_table.md

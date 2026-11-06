@@ -1,0 +1,6 @@
+PASS Q1 V2 removal of L0 risk (nan = no L0 risk without the check): houston S1 100 %; houston A2 nan %; dfw S1 100 %; dfw A2 100 %
+FAIL Q2 V2 removal of L2 risk: houston S1 95 %; houston A2 86 %; dfw S1 96 %; dfw A2 81 %
+PASS Q3 V3 removal of L2 risk: houston S1 100 %; houston A2 100 %; dfw S1 100 %; dfw A2 100 %
+FAIL Q4 L2 risk with V2, shared-out vs best-sourced heights: houston 0.929 vs 0.816; dfw 1.11 vs 0.512
+FAIL Q5 delayed share V3 / V2: houston S1 1.00; houston A2 2.09; dfw S1 1.32; dfw A2 2.81
+2 of 5 passed

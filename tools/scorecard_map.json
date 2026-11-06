@@ -1,0 +1,1062 @@
+[
+ {
+  "name": "Cypress, real sites",
+  "code": "HOUSTON1",
+  "results": [
+   "planned/HOUSTON1_RESULTS_2026-10-22.md",
+   "planned/houston1_results_table.md"
+  ],
+  "pass_record": 0,
+  "n_record": 2,
+  "pass_scorecard": 0,
+  "n_scorecard": 2,
+  "match": true,
+  "note": "P2 not evaluable (0 Wing-Zipline passes), so excluded; scorecard corrected from 0/3 to 0/2 on 30 Oct 2026 after this check."
+ },
+ {
+  "name": "Houston build-out density",
+  "code": "HOUSTON2",
+  "results": [
+   "planned/HOUSTON2_RESULTS_2026-10-22.md",
+   "planned/houston2_results_table.md"
+  ],
+  "pass_record": 2,
+  "n_record": 3,
+  "pass_scorecard": 2,
+  "n_scorecard": 3,
+  "match": true,
+  "note": "Q1 PASS, Q2 PASS, Q3 FAIL. G1-G3 are feature checks."
+ },
+ {
+  "name": "Height allocation",
+  "code": "VALLOC",
+  "results": [
+   "planned/VALLOC_RESULTS_2026-10-22.md",
+   "planned/valloc_results_table.md"
+  ],
+  "pass_record": 3,
+  "n_record": 3,
+  "pass_scorecard": 3,
+  "n_scorecard": 3,
+  "match": true,
+  "note": "V1-V3 PASS. K1-K3 are checks."
+ },
+ {
+  "name": "Free spread vs allocation",
+  "code": "VALLOC2",
+  "results": [
+   "planned/VALLOC2_RESULTS_2026-10-22.md",
+   "planned/valloc2_results_table.md"
+  ],
+  "pass_record": 2,
+  "n_record": 2,
+  "pass_scorecard": 2,
+  "n_scorecard": 2,
+  "match": true,
+  "note": "W1, W2 are this study's registered predictions (both PASS); L1-L2 are checks."
+ },
+ {
+  "name": "Robustness",
+  "code": "ROBUST",
+  "results": [
+   "planned/ROBUST_RESULTS_2026-10-22.md",
+   "planned/robust_results_table.md"
+  ],
+  "pass_record": 2,
+  "n_record": 4,
+  "pass_scorecard": 2,
+  "n_scorecard": 4,
+  "match": true,
+  "note": "R1 PASS, R2 FAIL, R3 PASS, R4 FAIL. 27 Oct correction note says verdicts stand as run."
+ },
+ {
+  "name": "Procedures near sites",
+  "code": "PROC",
+  "results": [
+   "planned/PROC_RESULTS_2026-10-22.md",
+   "planned/proc_results_table.md"
+  ],
+  "pass_record": 2,
+  "n_record": 2,
+  "pass_scorecard": 2,
+  "n_scorecard": 2,
+  "match": true,
+  "note": "B2, B3 PASS; B1, B4, B5 explicitly NOT SCORED (K2 failed) and excluded."
+ },
+ {
+  "name": "Profile shape vs priority rule",
+  "code": "FAIR",
+  "results": [
+   "planned/FAIR_RESULTS_2026-10-22.md",
+   "planned/fair_results_table.md"
+  ],
+  "pass_record": 3,
+  "n_record": 4,
+  "pass_scorecard": 3,
+  "n_scorecard": 4,
+  "match": true,
+  "note": "G1, G3, G4 PASS; G2 FAIL."
+ },
+ {
+  "name": "Vertical speed",
+  "code": "VRATE",
+  "results": [
+   "planned/VRATE_RESULTS_2026-10-22.md",
+   "planned/vrate_results_table.md"
+  ],
+  "pass_record": 0,
+  "n_record": 3,
+  "pass_scorecard": 0,
+  "n_scorecard": 3,
+  "match": true,
+  "note": "H1-H3 are the registered predictions here ('All three predictions failed')."
+ },
+ {
+  "name": "Equal fleet sizes",
+  "code": "FLEET",
+  "results": [
+   "planned/FLEET_RESULTS_2026-10-22.md",
+   "planned/fleet_results_table.md"
+  ],
+  "pass_record": 1,
+  "n_record": 3,
+  "pass_scorecard": 1,
+  "n_scorecard": 3,
+  "match": true,
+  "note": "E1 FAIL, E2 FAIL, E3 PASS."
+ },
+ {
+  "name": "Richardson no-fly zone",
+  "code": "NFZ",
+  "results": [
+   "planned/NFZ_RESULTS_2026-10-22.md"
+  ],
+  "pass_record": 3,
+  "n_record": 3,
+  "pass_scorecard": 3,
+  "n_scorecard": 3,
+  "match": true,
+  "note": "N1-N3 PASS."
+ },
+ {
+  "name": "Reserved volume size",
+  "code": "VOL",
+  "results": [
+   "planned/VOL_RESULTS_2026-10-22.md",
+   "planned/vol_results_table.md"
+  ],
+  "pass_record": 3,
+  "n_record": 4,
+  "pass_scorecard": 3,
+  "n_scorecard": 4,
+  "match": true,
+  "note": "Q1, Q3, Q4 PASS; Q2 FAIL."
+ },
+ {
+  "name": "Surge and pop-up restriction",
+  "code": "STRESS",
+  "results": [
+   "planned/STRESS_RESULTS_2026-10-22.md",
+   "planned/stress_results_table.md"
+  ],
+  "pass_record": 1,
+  "n_record": 3,
+  "pass_scorecard": 1,
+  "n_scorecard": 3,
+  "match": true,
+  "note": "R1 FAIL, R2 PASS, R3 FAIL."
+ },
+ {
+  "name": "Off-plan drones (allocation)",
+  "code": "DEVIATE",
+  "results": [
+   "planned/DEVIATE_RESULTS_2026-10-22.md",
+   "planned/deviate_results_table.md"
+  ],
+  "pass_record": 0,
+  "n_record": 3,
+  "pass_scorecard": 0,
+  "n_scorecard": 3,
+  "match": true,
+  "note": "C1-C3 FAIL ('All three predictions failed')."
+ },
+ {
+  "name": "Off-plan drones (filed heights)",
+  "code": "DEVA0",
+  "results": [
+   "planned/DEVA0_RESULTS_2026-10-22.md",
+   "planned/deva0_results_table.md"
+  ],
+  "pass_record": 2,
+  "n_record": 2,
+  "pass_scorecard": 2,
+  "n_scorecard": 2,
+  "match": true,
+  "note": "D1, D2 PASS."
+ },
+ {
+  "name": "Return-to-home and outage",
+  "code": "RTH",
+  "results": [
+   "planned/RTH_RESULTS_2026-10-22.md",
+   "planned/rth_results_table.md"
+  ],
+  "pass_record": 2,
+  "n_record": 3,
+  "pass_scorecard": 2,
+  "n_scorecard": 3,
+  "match": true,
+  "note": "G1, G2 PASS; G3 FAIL. The 'corrected' 10.7x figure in studies.json comes from COUNTFIX; RTH verdicts unchanged."
+ },
+ {
+  "name": "Area outages",
+  "code": "OUTAGE",
+  "results": [
+   "planned/OUTAGE_RESULTS_2026-10-22.md",
+   "planned/outage_results_table.md"
+  ],
+  "pass_record": 2,
+  "n_record": 3,
+  "pass_scorecard": 2,
+  "n_scorecard": 3,
+  "match": true,
+  "note": "O1, O2 PASS; O3 FAIL."
+ },
+ {
+  "name": "Counting fix and re-runs",
+  "code": "COUNTFIX",
+  "results": [
+   "planned/COUNTFIX_RESULTS_2026-10-23.md",
+   "planned/countfix_results_table.md"
+  ],
+  "pass_record": 4,
+  "n_record": 4,
+  "pass_scorecard": 4,
+  "n_scorecard": 4,
+  "match": true,
+  "note": "U1-U4 PASS."
+ },
+ {
+  "name": "Wing at fixed heights",
+  "code": "WINGFIX",
+  "results": [
+   "planned/WINGFIX_RESULTS_2026-10-23.md",
+   "planned/wingfix_results_table.md"
+  ],
+  "pass_record": 2,
+  "n_record": 2,
+  "pass_scorecard": 2,
+  "n_scorecard": 2,
+  "match": true,
+  "note": "W1, W2 PASS."
+ },
+ {
+  "name": "Pre-launch robustness",
+  "code": "PRELAUNCH",
+  "results": [
+   "planned/PRELAUNCH_RESULTS_2026-10-23.md"
+  ],
+  "pass_record": 9,
+  "n_record": 10,
+  "pass_scorecard": 9,
+  "n_scorecard": 10,
+  "match": true,
+  "note": "P1-P4, E1, E2, L1, L2, L4 PASS; L3 FAIL ('Nine of ten predictions passed')."
+ },
+ {
+  "name": "Bad days, high-return case",
+  "code": "PRELAUNCH2",
+  "results": [
+   "planned/PRELAUNCH2_RESULTS_2026-10-23.md"
+  ],
+  "pass_record": 4,
+  "n_record": 4,
+  "pass_scorecard": 4,
+  "n_scorecard": 4,
+  "match": true,
+  "note": "Q1-Q4 PASS."
+ },
+ {
+  "name": "Houston today, real sites",
+  "code": "HOUTODAY",
+  "results": [
+   "planned/HOUTODAY_RESULTS_2026-10-23.md"
+  ],
+  "pass_record": 4,
+  "n_record": 6,
+  "pass_scorecard": 4,
+  "n_scorecard": 6,
+  "match": true,
+  "note": "D1, D5 PASS; D3 'PASS on paper; not meaningful' and D6 'PASS (both near zero)' counted as PASS; D2, D4 FAIL (D4 'also not meaningful')."
+ },
+ {
+  "name": "Real Houston layout",
+  "code": "HOUREAL",
+  "results": [
+   "planned/HOUREAL_RESULTS_2026-10-23.md"
+  ],
+  "pass_record": 4,
+  "n_record": 4,
+  "pass_scorecard": 4,
+  "n_scorecard": 4,
+  "match": true,
+  "note": "G1-G4 PASS."
+ },
+ {
+  "name": "Real DFW layout",
+  "code": "DFWREAL",
+  "results": [
+   "planned/DFWREAL_RESULTS_2026-10-23.md"
+  ],
+  "pass_record": 4,
+  "n_record": 4,
+  "pass_scorecard": 4,
+  "n_scorecard": 4,
+  "match": true,
+  "note": "F1-F4 PASS."
+ },
+ {
+  "name": "Customers where people live",
+  "code": "CENSUS",
+  "results": [
+   "planned/CENSUS_RESULTS_2026-10-23.md"
+  ],
+  "pass_record": 5,
+  "n_record": 5,
+  "pass_scorecard": 5,
+  "n_scorecard": 5,
+  "match": true,
+  "note": "C1-C5 PASS."
+ },
+ {
+  "name": "Amazon best-sourced heights",
+  "code": "AMZSRC",
+  "results": [
+   "planned/AMZSRC_RESULTS_2026-10-24.md"
+  ],
+  "pass_record": 3,
+  "n_record": 3,
+  "pass_scorecard": 3,
+  "n_scorecard": 3,
+  "match": true,
+  "note": "Q1-Q3 PASS."
+ },
+ {
+  "name": "Shared departure paths",
+  "code": "CORRIDOR",
+  "results": [
+   "planned/CORRIDOR_RESULTS_2026-10-24.md"
+  ],
+  "pass_record": 6,
+  "n_record": 6,
+  "pass_scorecard": 6,
+  "n_scorecard": 6,
+  "match": true,
+  "note": "Part A RC1-RC3 and part B RB1-RB3, all PASS."
+ },
+ {
+  "name": "Real wind",
+  "code": "WIND+WIND20",
+  "results": [
+   "planned/WIND_RESULTS_2026-10-24.md",
+   "planned/WIND20_RESULTS_2026-10-24.md"
+  ],
+  "pass_record": 8,
+  "n_record": 9,
+  "pass_scorecard": 8,
+  "n_scorecard": 9,
+  "match": true,
+  "note": "Combined: WIND W1-W3 PASS (3/3); WIND20 Houston Wn1-Wn3 PASS (3/3), DFW Wn1 FAIL, Wn2-Wn3 PASS (2/3)."
+ },
+ {
+  "name": "Build-out stages",
+  "code": "BUILDOUT+DFWBUILD",
+  "results": [
+   "planned/BUILDOUT_RESULTS_2026-10-24.md",
+   "planned/DFWBUILD_RESULTS_2026-10-24.md"
+  ],
+  "pass_record": 8,
+  "n_record": 10,
+  "pass_scorecard": 8,
+  "n_scorecard": 10,
+  "match": true,
+  "note": "Combined: BUILDOUT B1-B5 (v2) 3/5 (B1, B3 FAIL); DFWBUILD D1-D5 5/5."
+ },
+ {
+  "name": "More seeds",
+  "code": "SEEDS",
+  "results": [
+   "planned/SEEDS_RESULTS_2026-10-24.md"
+  ],
+  "pass_record": 5,
+  "n_record": 5,
+  "pass_scorecard": 5,
+  "n_scorecard": 5,
+  "match": true,
+  "note": "S-B1..S-B4 and S-F all PASS."
+ },
+ {
+  "name": "Real Walmart sites",
+  "code": "REALSITES",
+  "results": [
+   "planned/REALSITES_RESULTS_2026-10-24.md"
+  ],
+  "pass_record": 4,
+  "n_record": 5,
+  "pass_scorecard": 4,
+  "n_scorecard": 5,
+  "match": true,
+  "note": "R1-R4 PASS; R5 FAIL."
+ },
+ {
+  "name": "Fixed pads",
+  "code": "PADS",
+  "results": [
+   "planned/PADS_RESULTS_2026-10-24.md"
+  ],
+  "pass_record": 2,
+  "n_record": 4,
+  "pass_scorecard": 2,
+  "n_scorecard": 4,
+  "match": true,
+  "note": "F1, F2 PASS; F3, F4 FAIL."
+ },
+ {
+  "name": "DFW bad days and plan-check cost",
+  "code": "DFWBAD+DFWPROC",
+  "results": [
+   "planned/DFWBAD_RESULTS_2026-10-25.md",
+   "planned/dfwbad_results_table.md",
+   "planned/DFWPROC_RESULTS_2026-10-25.md",
+   "planned/dfwproc_results_table.md"
+  ],
+  "pass_record": 9,
+  "n_record": 11,
+  "pass_scorecard": 9,
+  "n_scorecard": 11,
+  "match": true,
+  "note": "Combined: DFWBAD B1-B6 6/6; DFWPROC C1-C3 PASS, C4, C5 FAIL (3/5)."
+ },
+ {
+  "name": "Drones near an air-taxi site (VTXPAD)",
+  "code": "VTXPAD",
+  "results": [
+   "planned/VTXPAD_RESULTS_2026-10-25.md",
+   "planned/vtxpad_results_table.md"
+  ],
+  "pass_record": 4,
+  "n_record": 4,
+  "pass_scorecard": 4,
+  "n_scorecard": 4,
+  "match": true,
+  "note": "V1-V4 PASS."
+ },
+ {
+  "name": "Amazon at today's volume",
+  "code": "TODAYVOL",
+  "results": [
+   "planned/TODAYVOL_RESULTS_2026-10-25.md",
+   "planned/todayvol_results_table.md"
+  ],
+  "pass_record": 7,
+  "n_record": 10,
+  "pass_scorecard": 7,
+  "n_scorecard": 10,
+  "match": true,
+  "note": "T1-T5 per metro (10 rows); FAIL: T4 dfw, T2 houston, T4 houston. Results file notes earlier misstatement of 8/10, corrected to 7/10."
+ },
+ {
+  "name": "Headline rerun (review fixes)",
+  "code": "HEADLINE2",
+  "results": [
+   "planned/HEADLINE2_RESULTS_2026-10-25.md",
+   "planned/headline2_results_table.md"
+  ],
+  "pass_record": 4,
+  "n_record": 5,
+  "pass_scorecard": 4,
+  "n_scorecard": 5,
+  "match": true,
+  "note": "H1-H5 are the registered predictions; H3 FAIL."
+ },
+ {
+  "name": "Air taxis near take-off sites",
+  "code": "AIRTAXI1",
+  "results": [
+   "planned/AIRTAXI1_RESULTS_2026-10-26.md",
+   "planned/airtaxi1_results_table.md"
+  ],
+  "pass_record": 6,
+  "n_record": 6,
+  "pass_scorecard": 6,
+  "n_scorecard": 6,
+  "match": true,
+  "note": "P1-P6 PASS. 28 Oct correction changes wording only."
+ },
+ {
+  "name": "Realistic plan sharing (COORD1)",
+  "code": "COORD1",
+  "results": [
+   "planned/COORD1_RESULTS_2026-10-26.md",
+   "planned/coord1_results_table.md"
+  ],
+  "pass_record": 4,
+  "n_record": 6,
+  "pass_scorecard": 4,
+  "n_scorecard": 6,
+  "match": true,
+  "note": "C1, C2, C4, C6 PASS; C3, C5 FAIL."
+ },
+ {
+  "name": "Layer gaps sized to the reservation (COORD2)",
+  "code": "COORD2",
+  "results": [
+   "planned/COORD2_RESULTS_2026-10-27.md",
+   "planned/coord2_results_table.md"
+  ],
+  "pass_record": 2,
+  "n_record": 6,
+  "pass_scorecard": 2,
+  "n_scorecard": 6,
+  "match": true,
+  "note": "G4, G5 PASS; G1, G2, G3, G6 FAIL."
+ },
+ {
+  "name": "Coordination cost vs demand (DENS1)",
+  "code": "DENS1",
+  "results": [
+   "planned/DENS1_RESULTS_2026-10-27.md",
+   "planned/dens1_results_table.md"
+  ],
+  "pass_record": 3,
+  "n_record": 6,
+  "pass_scorecard": 3,
+  "n_scorecard": 6,
+  "match": true,
+  "note": "D3, D5, D6 PASS; D1, D2, D4 FAIL."
+ },
+ {
+  "name": "Air-taxi engine vs a published vertiport model (VERTIPORT1)",
+  "code": "VERTIPORT1",
+  "results": [
+   "planned/VERTIPORT1_RESULTS_2026-10-27.md",
+   "planned/vertiport1_results_table.md"
+  ],
+  "pass_record": 5,
+  "n_record": 5,
+  "pass_scorecard": 5,
+  "n_scorecard": 5,
+  "match": true,
+  "note": "V1-V5 PASS."
+ },
+ {
+  "name": "Order of the height layers (LAYER1)",
+  "code": "LAYER1",
+  "results": [
+   "planned/LAYER1_RESULTS_2026-10-27.md",
+   "planned/layer1_results_table.md"
+  ],
+  "pass_record": 4,
+  "n_record": 7,
+  "pass_scorecard": 4,
+  "n_scorecard": 7,
+  "match": true,
+  "note": "P1-P4 PASS; P5-P7 FAIL."
+ },
+ {
+  "name": "Layer order plus thinner reserved blocks (LAYER2)",
+  "code": "LAYER2",
+  "results": [
+   "planned/LAYER2_RESULTS_2026-10-27.md",
+   "planned/layer2_results_table.md"
+  ],
+  "pass_record": 6,
+  "n_record": 6,
+  "pass_scorecard": 6,
+  "n_scorecard": 6,
+  "match": true,
+  "note": "Q1-Q6 PASS."
+ },
+ {
+  "name": "Who could save time flying between Archer's sites (ACCESS1)",
+  "code": "ACCESS1",
+  "results": [
+   "planned/ACCESS1_RESULTS_2026-10-27.md",
+   "planned/access1_results_table.md",
+   "planned/ACCESS1B_ADDENDUM_2026-10-27.md"
+  ],
+  "pass_record": 5,
+  "n_record": 8,
+  "pass_scorecard": 5,
+  "n_scorecard": 8,
+  "match": true,
+  "note": "P1-P5 PASS; P6-P8 FAIL. ACCESS1b addendum is descriptive, no predictions (it notes P1 would fail on 12 sites but the registered verdict stands)."
+ },
+ {
+  "name": "Parking stands per air-taxi site (STANDS1)",
+  "code": "STANDS1",
+  "results": [
+   "planned/STANDS1_RESULTS_2026-10-27.md",
+   "planned/stands1_results_table.md"
+  ],
+  "pass_record": 3,
+  "n_record": 6,
+  "pass_scorecard": 3,
+  "n_scorecard": 6,
+  "match": true,
+  "note": "S3, S4, S6 PASS (S3 'partly trivial', S4 'for the wrong reason', still PASS); S1, S2, S5 FAIL."
+ },
+ {
+  "name": "Landing rule with limited stands (PADRULE1)",
+  "code": "PADRULE1",
+  "results": [
+   "planned/PADRULE1_RESULTS_2026-10-27.md",
+   "planned/padrule1_results_table.md"
+  ],
+  "pass_record": 5,
+  "n_record": 6,
+  "pass_scorecard": 5,
+  "n_scorecard": 6,
+  "match": true,
+  "note": "R1-R5 PASS; R6 FAIL. K2/K4 rows in the table are checks."
+ },
+ {
+  "name": "How wide are the air-taxi headlines? (UNCERT1)",
+  "code": "UNCERT1",
+  "results": [
+   "planned/UNCERT1_RESULTS_2026-10-27.md",
+   "planned/uncert1_results_table.md"
+  ],
+  "pass_record": 5,
+  "n_record": 6,
+  "pass_scorecard": 5,
+  "n_scorecard": 6,
+  "match": true,
+  "note": "U1, U3-U6 PASS; U2 FAIL."
+ },
+ {
+  "name": "Amazon anywhere in its Texas band (AMZBAND)",
+  "code": "AMZBAND",
+  "results": [
+   "planned/AMZBAND_RESULTS_2026-10-23.md"
+  ],
+  "pass_record": 3,
+  "n_record": 3,
+  "pass_scorecard": 3,
+  "n_scorecard": 3,
+  "match": true,
+  "note": "B1-B3 PASS."
+ },
+ {
+  "name": "Where people live, Richardson (RICHPOP)",
+  "code": "RICHPOP",
+  "results": [
+   "planned/RICHPOP_RESULTS_2026-10-23.md"
+  ],
+  "pass_record": 2,
+  "n_record": 3,
+  "pass_scorecard": 2,
+  "n_scorecard": 3,
+  "match": true,
+  "note": "RP1, RP2 PASS; RP3 FAIL."
+ },
+ {
+  "name": "Common return height, Amazon high return (RTHREP)",
+  "code": "RTHREP",
+  "results": [
+   "planned/RTHREP_RESULTS_2026-10-23.md"
+  ],
+  "pass_record": 1,
+  "n_record": 2,
+  "pass_scorecard": 1,
+  "n_scorecard": 2,
+  "match": true,
+  "note": "H1 PASS, H2 FAIL (H1/H2 are this study's registered predictions)."
+ },
+ {
+  "name": "Amazon best-sourced heights, DFW (AMZSRC_DFW)",
+  "code": "AMZSRC_DFW",
+  "results": [
+   "planned/AMZSRC_DFW_RESULTS_2026-10-24.md"
+  ],
+  "pass_record": 3,
+  "n_record": 3,
+  "pass_scorecard": 3,
+  "n_scorecard": 3,
+  "match": true,
+  "note": "Q1-Q3 PASS."
+ },
+ {
+  "name": "Meetings at a company's own sites (SITECAP)",
+  "code": "SITECAP",
+  "results": [
+   "planned/SITECAP_RESULTS_2026-10-24.md"
+  ],
+  "pass_record": 4,
+  "n_record": 4,
+  "pass_scorecard": 4,
+  "n_scorecard": 4,
+  "match": true,
+  "note": "S1-S4 PASS in both v1 and corrected v2 tables."
+ },
+ {
+  "name": "Time slots at sites (ARRIVE)",
+  "code": "ARRIVE",
+  "results": [
+   "planned/ARRIVE_RESULTS_2026-10-24.md"
+  ],
+  "pass_record": 1,
+  "n_record": 4,
+  "pass_scorecard": 1,
+  "n_scorecard": 4,
+  "match": true,
+  "note": "P3 PASS; P1, P2 ('mixed'), P4 ('narrowly') FAIL."
+ },
+ {
+  "name": "Air taxi against the peak-hour car (AIRTAXI_NET1)",
+  "code": "AIRTAXI_NET1",
+  "results": [
+   "planned/AIRTAXI_NET1_RESULTS_2026-10-26.md",
+   "planned/airtaxi_net1_results_table.md",
+   "planned/AIRTAXI_NET1_RECHECK_V2_2026-10-26.md"
+  ],
+  "pass_record": 13,
+  "n_record": 14,
+  "pass_scorecard": 13,
+  "n_scorecard": 14,
+  "match": true,
+  "note": "Record scores 14 rows (P1 split into 6 routes, P4 into DFW/HOU): 13 of 14, only P7 FAIL. Counting by label (P1-P8) would give 7/8. P7 'stays recorded as a FAIL' despite the v2 recheck."
+ },
+ {
+  "name": "Pads per air-taxi site (AIRTAXI_NET2)",
+  "code": "AIRTAXI_NET2",
+  "results": [
+   "planned/AIRTAXI_NET2_RESULTS_2026-10-26.md"
+  ],
+  "pass_record": 6,
+  "n_record": 14,
+  "pass_scorecard": 6,
+  "n_scorecard": 14,
+  "match": true,
+  "note": "Record scores 14 rows (Q2 split into 8 cells, 1 PASS): '6 of 14 predictions passed', also confirmed in the prereg deviation log. Counting by label (Q1a, Q1b, Q2-Q6) would give 5/7."
+ },
+ {
+  "name": "Battery reserve and holding energy (AIRTAXI_NET3)",
+  "code": "AIRTAXI_NET3",
+  "results": [
+   "planned/AIRTAXI_NET3_RESULTS_2026-10-27.md",
+   "planned/airtaxi_net3_results_table.md"
+  ],
+  "pass_record": 5,
+  "n_record": 5,
+  "pass_scorecard": 5,
+  "n_scorecard": 5,
+  "match": true,
+  "note": "F1-F5 PASS; K rows are checks."
+ },
+ {
+  "name": "Air-taxi noise on the ground (AIRTAXI_NOISE1)",
+  "code": "AIRTAXI_NOISE1",
+  "results": [
+   "planned/AIRTAXI_NOISE1_RESULTS_2026-10-26.md"
+  ],
+  "pass_record": 5,
+  "n_record": 6,
+  "pass_scorecard": 5,
+  "n_scorecard": 6,
+  "match": true,
+  "note": "N1, N2, N4-N6 PASS; N3 FAIL."
+ },
+ {
+  "name": "Break-even on engine v5 and Archer's 12-site network (AIRTAXI_NET4)",
+  "code": "AIRTAXI_NET4",
+  "results": [
+   "planned/AIRTAXI_NET4_RESULTS_2026-10-28.md",
+   "planned/airtaxi_net4_results_table.md"
+  ],
+  "pass_record": 6,
+  "n_record": 7,
+  "pass_scorecard": 6,
+  "n_scorecard": 7,
+  "match": true,
+  "note": "A2, B1-B5 PASS; A1 FAIL."
+ },
+ {
+  "name": "Power each air-taxi site would draw (AIRTAXI_POWER1)",
+  "code": "AIRTAXI_POWER1",
+  "results": [
+   "planned/AIRTAXI_POWER1_RESULTS_2026-10-28.md",
+   "planned/airtaxi_power1_results_table.md"
+  ],
+  "pass_record": 5,
+  "n_record": 5,
+  "pass_scorecard": 5,
+  "n_scorecard": 5,
+  "match": true,
+  "note": "P1-P5 PASS."
+ },
+ {
+  "name": "People under the air-taxi noise, evenings and nights (AIRTAXI_NOISE2)",
+  "code": "AIRTAXI_NOISE2",
+  "results": [
+   "planned/AIRTAXI_NOISE2_RESULTS_2026-10-28.md",
+   "planned/airtaxi_noise2_results_table.md"
+  ],
+  "pass_record": 2,
+  "n_record": 5,
+  "pass_scorecard": 2,
+  "n_scorecard": 5,
+  "match": true,
+  "note": "P1, P4 PASS; P2, P3, P5 FAIL."
+ },
+ {
+  "name": "Departure corridors for all three companies (CORR2)",
+  "code": "CORR2",
+  "results": [
+   "planned/CORR2_RESULTS_2026-10-28.md",
+   "planned/corr2_results_table.md"
+  ],
+  "pass_record": 3,
+  "n_record": 3,
+  "pass_scorecard": 3,
+  "n_scorecard": 3,
+  "match": true,
+  "note": "C1-C3 PASS."
+ },
+ {
+  "name": "Plan-sharing cost with ten runs (SEEDS2)",
+  "code": "SEEDS2",
+  "results": [
+   "planned/SEEDS2_RESULTS_2026-10-28.md",
+   "planned/seeds2_results_table.md"
+  ],
+  "pass_record": 4,
+  "n_record": 4,
+  "pass_scorecard": 4,
+  "n_scorecard": 4,
+  "match": true,
+  "note": "S1-S4 PASS."
+ },
+ {
+  "name": "Filed caps on overlapping service areas (CAPS1)",
+  "code": "CAPS1",
+  "results": [
+   "planned/CAPS1_RESULTS_2026-10-28.md",
+   "planned/caps1_results_table.md"
+  ],
+  "pass_record": 4,
+  "n_record": 4,
+  "pass_scorecard": 4,
+  "n_scorecard": 4,
+  "match": true,
+  "note": "Q1-Q4 PASS."
+ },
+ {
+  "name": "Real weather in the flying day (WX1)",
+  "code": "WX1",
+  "results": [
+   "planned/WX1_RESULTS_2026-10-29.md",
+   "planned/wx1_results_table.md"
+  ],
+  "pass_record": 2,
+  "n_record": 6,
+  "pass_scorecard": 2,
+  "n_scorecard": 6,
+  "match": true,
+  "note": "W1-W6 are this study's registered predictions ('2 of 6 predictions passed'); W4, W5 PASS."
+ },
+ {
+  "name": "Air-taxi close approaches in the air (AIRTAXI_ENC1)",
+  "code": "AIRTAXI_ENC1",
+  "results": [
+   "planned/AIRTAXI_ENC1_RESULTS_2026-10-29.md",
+   "planned/airtaxi_enc1_results_table.md"
+  ],
+  "pass_record": 5,
+  "n_record": 6,
+  "pass_scorecard": 5,
+  "n_scorecard": 6,
+  "match": true,
+  "note": "X1-X6 are this study's registered predictions ('5 of 6 predictions passed'); X5 FAIL."
+ },
+ {
+  "name": "Air taxi on a flown path 15% longer than the straight line (AIRTAXI_ROUTE1)",
+  "code": "AIRTAXI_ROUTE1",
+  "results": [
+   "planned/AIRTAXI_ROUTE1_RESULTS_2026-10-29.md"
+  ],
+  "pass_record": 21,
+  "n_record": 21,
+  "pass_scorecard": 21,
+  "n_scorecard": 21,
+  "match": true,
+  "note": "Record scores 21 rows (P1, P2, P6 each split into 6 routes): '21 of 21 predictions passed'. By label (P1-P6) it would be 6/6; all pass either way."
+ },
+ {
+  "name": "Houston area outage recounted at 4 checks per second (RECOUNT1)",
+  "code": "RECOUNT1",
+  "results": [
+   "planned/RECOUNT1_RESULTS_2026-10-29.md"
+  ],
+  "pass_record": 3,
+  "n_record": 3,
+  "pass_scorecard": 3,
+  "n_scorecard": 3,
+  "match": true,
+  "note": "R1-R3 PASS; K1 is a check."
+ },
+ {
+  "name": "Noise with departures into the real wind (AIRTAXI_NOISEWIND1)",
+  "code": "AIRTAXI_NOISEWIND1",
+  "results": [
+   "planned/AIRTAXI_NOISEWIND1_RESULTS_2026-10-29.md",
+   "planned/airtaxi_noisewind1_results_table.md"
+  ],
+  "pass_record": 4,
+  "n_record": 5,
+  "pass_scorecard": 4,
+  "n_scorecard": 5,
+  "match": true,
+  "note": "P1, P3-P5 PASS; P2 FAIL."
+ },
+ {
+  "name": "How well my own predictions held up (CALIB1)",
+  "code": "CALIB1",
+  "results": [
+   "planned/CALIB1_RESULTS_2026-10-31.md",
+   "planned/calib1_results_table.md"
+  ],
+  "pass_record": 1,
+  "n_record": 5,
+  "pass_scorecard": 1,
+  "n_scorecard": 5,
+  "match": true,
+  "note": "C2 PASS; C1, C3, C4, C5 FAIL."
+ },
+ {
+  "name": "Does height sharing survive GPS-level errors? (ERRORS1)",
+  "code": "ERRORS1",
+  "results": [
+   "planned/ERRORS1_RESULTS_2026-11-03.md",
+   "planned/errors1_results_table.md"
+  ],
+  "pass_record": 10,
+  "n_record": 13,
+  "pass_scorecard": 10,
+  "n_scorecard": 13,
+  "match": true,
+  "note": "E1, E5-E11 PASS; E2, E3, E4 FAIL."
+ },
+ {
+  "name": "Collision risk per flight hour (RISK1)",
+  "code": "RISK1",
+  "results": [
+   "planned/RISK1_RESULTS_2026-11-04.md",
+   "planned/risk1_results_table.md"
+  ],
+  "pass_record": 5,
+  "n_record": 5,
+  "pass_scorecard": 5,
+  "n_scorecard": 5,
+  "match": true,
+  "note": "R1-R5 PASS."
+ },
+ {
+  "name": "In-flight avoidance (AVOID1)",
+  "code": "AVOID1",
+  "results": [
+   "planned/AVOID1_RESULTS_2026-11-04.md",
+   "planned/avoid1_results_table.md"
+  ],
+  "pass_record": 3,
+  "n_record": 5,
+  "pass_scorecard": 3,
+  "n_scorecard": 5,
+  "match": true,
+  "note": "V3-V5 PASS; V1, V2 FAIL."
+ },
+ {
+  "name": "The headline case under errors, and errors shared by nearby drones (ERRORS2)",
+  "code": "ERRORS2",
+  "results": [
+   "planned/ERRORS2_RESULTS_2026-11-04.md",
+   "planned/errors2_results_table.md"
+  ],
+  "pass_record": 10,
+  "n_record": 10,
+  "pass_scorecard": 10,
+  "n_scorecard": 10,
+  "match": true,
+  "note": "D1-D5, C1-C5 PASS."
+ },
+ {
+  "name": "Collision risk with the plan check on (RISK2)",
+  "code": "RISK2",
+  "results": [
+   "planned/RISK2_RESULTS_2026-11-05.md",
+   "planned/risk2_results_table.md"
+  ],
+  "pass_record": 2,
+  "n_record": 5,
+  "pass_scorecard": 2,
+  "n_scorecard": 5,
+  "match": true,
+  "note": "Q1, Q3 PASS; Q2, Q4, Q5 FAIL."
+ },
+ {
+  "name": "Worse GPS downtown and drifting errors (ERRORS3)",
+  "code": "ERRORS3",
+  "results": [
+   "planned/ERRORS3_RESULTS_2026-11-05.md",
+   "planned/errors3_results_table.md"
+  ],
+  "pass_record": 3,
+  "n_record": 4,
+  "pass_scorecard": 3,
+  "n_scorecard": 4,
+  "match": true,
+  "note": "G1-G3 PASS; G4 FAIL."
+ },
+ {
+  "name": "Weather stops and catch-up afterwards (WX2)",
+  "code": "WX2",
+  "results": [
+   "planned/WX2_RESULTS_2026-11-05.md",
+   "planned/wx2_results_table.md"
+  ],
+  "pass_record": 4,
+  "n_record": 5,
+  "pass_scorecard": 4,
+  "n_scorecard": 5,
+  "match": true,
+  "note": "X1-X3, X5 PASS; X4 FAIL."
+ },
+ {
+  "name": "Deliveries bunched at lunch and dinner (DEMAND1)",
+  "code": "DEMAND1",
+  "results": [
+   "planned/DEMAND1_RESULTS_2026-11-05.md",
+   "planned/demand1_results_table.md"
+  ],
+  "pass_record": 2,
+  "n_record": 3,
+  "pass_scorecard": 2,
+  "n_scorecard": 3,
+  "match": true,
+  "note": "Y2, Y3 PASS; Y1 FAIL."
+ },
+ {
+  "name": "Real helicopter traffic against the drone layers (HELI1)",
+  "code": "HELI1",
+  "results": [
+   "planned/HELI1_RESULTS_2026-11-05.md",
+   "planned/heli1_results_table.md"
+  ],
+  "pass_record": 2,
+  "n_record": 5,
+  "pass_scorecard": 2,
+  "n_scorecard": 5,
+  "match": true,
+  "note": "H4, H5 PASS; H1-H3 FAIL."
+ }
+]

@@ -1,0 +1,7 @@
+R-RTH120: runs 6, events 6236, wide 86 (1.38 per 100), close 17
+R-RTHOWN: runs 6, events 6236, wide 10 (0.16 per 100), close 3
+ratio 8.6 [4.5–18.6]
+| Prediction | Result | Verdict |
+|---|---|---|
+| H1 R-RTH120 >= 5x R-RTHOWN per 100 | 8.6x | **PASS** |
+| H2 R-RTH120 rate >= A2 RTH-120 rate 1.54 per 100 | 1.38 | **FAIL** |

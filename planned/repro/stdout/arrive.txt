@@ -1,0 +1,23 @@
+| Site | traffic | pads | none | D20 | A20 | D20A20 | M20 | M10 |
+|---|---|---|---|---|---|---|---|---|
+| amazon | 1x | 30 m | 301 (w 0/0 s) | 267 (w 5/0 s) | 252 (w 0/6 s) | 231 (w 5/6 s) | 304 (w 17/19 s) | 233 (w 2/3 s) |
+| amazon | 1x | 120 m | 73 (w 0/0 s) | 58 (w 5/0 s) | 61 (w 0/7 s) | 45 (w 5/6 s) | 60 (w 17/19 s) | 48 (w 2/3 s) |
+| amazon | 2x | 30 m | 1210 (w 0/0 s) | 1052 (w 20/0 s) | 1039 (w 0/21 s) | 907 (w 20/17 s) | 757 (w 1291/1370 s) | 973 (w 10/10 s) |
+| amazon | 2x | 120 m | 297 (w 0/0 s) | 224 (w 20/0 s) | 254 (w 0/21 s) | 211 (w 20/17 s) | 150 (w 1290/1370 s) | 220 (w 10/9 s) |
+| wing | 1x | 30 m | 98 (w 0/0 s) | 93 (w 1/0 s) | 101 (w 0/1 s) | 96 (w 1/1 s) | 85 (w 4/4 s) | 99 (w 1/1 s) |
+| wing | 1x | 120 m | 9 (w 0/0 s) | 8 (w 1/0 s) | 10 (w 0/1 s) | 9 (w 1/1 s) | 9 (w 5/4 s) | 9 (w 1/1 s) |
+| wing | 2x | 30 m | 396 (w 0/0 s) | 374 (w 4/0 s) | 381 (w 0/3 s) | 357 (w 4/4 s) | 307 (w 11/10 s) | 378 (w 2/2 s) |
+| wing | 2x | 120 m | 77 (w 0/0 s) | 74 (w 4/0 s) | 71 (w 0/3 s) | 67 (w 4/3 s) | 57 (w 10/10 s) | 67 (w 2/2 s) |
+| zipline | 1x | 30 m | 377 (w 0/0 s) | 336 (w 5/0 s) | 342 (w 0/6 s) | 307 (w 5/7 s) | 179 (w 28/26 s) | 279 (w 3/3 s) |
+| zipline | 1x | 120 m | 86 (w 0/0 s) | 69 (w 5/0 s) | 77 (w 0/6 s) | 58 (w 5/7 s) | 41 (w 28/26 s) | 51 (w 3/3 s) |
+| zipline | 2x | 30 m | 1291 (w 0/0 s) | 1231 (w 20/0 s) | 1215 (w 0/18 s) | 1134 (w 20/19 s) | 272 (w 1727/1893 s) | 889 (w 9/9 s) |
+| zipline | 2x | 120 m | 340 (w 0/0 s) | 290 (w 20/0 s) | 287 (w 0/18 s) | 256 (w 20/19 s) | 56 (w 1728/1893 s) | 196 (w 10/10 s) |
+(near-site same-company wide meetings within 300 m, 3 seeds x 2 h; in brackets mean departure wait / arrival hold)
+| Prediction | Result | Verdict |
+|---|---|---|
+| P1 shared 20 s slot cuts >= 80 % at 1x, 30 m pads, each site | amazon -1 %, wing 13 %, zipline 53 % | **FAIL** |
+| P2 separate 20 s slots cut less than one shared 20 s slot, each site | amazon 23 vs -1 %, wing 2 vs 13 %, zipline 19 vs 53 % | **FAIL** |
+| P3 Amazon 2x with a shared 20 s slot (cap 180 movements/h for ~242) has mean wait or hold > 600 s | 1370 s | **PASS** |
+| P4 120 m pads + shared 10 s slot at 2x: >= 90 % cut vs 30 m none, mean wait/hold <= 60 s, each site | amazon 82 % / 10 s, wing 83 % / 2 s, zipline 85 % / 10 s | **FAIL** |
+throughput (landed by 30 min after window / requested): {'amazon 1x none': 1.0, 'amazon 1x D20': 1.0, 'amazon 1x A20': 1.0, 'amazon 1x D20A20': 1.0, 'amazon 1x M20': 1.0, 'amazon 1x M10': 1.0, 'amazon 2x none': 1.0, 'amazon 2x D20': 1.0, 'amazon 2x A20': 1.0, 'amazon 2x D20A20': 1.0, 'amazon 2x M20': 0.68, 'amazon 2x M10': 1.0}
+Runs read: 216 (expected 216).

@@ -1,0 +1,723 @@
+<title>Sky-Grid Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: an operations bench: scenario controls on the left, the live run (plan view, side view, numbers) on the right, then the run log and the study record. */
+:root {
+  --paper: #f3f5f1; --surface: #fbfcfa; --ink: #142030; --muted: #566473; --rule: #d3d9d4; --grid: #e4e9e4;
+  --alert: #b0237a; --wing: #2563c9; --zip: #c97a1c; --amz: #8a3fbf; --band: rgba(37, 99, 201, .08); --good: #2f7d4f;
+  --display: "Saira Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #0b1119; --surface: #0f1620; --ink: #e4e9ee; --muted: #93a0ad; --rule: #26313d; --grid: #18222d;
+  --alert: #e04fa2; --wing: #5288dc; --zip: #b97a2e; --amz: #a06cd6; --band: rgba(82, 136, 220, .12); --good: #5fb886; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --paper: #0b1119; --surface: #0f1620; --ink: #e4e9ee; --muted: #93a0ad; --rule: #26313d; --grid: #18222d;
+  --alert: #e04fa2; --wing: #5288dc; --zip: #b97a2e; --amz: #a06cd6; --band: rgba(82, 136, 220, .12); --good: #5fb886; color-scheme: dark }
+* { box-sizing: border-box }
+[hidden] { display: none !important }
+body { background: var(--paper); color: var(--ink); font: 400 15px/1.5 var(--body) }
+.wrap { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 32px 56px; display: grid; gap: 40px }
+h1, h2 { font-family: var(--display); font-weight: 700; line-height: 1.05; margin: 0; text-wrap: balance }
+h1 { font-size: clamp(2rem, 4.4vw, 3.1rem) } h2 { font-size: clamp(1.4rem, 2.6vw, 1.9rem) }
+p { margin: 0; max-width: 72ch }
+.eyebrow { font: 500 .76rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted) }
+.head { display: grid; gap: 10px }
+.sub { color: var(--muted) }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums }
+a { color: var(--wing) }
+button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--alert); outline-offset: 2px }
+.note { border-left: 3px solid var(--zip); padding: 2px 0 2px 12px; font-size: .9rem; color: var(--muted); max-width: 90ch }
+.bench { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 20px; align-items: start }
+@media (max-width: 960px) { .bench { grid-template-columns: minmax(0, 1fr) } }
+.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 16px; display: grid; gap: 14px; min-width: 0 }
+.panel h3 { font: 600 .78rem/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; margin: 0; color: var(--muted) }
+.presets { display: flex; flex-wrap: wrap; gap: 6px }
+.chip { font: 500 .82rem/1.2 var(--body); border: 1px solid var(--rule); background: transparent; color: var(--ink); border-radius: 999px; padding: 6px 10px; cursor: pointer }
+.chip:hover { border-color: var(--ink) }
+fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; min-width: 0 }
+legend { font: 600 .78rem/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); padding: 0; margin-bottom: 6px }
+label { display: grid; gap: 4px; font-size: .88rem }
+.row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px }
+select, input[type=number] { font: 500 .9rem/1.2 var(--body); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 5px; padding: 7px 8px; width: 100%; min-width: 0 }
+.check { display: flex; gap: 8px; align-items: center; font-size: .9rem }
+.actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px }
+.btn { font: 600 .92rem/1 var(--body); border-radius: 5px; padding: 11px 12px; cursor: pointer; border: 1px solid var(--ink); background: var(--ink); color: var(--paper) }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--rule) }
+.btn:disabled { opacity: .5; cursor: progress }
+.status { font: 400 .82rem/1.3 var(--mono); color: var(--muted); min-height: 1.3em }
+.bar { height: 4px; background: var(--grid); border-radius: 2px; overflow: hidden } .bar i { display: block; height: 100%; width: 0; background: var(--wing); transition: width .2s }
+.run { display: grid; gap: 14px; min-width: 0 }
+.views { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px }
+@media (max-width: 700px) { .views { grid-template-columns: minmax(0, 1fr) } }
+.view { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 12px; display: grid; gap: 8px; min-width: 0 }
+.view-t { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font: 500 .78rem/1.2 var(--mono); color: var(--muted) }
+.view-t b { color: var(--ink); letter-spacing: .08em; text-transform: uppercase }
+canvas { width: 100%; display: block; border-radius: 3px } #map { aspect-ratio: 1 / 1 } #side { aspect-ratio: 1 / 1 }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: .8rem; color: var(--muted) }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: -1px } .legend .ring { border: 2px solid var(--alert) }
+.playrow { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font: 400 .82rem/1 var(--mono); color: var(--muted) }
+.playrow .btn { padding: 7px 10px; font-size: .82rem }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px }
+@media (max-width: 700px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+.stat { border-top: 2px solid var(--rule); padding-top: 8px; display: grid; gap: 2px; min-width: 0 }
+.stat.hot { border-color: var(--alert) } .stat.ok { border-color: var(--good) }
+.stat .n { font: 700 1.9rem/1 var(--display); font-variant-numeric: tabular-nums } .stat .l { font-size: .82rem; color: var(--muted) }
+.pairs { display: grid; gap: 6px; font-size: .85rem }
+.pairs div { display: grid; grid-template-columns: 150px minmax(0, 1fr) 44px; gap: 8px; align-items: center }
+.pairs span.track { height: 10px; background: var(--grid); border-radius: 2px; overflow: hidden } .pairs span.track i { display: block; height: 100% }
+.scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px }
+table { border-collapse: collapse; width: 100%; font-size: .88rem; min-width: 760px }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top }
+th { font: 600 .72rem/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--surface); position: sticky; top: 0 }
+td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right } th.num { text-align: right }
+.pill { display: inline-block; font: 600 .72rem/1 var(--mono); padding: 4px 7px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap }
+.pill.pass { color: var(--good) } .pill.fail { color: var(--alert) } .pill.mixed { color: var(--zip) }
+.empty { color: var(--muted); font-size: .88rem; padding: 14px 12px }
+footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border-top: 1px solid var(--rule); padding-top: 16px }
+</style>
+
+<div class="wrap">
+  <header class="head">
+    <div class="eyebrow">Sky-Grid · planned-operations engine · runs in your browser</div>
+    <h1>Sky-Grid Lab</h1>
+    <p class="sub">Set up a Houston-style build-out of Wing, Zipline and Amazon delivery sites using their FAA-filed flight profiles, choose the heights and rules, and run it. Every number below is computed live by the same engine used for the published studies.</p>
+  </header>
+
+  <section class="bench">
+    <form class="panel" id="form" autocomplete="off">
+      <div class="head" style="gap:8px"><h3>Start from</h3>
+        <div class="presets" id="presets"></div></div>
+      <fieldset><legend>Airspace</legend>
+        <label>Site spacing (Wing nests)<select id="d"><option value="4">4 km apart</option><option value="3" selected>3 km apart</option><option value="2">2 km apart (slow)</option></select></label>
+        <label>Fleet mix<select id="fleet"><option value="filed" selected>As filed for Houston (75 : 65 : 6)</option><option value="equal">Equal fleet sizes</option></select></label>
+        <label>Random seed<input type="number" id="seed" min="1" max="999" value="1"></label>
+      </fieldset>
+      <fieldset><legend>Heights (metres)</legend>
+        <label>Height plan<select id="heights"><option value="filed" selected>Filed baselines</option><option value="reported">High return, staff remark only (69 m out, 122 m back)</option><option value="allocation">Allocation inside filed bands</option><option value="custom">Custom</option></select></label>
+        <div class="row" id="custom" hidden>
+          <label>Wing low<input type="number" id="wlo" value="46" min="0" max="122"></label><label>Wing high<input type="number" id="whi" value="91" min="0" max="122"></label>
+          <label>Amazon out<input type="number" id="aout" value="61" min="0" max="122"></label><label>Amazon back<input type="number" id="ain" value="105" min="0" max="122"></label>
+          <label>Zipline<input type="number" id="zip" value="101" min="0" max="122"></label>
+        </div>
+        <label>Wing height practice<select id="wingfix"><option value="0" selected>Random within its band</option><option value="46">Fixed 46 m</option><option value="61">Fixed 61 m</option><option value="76">Fixed 76 m</option></select></label>
+      </fieldset>
+      <fieldset><legend>Shared flight-plan check</legend>
+        <label class="check"><input type="checkbox" id="check"> Companies check each other's plans before take-off</label>
+        <div class="row">
+          <label>Reserved width<select id="cell"><option value="15">15 m</option><option value="30" selected>30 m</option><option value="60">60 m</option><option value="90">90 m</option></select></label>
+          <label>Time margin<select id="tb"><option value="5" selected>±5 s</option><option value="15">±15 s</option><option value="30">±30 s</option></select></label>
+          <label>Vertical gap<select id="vsep"><option value="10" selected>10 m</option><option value="20">20 m</option></select></label>
+        </div>
+      </fieldset>
+      <fieldset><legend>When something goes wrong</legend>
+        <label>Off-plan event<select id="cont"><option value="none" selected>None</option><option value="hold">20 % of drones stop for 2 min</option><option value="rth-own">20 % return home at own height</option><option value="rth-120">20 % return home at 120 m</option><option value="outage">6 area outages (2 km, 2 min)</option></select></label>
+        <p class="sub" id="conthint" style="font-size:.82rem" hidden>Turn on the plan check to isolate conflicts caused by the off-plan event; without it, conflicts in the plans themselves are counted too.</p>
+      </fieldset>
+      <div class="actions"><button class="btn" type="submit" id="run">Run</button><button class="btn ghost" type="button" id="runboth">Run filed vs allocation</button></div>
+      <div class="bar"><i id="prog"></i></div>
+      <div class="status" id="status" aria-live="polite">Ready.</div>
+    </form>
+
+    <div class="run">
+      <div class="stats" id="stats"></div>
+      <div class="views">
+        <div class="view"><div class="view-t"><b>Plan view</b><span>counted area, 10 × 10 km</span></div><canvas id="map" role="img" aria-label="Top-down view of the latest run"></canvas></div>
+        <div class="view"><div class="view-t"><b>Side view</b><span>east–west, height × 40</span></div><canvas id="side" role="img" aria-label="Side view of drone heights in the latest run"></canvas></div>
+      </div>
+      <div class="legend"><span><i style="background:var(--wing)"></i>Wing</span><span><i style="background:var(--zip)"></i>Zipline</span><span><i style="background:var(--amz)"></i>Amazon</span><span><i class="ring"></i>Planned conflict between companies</span></div>
+      <div class="playrow"><button class="btn ghost" type="button" id="play">Pause</button><span id="clock">minute 0 of 60</span><span id="runlabel"></span></div>
+      <div class="view"><div class="view-t"><b>Planned conflicts by company pair</b><span>within 30 m and 10 m</span></div><div class="pairs" id="pairs"></div></div>
+    </div>
+  </section>
+
+  <p class="note">Lab runs use a 24 km area, 1 hour and one seed, so they are faster and noisier than the published studies (44 km, 2 hours, three seeds, 95 % ranges). Expect the same direction and similar size of effect, not the same numbers. Try a few seeds before reading much into one run.</p>
+
+  <section class="head">
+    <div class="eyebrow">Your runs</div>
+    <h2>Run log</h2>
+    <div class="scroll"><table><thead><tr><th>Scenario</th><th class="num">Planned conflicts</th><th class="num">Tight</th><th class="num">Flights delayed</th><th class="num">Avg wait</th><th class="num">Off-plan events</th><th class="num">Conflicts per 100 events</th><th class="num">Time</th></tr></thead><tbody id="log"></tbody></table></div>
+  </section>
+
+  <section class="head">
+    <div class="eyebrow">Published studies</div>
+    <h2>Study record</h2>
+    <p class="sub">Every study was written down with its predictions and fingerprinted before any code or run. Failed predictions stay in the record.</p>
+    <div class="scroll"><table><thead><tr><th>Study</th><th>Question</th><th>Result</th><th>Predictions</th></tr></thead><tbody id="record"></tbody></table></div>
+  </section>
+
+  <footer>
+    <p>Findings and methods: <a href="https://github.com/forgottenl5/sky-grid/tree/main/planned">study record (registrations, code, results)</a> · <a href="houston.html">Houston simulation</a> · <a href="dfw.html">Dallas–Fort Worth simulation</a>. The lab engine is the research engine in one file; it reproduces the published counts exactly at the research settings.</p>
+    <p>A "planned conflict" is two planned flights of different companies within 30 m horizontally and 10 m vertically at the same moment, checked four times a second. It measures how plans interact with no coordination between companies, not collision risk. Pass counts include some predictions that were easy to meet; the failures are the informative part. Planned tracks only: no wind, no in-flight avoidance.</p>
+    <p class="mono">forgottenl5 · 25 October 2026</p>
+  </footer>
+</div>
+
+<script type="text/plain" id="engine">'use strict';
+// Sky-Grid lab engine: a single-file, configurable copy of the planned-operations research engine, for the browser lab.
+// Every function mirrors its research original (named in each comment); test_lab_engine.js checks they give identical results.
+(function (root) {
+  const OP = { wing: { rate: 400 / 15, radius: 9656, hours: 15 }, amazon: { rate: 1000 / 16.5, radius: 12070, hours: 16.5 }, zipline: { rate: 1000 * 0.95 / 15, radius: 16093, hours: 15 } };
+  const RATIO = { wing: 75 / 75, zipline: 65 / 75, amazon: 6 / 75 };
+  const HEIGHTS = { filed: { wing: [46, 91], aOut: 61, zip: 101, aIn: 105 }, allocation: { wing: [46, 71], aOut: 81, zip: 101, aIn: 115 }, reported: { wing: [46, 91], aOut: 69, zip: 101, aIn: 122 } };   // reported: Amazon per local Richardson reports (PRELAUNCH)
+  const VZ = 5, MIN_R = 300, MARGIN = 1000, STEP = 30, TRIES = 40;
+  function rng(seed) { let s = (seed * 2654435761) >>> 0; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
+  const posAt = (sg, t) => { const f = (t - sg[0] + 0.5) / sg[1]; return [sg[2] + (sg[5] - sg[2]) * f, sg[3] + (sg[6] - sg[3]) * f, sg[4] + (sg[7] - sg[4]) * f]; };
+  const toward = (a, b, d) => { const L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1; return [a[0] + (b[0] - a[0]) / L * d, a[1] + (b[1] - a[1]) / L * d]; };
+
+  // ---- segment builder (valloc.js)
+  function Seg(t0) { this.t = t0; this.s = []; }
+  Seg.prototype.put = function (n, x0, y0, z0, x1, y1, z1, ph, leg) { this.s.push([this.t, n, x0, y0, z0, x1, y1, z1, ph, leg]); this.t += n; return this; };
+  Seg.prototype.vert = function (x, y, z0, z1, dur, leg) { dur = dur === undefined ? Math.abs(z1 - z0) / VZ : dur; return this.put(Math.max(1, Math.round(dur)), x, y, z0, x, y, z1, 'vertical', leg); };
+  Seg.prototype.hover = function (x, y, z, dur, leg) { return this.put(dur, x, y, z, x, y, z, 'hover', leg); };
+  Seg.prototype.cruise = function (a, b, z, v, leg) { const L = Math.hypot(b[0] - a[0], b[1] - a[1]); return this.put(Math.max(1, Math.round(L / v)), a[0], a[1], z, b[0], b[1], z, 'cruise', leg); };
+  Seg.prototype.ramp = function (a, b, z0, z1, dur, leg) { return this.put(Math.max(1, Math.round(dur)), a[0], a[1], z0, b[0], b[1], z1, 'vertical', leg); };
+  function wingFlight(t0, pad, cust, h) { const T = new Seg(t0); T.vert(pad[0], pad[1], 0, 7, undefined, 'out').hover(pad[0], pad[1], 7, 30, 'out').vert(pad[0], pad[1], 7, h, undefined, 'out').cruise(pad, cust, h, 26.4, 'out')
+    .vert(cust[0], cust[1], h, 7, undefined, 'out').hover(cust[0], cust[1], 7, 30, 'out').vert(cust[0], cust[1], 7, h, undefined, 'in').cruise(cust, pad, h, 26.4, 'in').vert(pad[0], pad[1], h, 0, undefined, 'in'); return T.s; }
+  function amazonFlight(t0, pad, cust, ho, hi, via) { const T = new Seg(t0), V = 30, d1 = V * 40 / 2, d2 = V * 30 / 2;
+    if (via && Math.hypot(via[0] - pad[0], via[1] - pad[1]) > d1 + d2 && Math.hypot(cust[0] - via[0], cust[1] - via[1]) > d1 + d2) {   // registered-path variant (CORRIDOR study): pad -> via -> customer, same path back
+      const a1 = toward(pad, via, d1), c0 = toward(cust, via, d2), b1 = toward(cust, via, d1), p0 = toward(pad, via, d2);
+      T.vert(pad[0], pad[1], 0, 35, 15, 'out').ramp(pad, a1, 35, ho, 40, 'out').cruise(a1, via, ho, V, 'out').cruise(via, c0, ho, V, 'out').ramp(c0, cust, ho, 43, 30, 'out').vert(cust[0], cust[1], 43, 4, 27, 'out').hover(cust[0], cust[1], 4, 4, 'out')
+        .vert(cust[0], cust[1], 4, 60, 30, 'in').ramp(cust, b1, 60, hi, 40, 'in').cruise(b1, via, hi, V, 'in').cruise(via, p0, hi, V, 'in').ramp(p0, pad, hi, 60, 30, 'in').vert(pad[0], pad[1], 60, 0, 35, 'in'); return T.s; }
+    const a1 = toward(pad, cust, d1), c0 = toward(cust, pad, d2), b1 = toward(cust, pad, d1), p0 = toward(pad, cust, d2);
+    T.vert(pad[0], pad[1], 0, 35, 15, 'out').ramp(pad, a1, 35, ho, 40, 'out').cruise(a1, c0, ho, V, 'out').ramp(c0, cust, ho, 43, 30, 'out').vert(cust[0], cust[1], 43, 4, 27, 'out').hover(cust[0], cust[1], 4, 4, 'out')
+      .vert(cust[0], cust[1], 4, 60, 30, 'in').ramp(cust, b1, 60, hi, 40, 'in').cruise(b1, p0, hi, V, 'in').ramp(p0, pad, hi, 60, 30, 'in').vert(pad[0], pad[1], 60, 0, 35, 'in'); return T.s; }
+  function ziplineFlight(t0, dock, box, cust, hz) { const T = new Seg(t0); T.vert(dock[0], dock[1], 0, hz, undefined, 'toBox').cruise(dock, box, hz, 31.3, 'toBox').hover(box[0], box[1], hz, 120, 'toBox').cruise(box, cust, hz, 31.3, 'out')
+    .hover(cust[0], cust[1], hz, 75, 'out').cruise(cust, dock, hz, 31.3, 'in').vert(dock[0], dock[1], hz, 0, undefined, 'in'); return T.s; }
+
+  // ---- sites (houston2.sites; ratios adjustable as fleet.js)
+  function sites(cfg, d, seed, ratio) { ratio = ratio || RATIO; const r = rng(seed + 7919), L = 2 * cfg.half / 1000, out = [];
+    for (const op of ['wing', 'zipline', 'amazon']) { const n = Math.round(L * L / (d * d) * ratio[op]); for (let k = 0; k < n; k++) out.push({ op, c: [(r() - 0.5) * 2 * cfg.half, (r() - 0.5) * 2 * cfg.half] }); } return out; }
+  // ---- flights (valloc.flights)
+  function flights(cfg, siteList, seed, A, opt) { const NB = opt && opt.boxes ? opt.boxes.n : 20, BR = opt && opt.boxes ? opt.boxes.r : 5000; const r = rng(seed), r2 = rng(seed + 104729), END = cfg.warm + cfg.meas, fl = [], pick = v => Array.isArray(v) ? v[0] + (v[1] - v[0]) * r2() : v;
+    for (const S of siteList) { const o = OP[S.op], c = S.c, rate = S.rate || o.rate, boxes = [];
+      if (S.op === 'zipline') for (let k = 0; k < NB; k++) { const rr = BR * Math.sqrt(r()), th = 2 * Math.PI * r(); boxes.push([c[0] + rr * Math.cos(th), c[1] + rr * Math.sin(th)]); }
+      let t = -Math.log(1 - r()) * 3600 / rate;
+      while (t < END) { let cust = opt && opt.cust ? opt.cust(S, r) : null; if (!cust) for (;;) { const rr = o.radius * Math.sqrt(r()), th = 2 * Math.PI * r(); if (rr < MIN_R) continue; cust = [c[0] + rr * Math.cos(th), c[1] + rr * Math.sin(th)]; break; }
+        const PS = opt && opt.padSpread ? opt.padSpread : 30, pad = [c[0] + (r() - 0.5) * PS, c[1] + (r() - 0.5) * PS], t0 = Math.round(t); let sg;
+        if (S.op === 'wing') sg = wingFlight(t0, pad, cust, A.wing[0] + (A.wing[1] - A.wing[0]) * r()); else if (S.op === 'amazon') sg = amazonFlight(t0, pad, cust, pick(A.aOut), pick(A.aIn), opt && opt.via ? opt.via(S, cust) : null); else sg = ziplineFlight(t0, pad, boxes[Math.floor(r() * boxes.length)], cust, A.zip);
+        fl.push({ id: fl.length, op: S.op, t0, sg, end: sg[sg.length - 1][0] + sg[sg.length - 1][1] }); t += -Math.log(1 - r()) * 3600 / rate; } }
+    return fl; }
+  // ---- zone helpers (proc.js)
+  const reachesZone = (cfg, f, m) => { let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity; for (const s of f.sg) { x0 = Math.min(x0, s[2], s[5]); x1 = Math.max(x1, s[2], s[5]); y0 = Math.min(y0, s[3], s[6]); y1 = Math.max(y1, s[3], s[6]); } return x1 >= -cfg.zone - m && x0 <= cfg.zone + m && y1 >= -cfg.zone - m && y0 <= cfg.zone + m; };
+  function samples(cfg, f) { const out = [], lim = cfg.zone + MARGIN; for (const sg of f.sg) for (let q = 0; q < sg[1]; q++) { const t = sg[0] + q, p = posAt(sg, t); if (Math.abs(p[0]) <= lim && Math.abs(p[1]) <= lim) out.push(t - f.t0, p[0], p[1], p[2]); } return out; }
+  // ---- plan check, first filed goes first (vol.intentCheck)
+  function intentCheck(cfg, fl, CELL, TB, VSEP) { const OPI = { wing: 0, amazon: 1, zipline: 2 };
+    const order = fl.filter(f => reachesZone(cfg, f, 30)).sort((a, b) => a.t0 - b.t0 || a.id - b.id), book = new Map(), key = (ix, iy, b) => ((ix + 5000) * 10000 + (iy + 5000)) * 4000 + b;   // PCFIX 24 Oct 2026: was (ix+1000)*2000, which went negative beyond 30 km west/south (bookings pruned) and collided beyond 30 km east/north
+    const delays = new Map(); let cancelled = 0, lastPrune = -Infinity;
+    for (const f of order) {
+      if (f.t0 - lastPrune > 600) { const minB = Math.floor((f.t0 - TB) / 10) - 1; for (const k of book.keys()) if (k % 4000 < minB) book.delete(k); lastPrune = f.t0; }
+      const S = samples(cfg, f), me = OPI[f.op]; let D = -1;
+      for (let k = 0; k < TRIES; k++) { const d = k * STEP; let bad = false;
+        for (let i = 0; i < S.length && !bad; i += 4) { const t = f.t0 + d + S[i], x = S[i + 1], y = S[i + 2], z = S[i + 3], ix = Math.floor(x / CELL), iy = Math.floor(y / CELL);
+          for (let b = Math.floor((t - TB) / 10); b <= Math.floor((t + TB) / 10) && !bad; b++) for (let ox = -1; ox <= 1 && !bad; ox++) for (let oy = -1; oy <= 1 && !bad; oy++) { const L = book.get(key(ix + ox, iy + oy, b)); if (!L) continue;
+            for (let j = 0; j < L.length; j += 3) if (L[j + 2] !== me && Math.abs(L[j] - t) <= TB && Math.abs(L[j + 1] - z) < VSEP && !(L[j + 1] < 1 && z < 1)) { bad = true; break; } } }
+        if (!bad) { D = d; break; } }
+      if (D < 0) { cancelled++; delays.set(f.id, null); continue; }
+      delays.set(f.id, D);
+      for (let i = 0; i < S.length; i += 4) { const t = f.t0 + D + S[i], k = key(Math.floor(S[i + 1] / CELL), Math.floor(S[i + 2] / CELL), Math.floor(t / 10)); let L = book.get(k); if (!L) book.set(k, L = []); L.push(t, S[i + 3], me); } }
+    return { delays, cancelled, checked: order.length }; }
+  const shift = (f, D) => D ? { id: f.id, op: f.op, t0: f.t0 + D, sg: f.sg.map(s => [s[0] + D, ...s.slice(1)]), end: f.end + D } : f;
+  // ---- contingencies (deviate.js, rth.js, countfix.drawsInZone, outage.js)
+  const expand = f => { const o = []; for (const s of f.sg) for (let q = 0; q < s[1]; q++) { const p = posAt(s, s[0] + q); o.push([s[0] + q, p[0], p[1], p[2], s[8]]); } return o; };
+  const toFlight = (f, smp) => ({ id: f.id, op: f.op, t0: f.t0, sg: smp.map(p => [p[0], 1, p[1], p[2], p[3], p[1], p[2], p[3], p[4], 'dev']), end: smp[smp.length - 1][0] + 1, dev: true });
+  function hold(f, T, secs) { const smp = expand(f), k = smp.findIndex(p => p[0] === T); if (k < 0) return f; const p = smp[k], out = smp.slice(0, k); for (let i = 0; i < secs; i++) out.push([T + i, p[1], p[2], p[3], 'hover']); for (const q of smp.slice(k)) out.push([q[0] + secs, q[1], q[2], q[3], q[4]]); return toFlight(f, out); }
+  function rth(f, off, H) { const SPD = { wing: 26.4, zipline: 31.3, amazon: 30 }, smp = expand(f), td = f.t0 + off, k = smp.findIndex(p => p[0] === td), out = smp.slice(0, k), p = smp[k], pad = [f.sg[0][2], f.sg[0][3]]; let t = td, z = p[3];
+    const tgt = H === null ? z : H; while (Math.abs(z - tgt) > 1e-9) { out.push([t++, p[1], p[2], z, 'vertical']); z = Math.abs(tgt - z) <= 3 ? tgt : z + Math.sign(tgt - z) * 3; }
+    const L = Math.hypot(pad[0] - p[1], pad[1] - p[2]), n = Math.max(1, Math.round(L / SPD[f.op])); out.push([t++, p[1], p[2], z, 'cruise']);
+    for (let i = 1; i <= n; i++) out.push([t++, p[1] + (pad[0] - p[1]) * i / n, p[2] + (pad[1] - p[2]) * i / n, z, 'cruise']);
+    for (z = z - 3; z > 0; z -= 3) out.push([t++, pad[0], pad[1], z, 'vertical']); out.push([t, pad[0], pad[1], 0, 'vertical']); return toFlight(f, out); }
+  function drawsInZone(cfg, acc, seed, frac) { const r = rng(seed + 80000), out = new Map();
+    for (const f of [...acc].sort((a, b) => a.id - b.id)) { if (!reachesZone(cfg, f, 30)) continue; const u = r(), u2 = r(); if (u >= frac) continue; const ok = [];
+      for (const s of f.sg) { if (s[8] !== 'cruise') continue; for (let q = 0; q < s[1]; q++) { const t = s[0] + q; if (t < cfg.warm) continue; const p = posAt(s, t); if (Math.abs(p[0]) <= cfg.zone && Math.abs(p[1]) <= cfg.zone) ok.push(t - f.t0); } }
+      if (ok.length) out.set(f.id, ok[Math.floor(u2 * ok.length)]); }
+    return out; }
+  function outages(cfg, acc, seed, n, radius, secs) { const r = rng(seed + 90000), ev = []; for (let i = 0; i < n; i++) ev.push({ T: Math.floor(cfg.warm + r() * cfg.meas * 0.9), c: [(r() - 0.5) * cfg.zone * 1.4, (r() - 0.5) * cfg.zone * 1.4] }); ev.sort((a, b) => a.T - b.T);
+    const fin = acc.slice(); let held = 0;
+    for (const e of ev) for (let i = 0; i < fin.length; i++) { const f = fin[i]; if (e.T < f.t0 || e.T >= f.end) continue; const sg = f.sg.find(s => e.T >= s[0] && e.T < s[0] + s[1]); if (!sg) continue; const p = posAt(sg, e.T); if (p[2] <= 0.5 || Math.hypot(p[0] - e.c[0], p[1] - e.c[1]) > radius) continue; fin[i] = hold(f, e.T, secs); held++; }
+    return { fin, held, events: ev }; }
+  // ---- meeting counter (houston2.count, exposure parts removed)
+  function count(cfg, fl, opts) { opts = opts || {}; const warm = cfg.warm, zone = cfg.zone, inZ = (x, y) => Math.abs(x) <= zone && Math.abs(y) <= zone;
+    const keep = fl.filter(f => { let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity; for (const s of f.sg) { x0 = Math.min(x0, s[2], s[5]); x1 = Math.max(x1, s[2], s[5]); y0 = Math.min(y0, s[3], s[6]); y1 = Math.max(y1, s[3], s[6]); } return x1 >= -zone - 30 && x0 <= zone + 30 && y1 >= -zone - 30 && y0 <= zone + 30; });
+    keep.sort((a, b) => a.t0 - b.t0); const tmax = keep.length ? Math.min(opts.tEnd === undefined ? Infinity : opts.tEnd, Math.max(...keep.map(f => f.end))) : 0,   // opts.tEnd (24 Oct 2026): stop at the end of the measured window; default unchanged
+    res = {}, add = k => { res[k] = (res[k] || 0) + 1; }, TH = opts.th || [['wide', 30, 10], ['close', 15, 5]];
+    let prev = Object.fromEntries(TH.map(x => [x[0], new Set()])), nx = 0; const act = [];
+    const SUB = opts.sub || 1, pAt = SUB === 1 ? posAt : (sg, t) => { const f = Math.min(1, Math.max(0, (t - sg[0] + 0.5) / sg[1])); return [sg[2] + (sg[5] - sg[2]) * f, sg[3] + (sg[6] - sg[3]) * f, sg[4] + (sg[7] - sg[4]) * f]; };
+    for (let it = 0; it <= tmax * SUB; it++) { const t = it / SUB; if (opts.progress && it % (600 * SUB) === 0) opts.progress(t / tmax);
+      while (nx < keep.length && keep[nx].t0 <= t) { const f = keep[nx++]; f.k = 0; f.zb = opts.zerr ? opts.zerr(f.id) : 0; act.push(f); }
+      const P = []; for (let a = act.length - 1; a >= 0; a--) { const f = act[a]; if (t >= f.end) { act.splice(a, 1); continue; } while (f.k < f.sg.length - 1 && t >= f.sg[f.k][0] + f.sg[f.k][1]) f.k++; const sg = f.sg[f.k]; if (t < sg[0]) continue; const p = pAt(sg, t);
+        if (p[0] < -zone - 30 || p[0] > zone + 30 || p[1] < -zone - 30 || p[1] > zone + 30) continue; P.push([f.id, f.op, p[0], p[1], p[2] >= 1 ? p[2] + f.zb : p[2], sg[8], sg[9]]); }
+      const g = new Map(); for (let a = 0; a < P.length; a++) { const k = Math.floor(P[a][2] / 30) + ',' + Math.floor(P[a][3] / 30), v = g.get(k); if (v) v.push(a); else g.set(k, [a]); }
+      const now = Object.fromEntries(TH.map(x => [x[0], new Set()]));
+      for (let a = 0; a < P.length; a++) { const gx = Math.floor(P[a][2] / 30), gy = Math.floor(P[a][3] / 30);
+        for (let ox = -1; ox <= 1; ox++) for (let oy = -1; oy <= 1; oy++) { const v = g.get((gx + ox) + ',' + (gy + oy)); if (!v) continue;
+          for (const b of v) { if (b <= a) continue; const A = P[a], B = P[b]; if (A[4] < 1 && B[4] < 1) continue; const dh = Math.hypot(A[2] - B[2], A[3] - B[3]), dz = Math.abs(A[4] - B[4]);
+            for (const [nm, Rh, Rv] of TH) { if (!(dh < Rh && dz < Rv)) continue; const key = A[0] < B[0] ? A[0] + '_' + B[0] : B[0] + '_' + A[0]; now[nm].add(key);
+              if (prev[nm].has(key) || t < warm || !(inZ(A[2], A[3]) || inZ(B[2], B[3]))) continue;
+              const cross = A[1] !== B[1], pair = [A[1], B[1]].sort().join('-'); add(`${nm}|${cross ? 'cross' : 'same'}`); if (opts.onMeet) opts.onMeet(nm, A, B, t); add(`${nm}|pair|${pair}`); } } } }
+      prev = now; }
+    return res; }
+  // ---- one lab scenario
+  // p: { d, seed, heights: 'filed'|'allocation'|{wing:[lo,hi],aOut,zip,aIn}, wingFixed: null|m, fleet: 'filed'|'equal', check: bool, cell, tb, vsep, contingency: 'none'|'hold'|'rth-own'|'rth-120'|'outage', frac, sub }
+  function run(cfg, p, progress) {
+    const H = typeof p.heights === 'string' ? Object.assign({}, HEIGHTS[p.heights]) : Object.assign({}, p.heights);
+    if (p.wingFixed) { const w = Math.min(p.wingFixed, H.wing[1]); H.wing = [w, w]; }
+    const ratio = p.ratio ? p.ratio : p.fleet === 'equal' ? { wing: 1, zipline: 65 / 75 * 0.32, amazon: 6 / 75 * 5.4 } : RATIO;   // p.ratio (24 Oct, DFW page): metro site mix; default unchanged
+    const S = sites(cfg, p.d, p.seed, ratio); if (p.rateMul) for (const x of S) if (p.rateMul[x.op]) x.rate = OP[x.op].rate * p.rateMul[x.op];   // p.rateMul: per-operator rate factor (DFW Zipline 400/950); default unchanged
+    const fl = flights(cfg, S, p.seed, H, { boxes: p.boxes }); progress && progress('plan', 0);
+    let acc = fl, delays = null, ic = null;
+    if (p.check) { ic = intentCheck(cfg, fl, p.cell, p.tb, p.vsep); acc = fl.map(f => { if (!ic.delays.has(f.id)) return f; const D = ic.delays.get(f.id); return D === null ? null : shift(f, D); }).filter(Boolean); delays = ic.delays; }
+    let fin = acc, nEvents = 0;
+    if (p.contingency === 'hold' || p.contingency === 'rth-own' || p.contingency === 'rth-120') { const dv = drawsInZone(cfg, acc, p.seed, p.frac); nEvents = dv.size;
+      fin = acc.map(f => !dv.has(f.id) ? f : p.contingency === 'hold' ? hold(f, f.t0 + dv.get(f.id), 120) : rth(f, dv.get(f.id), p.contingency === 'rth-120' ? 120 : null)); }
+    else if (p.contingency === 'outage') { const o = outages(cfg, acc, p.seed, p.outages || 6, 2000, 120); fin = o.fin; nEvents = o.held; }
+    const events = []; const zerr = p.zsig ? (id => { const g = rng(p.seed * 7919 + id * 31 + 17), u = Math.max(1e-12, g()), v = g(); return p.zsig * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }) : null;
+    const c = count(cfg, fin, { sub: p.sub || 4, th: p.th, zerr: zerr, progress: progress && (x => progress('count', x)), onMeet: (nm, A, B, t) => { if (A[1] !== B[1]) events.push([nm === 'close' ? 1 : 0, t, Math.round(A[2]), Math.round(A[3]), Math.round((A[4] + B[4]) / 2), A[1][0] + B[1][0]]); } });
+    const ops = {}; for (const f of fl) if (f.t0 >= cfg.warm && reachesZone(cfg, f, 0)) ops[f.op] = (ops[f.op] || 0) + 1;
+    const dstat = { checked: 0, delayed: 0, total_s: 0, cancelled: 0, byOp: {} };
+    if (delays) { const opOf = new Map(fl.map(f => [f.id, f.op])); for (const [id, D] of delays) { const o = opOf.get(id), b = dstat.byOp[o] || (dstat.byOp[o] = { n: 0, delayed: 0 }); dstat.checked++; b.n++; if (D === null) { dstat.cancelled++; continue; } if (D > 0) { dstat.delayed++; b.delayed++; dstat.total_s += D; } } }
+    const pairs = {}; for (const k in c) { const m = k.match(/^wide\|pair\|(.+)$/); if (m && m[1].split('-')[0] !== m[1].split('-')[1]) pairs[m[1]] = c[k]; }
+    return { cross_wide: c['wide|cross'] || 0, cross_close: c['close|cross'] || 0, same_wide: c['wide|same'] || 0, pairs, delays: dstat, contingencyEvents: nEvents, flightsMeasured: ops, sites: S.length, heights: H, events, fin };
+  }
+  const api = { OP, RATIO, HEIGHTS, rng, posAt, sites, flights, intentCheck, count, drawsInZone, hold, rth, outages, expand, reachesZone, samples, run };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.SkyLab = api;
+})(typeof self !== 'undefined' ? self : this);
+</script>
+<script type="application/json" id="seed-runs">[{"p":{"d":3,"seed":1,"wingFixed":null,"fleet":"filed","check":false,"cell":30,"tb":5,"vsep":10,"contingency":"none","frac":0.2,"outages":6,"sub":4,"heights":"filed"},"r":{"cross_wide":146,"cross_close":62,"same_wide":2150,"pairs":{"amazon-zipline":113,"wing-zipline":7,"amazon-wing":26},"delays":{"checked":0,"delayed":0,"total_s":0,"cancelled":0,"byOp":{}},"contingencyEvents":0,"flightsMeasured":{"wing":705,"zipline":1621,"amazon":191},"sites":124,"heights":{"wing":[46,91],"aOut":61,"zip":101,"aIn":105},"events":[],"ms":0}},{"p":{"d":3,"seed":1,"wingFixed":null,"fleet":"filed","check":false,"cell":30,"tb":5,"vsep":10,"contingency":"none","frac":0.2,"outages":6,"sub":4,"heights":"allocation"},"r":{"cross_wide":24,"cross_close":1,"same_wide":2155,"pairs":{"amazon-zipline":12,"wing-zipline":7,"amazon-wing":5},"delays":{"checked":0,"delayed":0,"total_s":0,"cancelled":0,"byOp":{}},"contingencyEvents":0,"flightsMeasured":{"wing":705,"zipline":1621,"amazon":191},"sites":124,"heights":{"wing":[46,71],"aOut":81,"zip":101,"aIn":115},"events":[],"ms":0}}]</script>
+<script type="application/json" id="studies">[
+{
+"name": "Cypress, real sites",
+"q": "Do filed plans meet at today's approximate sites?",
+"r": "Almost never at today's spacing (0 planned conflicts in 20 h without Amazon).",
+"pass": 0,
+"n": 3
+},
+{
+"name": "Houston build-out density",
+"q": "How do planned conflicts grow as sites fill in?",
+"r": "With the square of site density; Amazon in about 90 % of planned conflicts.",
+"pass": 2,
+"n": 3
+},
+{
+"name": "Height allocation",
+"q": "Can heights inside each filed band separate the operators?",
+"r": "About 80 % fewer planned conflicts against the filed heights (re-measured: 81 %, 92 %). Against the high-return case (122 m back, staff remark only), only 23 % (see Pre-launch robustness).",
+"pass": 3,
+"n": 3
+},
+{
+"name": "Free spread vs allocation",
+"q": "Is spreading heights freely as good as allocating them?",
+"r": "No: free spread cut 19–32 %, allocation 80 %+.",
+"pass": 2,
+"n": 2
+},
+{
+"name": "Robustness",
+"q": "Does the allocation hold across thresholds and peak hours?",
+"r": "Holds for 15–50 m thresholds and the busiest hour; at 20 m vertical separation it cut more than predicted (58–59 %). Its Dallas–Fort Worth figure (50–54 %) came from an older counter that checked once a second; rerun on the current counter with the same company mix, the cut is 75 % (77 % with Houston's Amazon share), in line with 78 % on the real DFW layout (exploratory rerun, 27 Oct 2026).",
+"pass": 2,
+"n": 4
+},
+{
+"name": "Procedures near sites",
+"q": "What removes the remaining planned conflicts?",
+"r": "A shared plan check removes all, delaying 1.5–4.8 % of flights. 3 predictions not scored (a pre-run check failed).",
+"pass": 2,
+"n": 5
+},
+{
+"name": "Profile shape vs priority rule",
+"q": "Why is Amazon delayed most?",
+"r": "Climbing in place did not fix it; priority rules move delay without removing it.",
+"pass": 3,
+"n": 4
+},
+{
+"name": "Vertical speed",
+"q": "Do Amazon's slow climbs cause its delays?",
+"r": "No: faster climbs cut crossing time 71 % but delays only 31–44 %.",
+"pass": 0,
+"n": 3
+},
+{
+"name": "Equal fleet sizes",
+"q": "Is it fleet size instead?",
+"r": "Mostly: equal fleets shrink the gap by about 70 %.",
+"pass": 1,
+"n": 3
+},
+{
+"name": "Richardson no-fly zone",
+"q": "Does the hospital no-fly zone explain one home's overflights?",
+"r": "It funnels traffic 3–4× but explains about a fifth of the count.",
+"pass": 3,
+"n": 3
+},
+{
+"name": "Reserved volume size",
+"q": "What does each flight's reserved airspace cost?",
+"r": "Delay roughly proportional to width; a 20 m vertical gap costs about 5×.",
+"pass": 3,
+"n": 4
+},
+{
+"name": "Surge and pop-up restriction",
+"q": "How do a 3× surge and a pop-up no-fly zone play out?",
+"r": "Surge doubles delayed share, recovers within 30 min; restriction mainly holds flights.",
+"pass": 1,
+"n": 3
+},
+{
+"name": "Off-plan drones (allocation)",
+"q": "Do stopped or landing drones meet other companies?",
+"r": "Too rare to compare (4 in 4,838).",
+"pass": 0,
+"n": 3
+},
+{
+"name": "Off-plan drones (filed heights)",
+"q": "Does the allocation help when drones go off-plan?",
+"r": "Yes against filed heights (9.4× fewer per stop); in the high-return case (staff remark) only 1.4× [0.8–2.4].",
+"pass": 2,
+"n": 2
+},
+{
+"name": "Return-to-home and outage",
+"q": "Does a common return height matter?",
+"r": "Return at 120 m is about 10.7× riskier than at own height (corrected).",
+"pass": 2,
+"n": 3
+},
+{
+"name": "Area outages",
+"q": "Is freezing together riskier, or being caught mid-climb?",
+"r": "Filed heights 7× riskier than allocation (1-per-second counting). Not yet re-measured for the high-return case.",
+"pass": 2,
+"n": 3
+},
+{
+"name": "Counting fix and re-runs",
+"q": "Do the headline numbers survive finer counting and error ranges?",
+"r": "Yes: 81 % [78–84], 92 % [89–95]; contingency ratios corrected down.",
+"pass": 4,
+"n": 4
+},
+{
+"name": "Wing at fixed heights",
+"q": "Does the allocation depend on how Wing picks its height?",
+"r": "No: 81–84 % cut at 46, 61, 76 m and random.",
+"pass": 2,
+"n": 2
+},
+{
+"name": "Pre-launch robustness",
+"q": "Does the result survive Amazon's real heights, height error and other layouts?",
+"r": "Lifting Amazon's return 10 m+ removes ~75 % on its own; then allocation adds 23 %. Height error 3/5 m: 72/63 %. 30 layouts: 83 %. 6 km was not weaker (prediction failed).",
+"pass": 9,
+"n": 10
+},
+{
+"name": "Bad days, high-return case",
+"q": "Do the bad-day and delay benefits hold against Amazon's reported heights?",
+"r": "Mostly not: holds 1.4× [0.8–2.4], delay 1.3×. Nearly all came from the 4 m Amazon–Zipline gap.",
+"pass": 4,
+"n": 4
+},
+{
+"name": "Houston today, real sites",
+"q": "Do the sites flying today in Houston meet?",
+"r": "1-2 planned conflicts in 60 h at the filed caps, none at 20 %: Amazon and Zipline are too far apart.",
+"pass": 4,
+"n": 6
+},
+{
+"name": "Real Houston layout",
+"q": "Real Amazon sites, full filed site counts",
+"r": "Cut 79 % (Omaha profile), 71 % (Texas band), 27 % (high-return case); 3 seeds, superseded by HEADLINE2.",
+"pass": 0,
+"n": 0
+},
+{
+"name": "Real DFW layout",
+"q": "Same with Amazon's six geocoded DFW sites",
+"r": "Cut 76 / 67 / 3 % with 3 seeds; 10 seeds gave 80 / 73 / 33 % (SEEDS).",
+"pass": 0,
+"n": 0
+},
+{
+"name": "Customers where people live",
+"q": "Census 2020 population weighting",
+"r": "Headline unchanged (77 / 71 / 23 %).",
+"pass": 0,
+"n": 0
+},
+{
+"name": "Amazon best-sourced heights",
+"q": "Amazon 69 m out, back anywhere in 85-115 m",
+"r": "71 % Houston, 66 % DFW (3 seeds; see HEADLINE2).",
+"pass": 3,
+"n": 3
+},
+{
+"name": "Shared departure paths",
+"q": "Do departure corridors explain Richardson's overflights?",
+"r": "About two shared paths reproduce it (a fit, not proof); headline unchanged.",
+"pass": 6,
+"n": 6
+},
+{
+"name": "Real wind",
+"q": "Does Houston and DFW wind change the result?",
+"r": "Height sharing 72-84 % across wind bands; a plan check with no wind allowance fails in wind.",
+"pass": 8,
+"n": 9
+},
+{
+"name": "Build-out stages",
+"q": "Today to full build-out, Houston and DFW",
+"r": "0 / 0.5 / 6.3 / 36 an hour (Houston), 0.5 / 3.0 / 25 (DFW); most involve Amazon and Zipline.",
+"pass": 8,
+"n": 10
+},
+{
+"name": "More seeds",
+"q": "10 seeds instead of 3",
+"r": "Cuts stable (81-83 % Houston, 80 % DFW); DFW high-return cut 33 %, not 3 %.",
+"pass": 5,
+"n": 5
+},
+{
+"name": "Real Walmart sites",
+"q": "Wing grows onto real stores",
+"r": "Little change against random sites (cuts 72-80 %).",
+"pass": 4,
+"n": 5
+},
+{
+"name": "Fixed pads",
+"q": "Pads with occupancy at sites",
+"r": "92-99 % fewer near-site conflicts than random pads; Zipline Houston needs more than 20 docks.",
+"pass": 2,
+"n": 4
+},
+{
+"name": "DFW bad days and plan-check cost",
+"q": "Bad-day tests and check cost with the DFW mix",
+"r": "Hover sharing 7.6x; common return height 5.9x worse; 1-2 % of flights delayed shared out.",
+"pass": 9,
+"n": 11
+},
+{
+"name": "Air-taxi site",
+"q": "Drones near Toyota's Plano HQ at full DFW build-out",
+"r": "About 19 an hour within 1 km (range 7-51 over layouts).",
+"pass": 0,
+"n": 0
+},
+{
+"name": "Amazon at today's volume",
+"q": "Amazon at 20 % of cap (about 200 a day)",
+"r": "Conflicts fall about two thirds; Amazon still about 80 % of what remains; sharing out cuts 79 % DFW, 62 % Houston.",
+"pass": 7,
+"n": 10
+},
+{
+"name": "Headline rerun (review fixes)",
+"q": "10 runs, bounded counting, stricter separation rules",
+"r": "72 % Houston [67-76], 73 % DFW [66-80]; 55 % / 45 % if 15 m is needed; 29 % / 35 % in the high-return case.",
+"pass": 4,
+"n": 5
+},
+{
+"name": "Air taxis near take-off sites",
+"q": "Drones near air-taxi climb-outs and approaches (both metros)",
+"r": "None today at the TMC helipad; at full build-out about 1 in 2 movements with a drone inside well clear, 1 in 20-45 inside NMAC. Drones yielding to booked air-taxi movements removes all for about one 2-minute delay per movement.",
+"pass": 6,
+"n": 6
+},
+{
+"name": "Realistic plan sharing (COORD1)",
+"q": "F3548-style reserved volumes, plans made on an hour-old wind forecast",
+"r": "Flown conflicts cut 96–99 %; about 1 flight in 6 waits (mean ~6 min) with today's shared-out heights; the old ±5 s check leaves half the conflicts in wind. 14–15 % of flights leave their reserved windows.",
+"pass": 4,
+"n": 6
+},
+{
+"name": "Layer gaps sized to the reservation (COORD2)",
+"q": "Do 20 m gaps between company layers cut the cost of coordination?",
+"r": "Delays fall by about 60 % (Houston 19 % to 8 %, DFW 17 % to 7 %); Amazon still waits most, because it climbs through every layer.",
+"pass": 2,
+"n": 6
+},
+{
+"name": "Coordination cost vs demand (DENS1)",
+"q": "A quarter to twice the filed demand",
+"r": "Uncoordinated conflicts grow roughly with demand squared; with today's heights the delayed share stays near 20 % while cancellations rise; gap-sized layers are cheaper at every demand level.",
+"pass": 3,
+"n": 6
+},
+{
+"name": "Air-taxi engine vs a published vertiport model (VERTIPORT1)",
+"q": "Does the air-taxi engine reproduce Vascik & Hansman (MIT, AIAA SciTech 2019)?",
+"r": "Yes, for one pad with 1-8 stands: pad use within 10 points of theirs in 15 of 16 cases and the same saturation points; it falls up to 15 points short where their optimised schedule beats first-come first-served. Setting it up showed engine versions 1-3 never let full stands block a landing; version 4 fixes this.",
+"pass": 5,
+"n": 5
+},
+{
+"name": "Order of the height layers (LAYER1)",
+"q": "Does putting Zipline on top of the layers cut conflicts and delay?",
+"r": "It cuts flown conflicts by about 40 % (Amazon-Zipline 39 to 8 in Houston) but not coordination delay: with layers 12 m apart and reserved blocks 10 m thick, cruising flights in neighbouring layers still block each other on paper. Order and gap-versus-block thickness are separate levers.",
+"pass": 4,
+"n": 7
+},
+{
+"name": "Layer order plus thinner reserved blocks (LAYER2)",
+"q": "Zipline on top and 5 m blocks instead of 10 m, together",
+"r": "Delayed flights fall from 18.5 % to 4.4 % (Houston) and 17.0 % to 4.1 % (DFW); Amazon from 83 % to 26 % and 80 % to 18 %; flown conflicts no higher than today's check (counts too small to show a difference). Thinner blocks do most of it; order adds a further 44 % only once blocks are thin. Whether 5 m blocks are safe is not tested.",
+"pass": 6,
+"n": 6
+},
+{
+"name": "Who could save time flying between Archer's sites (ACCESS1)",
+"q": "Census blocks and commute flows: how many existing commuters would cut 10+ minutes door to door?",
+"r": "Under generous road-speed assumptions 2.6 % of DFW and 1.2 % of Houston jobs (87,000 and 34,000) would save 10+ minutes, mostly long cross-metro commutes (about 67-77 km against a typical 20 km); off peak 0.3-0.4 %. No income skew (a prediction that failed). Slower local access roads cut this to 0.2-0.3 %. Adding Archer's last two sites (addendum): Frisco Station raises DFW to 3.1 %; the downtown Houston helipad puts about 730,000 more people within 15 minutes of a site but adds almost no time-savers, because downtown is a short drive from Hobby. Counts people with a time saving, not riders: fares, capacity and weather are not modelled.",
+"pass": 5,
+"n": 8
+},
+{
+"name": "Parking stands per air-taxi site (STANDS1)",
+"q": "How many stands does each site need once full stands block landings (engine v4)?",
+"r": "The registered test failed for a reason unrelated to stands: v4 makes arriving aircraft wait briefly for a pad, and with no charge margin any wait dips below the 20-minute reserve. Without that test (exploratory): about 4 stands per site at the lowest demand and 5-6 at the next; the 6 used since NET1 work in 7 of 10 seeds there; at higher demand the 2 pads run out before the stands do. Next: an arrival-priority pad rule.",
+"pass": 3,
+"n": 6
+},
+{
+"name": "Landing rule with limited stands (PADRULE1)",
+"q": "Does booking the landing slot at take-off, or holding aircraft on the ground until a stand is reserved, beat the first-come rule?",
+"r": "Yes where pads are scarce: with 2 pads per site and 3 requests an hour each way, the first-come rule never meets the service and reserve criterion at any stand count up to 16, booking the slot at take-off needs 8 stands per site and waiting on the ground for a stand needs 5, at the price of longer passenger waits (about 225-285 s against 46-130 s). With 4 pads the rules converge. Two pads run out before stands do from 6 requests an hour. One prediction failed (aircraft left waiting at the end of the run, which were ordinary queueing, not a deadlock).",
+"pass": 5,
+"n": 6
+},
+{
+"name": "How wide are the air-taxi headlines? (UNCERT1)",
+"q": "Draw the uncertain inputs from stated ranges and see how far the headline numbers move",
+"r": "The share of jobs saving 10+ minutes by flying becomes 1.2 % in DFW (5th-95th: 0.02-4.9 %) and 0.5 % in Houston (0.2-2.4 %), against the 3.1 % and 1.3 % of the single-point run: that point was optimistic. What matters most is how fast the road is that people would otherwise drive, then pad processing time. The required fleet is robust (DFW at 3 flights an hour each way: 12-16 aircraft; Houston 8-12) and moves mainly with the charging rate. The ranges are my assumptions. One prediction failed (which input matters most for the access share).",
+"pass": 5,
+"n": 6
+}
+]</script>
+<script>
+(() => {
+  const CFG = { half: 12000, zone: 5000, warm: 1800, meas: 3600 }, DT = 3;
+  const $ = id => document.getElementById(id), css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const OPC = { w: '--wing', z: '--zip', a: '--amz' }, NAMES = { wing: 'Wing', zipline: 'Zipline', amazon: 'Amazon' };
+  // ---- worker running the engine
+  const workerSrc = $('engine').textContent + `
+self.onmessage = e => { const { id, cfg, p } = e.data, t0 = Date.now();
+  const r = SkyLab.run(cfg, p, (stage, x) => self.postMessage({ id, progress: { stage, x } }));
+  const T0 = cfg.warm, T1 = cfg.warm + cfg.meas, DT = ${DT}, tracks = [], bufs = [];
+  for (const f of r.fin) { if (f.end < T0 || f.t0 > T1 || !SkyLab.reachesZone(cfg, f, 0)) continue;
+    const s0 = Math.max(T0, Math.ceil(f.t0 / DT) * DT), s1 = Math.min(T1, f.end - 1); if (s1 <= s0) continue;
+    const n = Math.floor((s1 - s0) / DT) + 1, a = new Int16Array(n * 3); let k = 0;
+    for (let i = 0; i < n; i++) { const t = s0 + i * DT; while (k < f.sg.length - 1 && t >= f.sg[k][0] + f.sg[k][1]) k++; const p = SkyLab.posAt(f.sg[k], t); a[i * 3] = Math.round(p[0]); a[i * 3 + 1] = Math.round(p[1]); a[i * 3 + 2] = Math.round(p[2]); }
+    tracks.push({ o: f.op[0], s: s0 - T0, a }); bufs.push(a.buffer); }
+  delete r.fin; r.ms = Date.now() - t0; self.postMessage({ id, result: r, tracks }, bufs); };`;
+  let worker = null; try { worker = new Worker(URL.createObjectURL(new Blob([workerSrc], { type: 'text/javascript' }))); } catch (e) { worker = null; }
+  let nextId = 1; const pending = new Map();
+  if (worker) worker.onmessage = e => { const m = e.data, h = pending.get(m.id); if (!h) return; if (m.progress) { h.progress(m.progress); return; } pending.delete(m.id); h.resolve(m); };
+  const runInWorker = (p, progress) => new Promise((resolve, reject) => { if (!worker) return reject(new Error('This browser blocked the background worker the lab needs.')); const id = nextId++; pending.set(id, { resolve, progress }); worker.postMessage({ id, cfg: CFG, p }); });
+
+  // ---- form
+  const PRESETS = [
+    ['Filed heights', { heights: 'filed', check: false, cont: 'none' }],
+    ['High return (staff remark)', { heights: 'reported', check: false, cont: 'none' }],
+    ['Allocation', { heights: 'allocation', check: false, cont: 'none' }],
+    ['Allocation + plan check', { heights: 'allocation', check: true, cont: 'none' }],
+    ['Drones stop, filed heights', { heights: 'filed', check: true, cont: 'hold' }],
+    ['Drones stop, high return (staff remark)', { heights: 'reported', check: true, cont: 'hold' }],
+    ['Drones stop, allocation', { heights: 'allocation', check: true, cont: 'hold' }],
+    ['Return home at 120 m', { heights: 'allocation', check: true, cont: 'rth-120' }]];
+  for (const [name, v] of PRESETS) { const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.textContent = name; b.onclick = () => { $('heights').value = v.heights; $('check').checked = v.check; $('cont').value = v.cont; $('wingfix').value = '0'; $('fleet').value = 'filed'; sync(); go(); }; $('presets').append(b); }
+  function sync() { $('custom').hidden = $('heights').value !== 'custom'; $('conthint').hidden = !($('cont').value !== 'none' && !$('check').checked); for (const id of ['cell', 'tb', 'vsep']) $(id).disabled = !$('check').checked; }
+  for (const id of ['heights', 'check', 'cont']) $(id).addEventListener('change', sync); sync();
+  function params(heightsOverride) { const h = heightsOverride || $('heights').value;
+    const heights = h === 'custom' ? { wing: [+$('wlo').value, +$('whi').value], aOut: +$('aout').value, zip: +$('zip').value, aIn: +$('ain').value } : h;
+    return { d: +$('d').value, seed: Math.max(1, Math.min(999, +$('seed').value || 1)), heights, wingFixed: +$('wingfix').value || null, fleet: $('fleet').value, check: $('check').checked, cell: +$('cell').value, tb: +$('tb').value, vsep: +$('vsep').value, contingency: $('cont').value, frac: 0.2, outages: 6, sub: 4 }; }
+  function label(p) { const H = typeof p.heights === 'string' ? (p.heights === 'filed' ? 'Filed heights' : p.heights === 'reported' ? 'High return (staff remark)' : 'Allocation') : `Custom (W ${p.heights.wing[0]}–${p.heights.wing[1]}, A ${p.heights.aOut}/${p.heights.aIn}, Z ${p.heights.zip})`;
+    const parts = [H, `${p.d} km`, `seed ${p.seed}`]; if (p.wingFixed) parts.push(`Wing at ${p.wingFixed} m`); if (p.fleet === 'equal') parts.push('equal fleets');
+    if (p.check) parts.push(`plan check ${p.cell} m / ±${p.tb} s / ${p.vsep} m`); const C = { hold: '2-min stops', 'rth-own': 'return home at own height', 'rth-120': 'return home at 120 m', outage: 'area outages' }; if (p.contingency !== 'none') parts.push(C[p.contingency]); return parts.join(' · '); }
+
+  // ---- results
+  let current = null, tracks = [], t = 0, playing = !matchMedia('(prefers-reduced-motion: reduce)').matches, last = null;
+  const fmt = n => n.toLocaleString('en-US');
+  function stat(n, l, cls) { return `<div class="stat ${cls || ''}"><span class="n">${n}</span><span class="l">${l}</span></div>`; }
+  function show(r, p) { current = { r, p };
+    const ds = r.delays, delayedPct = ds.checked ? (100 * ds.delayed / ds.checked).toFixed(1) + ' %' : '—', avg = ds.delayed ? Math.round(ds.total_s / ds.delayed) + ' s' : '—';
+    const per100 = r.contingencyEvents ? (100 * r.cross_wide / r.contingencyEvents).toFixed(2) : '—';
+    $('stats').innerHTML = stat(fmt(r.cross_wide), 'planned conflicts between companies (1 h)', r.cross_wide ? 'hot' : 'ok') + stat(fmt(r.cross_close), 'of them within 15 m', r.cross_close ? 'hot' : 'ok')
+      + stat(p.check ? delayedPct : 'off', p.check ? `flights delayed · avg wait ${avg}` : 'shared plan check') + stat(p.contingency !== 'none' ? per100 : '—', p.contingency !== 'none' ? `planned conflicts per 100 off-plan events (${fmt(r.contingencyEvents)} events)` : 'no off-plan events');
+    const pairs = Object.entries(r.pairs).sort((a, b) => b[1] - a[1]), mx = Math.max(1, ...pairs.map(x => x[1]));
+    $('pairs').innerHTML = pairs.length ? pairs.map(([k, v]) => { const [a, b] = k.split('-'); return `<div><span>${NAMES[a]} – ${NAMES[b]}</span><span class="track"><i style="width:${100 * v / mx}%;background:linear-gradient(90deg,var(${OPC[a[0]]}),var(${OPC[b[0]]}))"></i></span><span class="mono" style="text-align:right">${v}</span></div>`; }).join('') : '<div class="empty" style="display:block;padding:0">No planned conflicts between companies in this run.</div>';
+    $('runlabel').textContent = label(p); }
+  function logRow(r, p) { const ds = r.delays, tr = document.createElement('tr');
+    tr.innerHTML = `<td>${label(p)}</td><td class="num">${fmt(r.cross_wide)}</td><td class="num">${fmt(r.cross_close)}</td><td class="num">${p.check ? (100 * ds.delayed / Math.max(1, ds.checked)).toFixed(1) + ' %' : '—'}</td><td class="num">${ds.delayed ? Math.round(ds.total_s / ds.delayed) + ' s' : '—'}</td><td class="num">${r.contingencyEvents ? fmt(r.contingencyEvents) : '—'}</td><td class="num">${r.contingencyEvents ? (100 * r.cross_wide / r.contingencyEvents).toFixed(2) : '—'}</td><td class="num">${r.ms ? (r.ms / 1000).toFixed(1) + ' s' : 'example'}</td>`;
+    const empty = $('log').querySelector('.empty-row'); if (empty) empty.remove(); $('log').prepend(tr); }
+
+  // ---- animation
+  const map = $('map'), side = $('side'), cM = map.getContext('2d'), cS = side.getContext('2d');
+  const fit = c => { const r = c.getBoundingClientRect(), d = Math.min(2, devicePixelRatio || 1); c.width = Math.max(1, Math.round(r.width * d)); c.height = Math.max(1, Math.round(r.height * d)); return d; };
+  let dM = fit(map), dS = fit(side); addEventListener('resize', () => { dM = fit(map); dS = fit(side); });
+  const posT = (tr, tt) => { const f = (tt - tr.s) / DT, i = Math.floor(f), n = tr.a.length / 3; if (i < 0 || i + 1 >= n) return null; const u = f - i, a = tr.a; return [a[i * 3] + (a[i * 3 + 3] - a[i * 3]) * u, a[i * 3 + 1] + (a[i * 3 + 4] - a[i * 3 + 1]) * u, a[i * 3 + 2] + (a[i * 3 + 5] - a[i * 3 + 2]) * u]; };
+  function draw() { const Z = CFG.zone, W = map.width, Hh = map.height, sc = W / (2 * Z), X = x => (x + Z) * sc, Y = y => (Z - y) * sc;
+    cM.fillStyle = css('--surface'); cM.fillRect(0, 0, W, Hh); cM.strokeStyle = css('--grid'); cM.lineWidth = 1;
+    for (let k = -Z; k <= Z; k += 1000) { cM.beginPath(); cM.moveTo(X(k), 0); cM.lineTo(X(k), Hh); cM.moveTo(0, Y(k)); cM.lineTo(W, Y(k)); cM.stroke(); }
+    const ev = current ? current.r.events : [];
+    for (const tr of tracks) { const p = posT(tr, t); if (!p) continue; cM.fillStyle = css(OPC[tr.o]); cM.beginPath(); cM.arc(X(p[0]), Y(p[1]), 1.9 * dM, 0, 7); cM.fill(); }
+    cM.strokeStyle = css('--alert'); for (const e of ev) { const age = t - (e[1] - CFG.warm); if (age < 0 || age > 60) continue; const k = age / 60; cM.globalAlpha = 1 - k; cM.lineWidth = (e[0] ? 3 : 2) * dM; cM.beginPath(); cM.arc(X(e[2]), Y(e[3]), (5 + 20 * k) * dM, 0, 7); cM.stroke(); } cM.globalAlpha = 1;
+    cM.font = `${11 * dM}px "IBM Plex Mono", monospace`; cM.fillStyle = css('--muted'); cM.fillRect(10 * dM, Hh - 14 * dM, 1000 * sc, 2 * dM); cM.fillText('1 km', 10 * dM, Hh - 22 * dM);
+    if (!tracks.length) { cM.textAlign = 'center'; cM.fillText(worker ? 'Run a scenario to see it fly' : 'Background worker blocked in this browser', W / 2, Hh / 2); cM.textAlign = 'left'; }
+    // side
+    const Ws = side.width, Hs = side.height, pl = 124 * dS, pb = 20 * dS, pt = 10 * dS, ZM = 130, SX = x => pl + (x + Z) / (2 * Z) * (Ws - pl - 6 * dS), SZ = z => Hs - pb - z / ZM * (Hs - pb - pt);
+    cS.fillStyle = css('--surface'); cS.fillRect(0, 0, Ws, Hs); cS.font = `${10.5 * dS}px "IBM Plex Mono", monospace`; cS.textBaseline = 'middle';
+    if (current) { const H = current.r.heights; cS.fillStyle = css('--band'); cS.fillRect(pl, SZ(H.wing[1]), Ws - pl, SZ(H.wing[0]) - SZ(H.wing[1]) || 1);
+      const lab = [['Wing', (H.wing[0] + H.wing[1]) / 2, '--wing', H.wing[0] === H.wing[1] ? `${H.wing[0]} m` : `${H.wing[0]}–${H.wing[1]} m`], ['Amazon out', H.aOut, '--amz', `${H.aOut} m`], ['Zipline', H.zip, '--zip', `${H.zip} m`], ['Amazon back', H.aIn, '--amz', `${H.aIn} m`]].sort((a, b) => a[1] - b[1]);
+      for (const [n, z, tok] of lab) { if (n === 'Wing') continue; cS.strokeStyle = css(tok); cS.globalAlpha = .5; cS.setLineDash([4 * dS, 4 * dS]); cS.beginPath(); cS.moveTo(pl, SZ(z)); cS.lineTo(Ws, SZ(z)); cS.stroke(); cS.setLineDash([]); cS.globalAlpha = 1; }
+      let py = Infinity; cS.textAlign = 'right'; for (const [n, z, tok, txt] of lab) { let y = SZ(z); if (py - y < 12 * dS) y = py - 12 * dS; py = y; cS.fillStyle = css(tok); cS.fillText(`${n} ${txt}`, pl - 5 * dS, y); } }
+    cS.strokeStyle = css('--muted'); cS.globalAlpha = .6; cS.beginPath(); cS.moveTo(pl, SZ(122)); cS.lineTo(Ws, SZ(122)); cS.stroke(); cS.globalAlpha = 1; cS.fillStyle = css('--muted'); cS.textAlign = 'left'; cS.fillText('400 ft ceiling', pl + 4 * dS, SZ(122) - 7 * dS);
+    cS.strokeStyle = css('--rule'); cS.beginPath(); cS.moveTo(pl, SZ(0)); cS.lineTo(Ws, SZ(0)); cS.stroke();
+    for (const tr of tracks) { const p = posT(tr, t); if (!p || p[2] < 1) continue; cS.fillStyle = css(OPC[tr.o]); cS.beginPath(); cS.arc(SX(p[0]), SZ(p[2]), 1.8 * dS, 0, 7); cS.fill(); }
+    cS.strokeStyle = css('--alert'); for (const e of ev) { const age = t - (e[1] - CFG.warm); if (age < 0 || age > 60) continue; const k = age / 60; cS.globalAlpha = 1 - k; cS.lineWidth = 2 * dS; cS.beginPath(); cS.arc(SX(e[2]), SZ(e[4]), (4 + 14 * k) * dS, 0, 7); cS.stroke(); } cS.globalAlpha = 1;
+    $('clock').textContent = `minute ${Math.floor(t / 60)} of ${CFG.meas / 60}`; }
+  function frame(ts) { if (last !== null && playing && tracks.length) { t += (ts - last) / 1000 * 60; if (t >= CFG.meas) t = 0; } last = ts; draw(); requestAnimationFrame(frame); }
+  $('play').textContent = playing ? 'Pause' : 'Play'; $('play').onclick = () => { playing = !playing; $('play').textContent = playing ? 'Pause' : 'Play'; };
+  requestAnimationFrame(frame);
+
+  // ---- running
+  let busy = false;
+  async function go(list, opt) { opt = opt || {}; if (busy) return; busy = true; $('run').disabled = $('runboth').disabled = true; list = list || [params()];
+    try { for (let i = 0; i < list.length; i++) { const p = list[i], tag = list.length > 1 ? `run ${i + 1} of ${list.length}: ` : '';
+        $('status').textContent = tag + 'building flights…'; $('prog').style.width = '0%';
+        const m = await runInWorker(p, pr => { $('status').textContent = tag + (pr.stage === 'plan' ? 'checking plans…' : `counting planned conflicts… ${Math.round(pr.x * 100)} %`); $('prog').style.width = (pr.stage === 'count' ? 20 + 80 * pr.x : 10) + '%'; });
+        tracks = m.tracks.map(x => ({ o: x.o, s: x.s, a: x.a })); t = 0; show(m.result, p); if (opt.log !== false) logRow(m.result, p); $('prog').style.width = '100%'; }
+      $('status').textContent = `Done. ${list.length > 1 ? 'Compare the two rows in the run log.' : ''}`; }
+    catch (e) { $('status').textContent = 'Run failed: ' + e.message; }
+    busy = false; $('run').disabled = $('runboth').disabled = false; }
+  $('form').addEventListener('submit', e => { e.preventDefault(); go(); });
+  $('runboth').onclick = () => go([params('filed'), params('allocation')]);
+
+  // ---- example runs computed at build time (same engine, same settings) so the page has numbers before you run anything
+  const seeds = JSON.parse($('seed-runs').textContent);
+  for (const s of seeds) logRow(s.r, s.p); if (seeds.length) show(seeds[seeds.length - 1].r, seeds[seeds.length - 1].p);
+  // ---- study record
+  const st = JSON.parse($('studies').textContent);
+  $('record').innerHTML = st.map(s => `<tr><td>${s.name}</td><td>${s.q}</td><td>${s.r}</td><td>${s.n ? `<span class="pill ${s.pass === s.n ? 'pass' : s.pass === 0 ? 'fail' : 'mixed'}">${s.pass} of ${s.n} passed</span>` : '—'}</td></tr>`).join('');
+  // start with a live run of the current scenario so the views move
+  if (worker) go(undefined, { log: false });
+})();
+</script>
