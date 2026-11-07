@@ -6,4 +6,4 @@ What it proves: these fingerprints existed no later than the Bitcoin block the p
 
 From now on each new registration is stamped when it is written, before its runs, so for those studies the order is checkable.
 
-Check: `pip install opentimestamps-client`, then `ots verify timestamps/manifest_2026-11-06.txt.ots` (needs a Bitcoin node or the calendar servers), or drop both files on opentimestamps.org. Until the proof is upgraded (a few hours after submission) it shows "pending".
+Check: `pip install opentimestamps-client`, then `ots verify timestamps/manifest_2026-11-06.txt.ots` (needs a Bitcoin node or the calendar servers), or drop both files on opentimestamps.org. The proof is complete: it is anchored in Bitcoin block 974,877 (mined 7 Nov 2026, 01:59 UTC; Merkle root dee625f4…faef5814), so the fingerprints existed no later than that. Two other calendars' branches are still marked pending; one confirmed branch is enough.
