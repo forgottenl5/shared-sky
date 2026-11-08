@@ -372,17 +372,38 @@ var OPN = ['Wing', 'Zipline', 'Amazon'], OPC = [[0.31, 0.85, 1.0], [1.0, 0.75, 0
 var SC = {}, NAMES = {
   filed: 'Filed profile', sourced: 'Best-sourced Amazon', reported: 'High return (staff remark)', shared: 'Shared out', checked: 'Shared out + plan sharing', layered: 'Zipline on top + 5 m blocks',
   holdFiled: 'Filed profile', holdReported: 'High return (staff remark)', holdShared: 'Shared out' };
-Object.keys(RAW.sc).forEach(function (k) {
-  var s = RAW.sc[k], fl = s.flights.map(function (a) {
+// Flights are packed as delta-coded arrays. The first scenario is inline; the others sit in data/*.js and load when picked (or a few seconds after the page is ready).
+function unpack(arr) {
+  var fl = arr.map(function (a) {
     var n = (a.length - 1) / 4, K = new Float32Array(n * 4), t = a[1];
     K[0] = t; K[1] = a[2]; K[2] = a[3]; K[3] = a[4];
     for (var i = 1; i < n; i++) { var o = 5 + (i - 1) * 4; t += a[o]; K[i * 4] = t; K[i * 4 + 1] = a[o + 1]; K[i * 4 + 2] = a[o + 2]; K[i * 4 + 3] = a[o + 3]; }
     return { o: a[0], t0: K[0], t1: t, K: K, n: n };
   });
   fl.sort(function (a, b) { return a.t0 - b.t0; });
+  return fl;
+}
+Object.keys(RAW.sc).forEach(function (k) {
+  var s = RAW.sc[k], lazy = RAW.meta.lazy && RAW.meta.lazy[k];
   var ev = s.events.map(function (e) { return { c: e[0], t: e[1], x: e[2], y: e[3], z: e[4], ops: e[5] }; });
-  SC[k] = { k: k, fl: fl, ev: ev, wide: s.wide, close: s.close, delays: s.delays, holds: s.holds };
+  SC[k] = { k: k, fl: lazy ? [] : unpack(s.flights), ev: ev, wide: s.wide, close: s.close, delays: s.delays, holds: s.holds, loaded: !lazy, lazy: lazy || null };
 });
+var loadingK = {};
+function loadScenario(k, done) {
+  var S = SC[k]; if (!S || S.loaded) { if (done) done(true); return; }
+  if (loadingK[k]) { loadingK[k].push(done); return; }
+  loadingK[k] = [done];
+  var sc = document.createElement('script'); sc.src = S.lazy.url;
+  sc.onload = function () { var arr = window.__FL && window.__FL[S.lazy.id]; if (arr) { S.fl = unpack(arr); S.loaded = true; delete window.__FL[S.lazy.id]; } var cbs = loadingK[k]; delete loadingK[k]; cbs.forEach(function (f) { if (f) f(S.loaded); }); };
+  sc.onerror = function () { var cbs = loadingK[k]; delete loadingK[k]; cbs.forEach(function (f) { if (f) f(false); }); };
+  document.head.appendChild(sc);
+}
+function prefetchRest() {
+  var c = navigator.connection; if (c && (c.saveData || /(^|-)2g|3g/.test(c.effectiveType || ''))) return;
+  var q = Object.keys(SC).filter(function (k) { return !SC[k].loaded; });
+  (function next() { var k = q.shift(); if (k) loadScenario(k, function () { setTimeout(next, 400); }); })();
+}
+window.addEventListener('load', function () { setTimeout(prefetchRest, 4000); });
 var SHORT = { filed: 'Filed', sourced: 'Sourced', reported: 'High return', shared: 'Shared', checked: '+ sharing', layered: 'Layer fix', holdFiled: 'Filed', holdReported: 'High return', holdShared: 'Shared' };
 var GROUPS = { normal: ['filed', 'sourced', 'reported', 'shared', 'checked', 'layered'], bad: ['holdFiled', 'holdReported', 'holdShared'] };
 var DESC = {
@@ -638,7 +659,8 @@ function updateScore() {
   if (!scrubbing) $('scrub').value = Math.floor(simT);
 }
 function setScenario(k) { cur = k; Array.prototype.forEach.call($('rows').children, function (r) { r.classList.toggle('on', r.dataset.k === k); });
-  Array.prototype.forEach.call($('segH').children, function (b) { b.classList.toggle('on', b.dataset.k === k); }); $('desc').innerHTML = DESC[k]; hideTip(); }
+  Array.prototype.forEach.call($('segH').children, function (b) { b.classList.toggle('on', b.dataset.k === k); }); $('desc').innerHTML = DESC[k]; hideTip();
+  if (!SC[k].loaded) { $('desc').innerHTML = '<i>Loading this scenario…</i> ' + DESC[k]; loadScenario(k, function (ok) { if (cur === k) $('desc').innerHTML = ok ? DESC[k] : DESC[k] + ' <b>Could not load this scenario’s flights. Check your connection and pick it again.</b>'; }); } }
 function setDay(d) { if (d === day) return; var idx = GROUPS[day].indexOf(cur); day = d; Array.prototype.forEach.call(document.querySelectorAll('#segD button'), function (b) { b.classList.toggle('on', b.dataset.d === d); });
   cur = GROUPS[d][Math.min(idx < 0 ? 0 : idx, GROUPS[d].length - 1)]; buildRows(); setScenario(cur); }
 document.querySelectorAll('#segD button').forEach(function (b) { b.addEventListener('click', function () { userAct(); setDay(b.dataset.d); }); });

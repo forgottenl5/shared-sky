@@ -118,7 +118,7 @@ ${OG("Shared Sky findings", "What a pre-registered simulation of delivery drones
 <link rel="stylesheet" href="vendor/fonts/fonts.css">
 <style>${css}</style></head><body><main>
 <nav><a href="index.html">Shared Sky</a><a href="lab.html">Lab</a><a href="houston.html">Houston</a><a href="dfw.html">Dallas–Fort Worth</a><a href="airtaxi.html">Air taxis</a><a href="about.html">About</a></nav>
-<div class="kick">Findings, updated 3 November 2026</div>
+<div class="kick">Findings, updated 6 November 2026</div>
 <h1>What the simulation found, and what it got wrong</h1>
 <p class="lede">Shared Sky is a scenario model of delivery drones (Wing, Zipline, Amazon) and of air taxis between Texas airports and vertiports, built from FAA filings, company announcements and Census data. It is not a forecast and nobody has endorsed it. No person outside the project has reviewed it yet; the reviews so far were done by AI reviewers. Predictions are written down and fingerprinted before the runs; this page shows the ones that came true and the ones that did not.</p>
 <div class="cav"><p><b>Read this first.</b> Every result here comes from a simulation, not from real flights, and none has been checked against real operations: the companies do not publish flight-level data, and the air-taxi networks are scenarios built from announced sites. Read each percentage as “what happens in this model under these assumptions”, not as what operators will see. Being reproducible and pre-registered makes the work checkable, not accurate. The assumptions that move the numbers most are <a href="#drivers">listed at the end</a>.</p></div>

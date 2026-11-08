@@ -1,6 +1,6 @@
 # Reproduction report
 
-Commit a604bf7, run 2026-11-06 23:22 by tools/reproduce.py.
+Commit ce9b42d, run 2026-11-06 23:59 by tools/reproduce.py.
 
 **291 of 291 checks passed.**
 
