@@ -6,7 +6,7 @@ Later notes (pre-study checks, deviations, corrections) are only ever **appended
 
     python3 planned/verify_prereg.py
 
-checks all of them that way (as of 29 Oct 2026: 70 of 70 pass). Any edit above the log would fail.
+checks all of them that way (as of 21 Nov 2026: 77 of the 80 registrations in the public copy pass; 3 are marked REDACTED because a private detail was removed, and were verified privately). Any edit above the log would fail.
 
 ## What "independent review" means in this record
 Wherever the record (22–27 Oct 2026) says "independent review", "independent reviewer" or names a reviewer role such as "industry engineer", it means an AI agent: a fresh session of the AI assistant used to build the project, given the files but no part in producing the work. No person outside the project has reviewed it yet. Registrations that use the old wording are fingerprinted and are not edited; this note applies to them.
@@ -28,3 +28,6 @@ Git history shows each registration committed before its runner, and the runner 
 
 ## Reproduce everything in one command (added 30 Oct 2026)
 `python3 tools/reproduce.py --rerun` builds a clean copy of the committed repo and checks, in order: every registration fingerprint; every one of the 67 analysis scripts re-run on the committed raw outputs (`planned/raw/out_snapshot.tar.xz`), with each results table byte-identical to the committed one; every scorecard entry in `lab/studies.json` against the pass/fail count read from its own results file (`tools/scorecard_map.json`, built by an independent record-by-record count); the totals on the built pages; two air-taxi studies (ROUTE1, VERTIPORT1) and one slice of RECOUNT1 re-run from scratch with byte-identical raw output, plus the shared-sky page data re-exported identically. Of the analyses, 44 write a results table that is compared with the committed one; the printed output of all 67 is compared with a snapshot the project took on 30 Oct 2026, which guards against later drift but does not prove the original runs. The 70 checked fingerprints are those in planned/; the older registrations at the repository root (20–22 Oct, earlier engine, not in the scorecard) are not checked. The last run's sheet is `planned/repro/REPORT.md`. It does not re-run every simulation (that takes many hours).
+
+## Engine self-test
+`node lab/test_lab_engine.js` needs the raw run outputs in `out/`. Extract them first: `tar -xJf planned/raw/out_snapshot.tar.xz` (from the repo root).

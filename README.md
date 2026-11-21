@@ -3,7 +3,7 @@
 *Formerly Sky-Grid (renamed 5 Nov 2026: "SkyGrid" is the name of an unrelated airspace-management company). Dated records written before the rename, including the fingerprinted registrations, keep the old name, because editing them would break their fingerprints.*
 
 <p align="center">
-  <a href="https://forgottenl5.github.io/shared-sky/houston.html"><img src="docs/img/demo.webp" width="300" alt="Houston delivery drones over two simulated hours: 92 planned conflicts with each company at its filed heights, 33 with heights shared out"></a><br>
+  <a href="https://forgottenl5.github.io/shared-sky/houston.html"><img src="docs/img/demo.webp" width="300" alt="Houston delivery drones over two simulated hours: 92 planned conflicts with Amazon at its best-sourced heights, 33 with heights shared out"></a><br>
   <sub>Same Houston flights, two height rules (the site's demo patch: 92 → 33 planned conflicts). <a href="https://forgottenl5.github.io/shared-sky/houston.html">Fly it in 3D</a></sub>
 </p>
 
@@ -28,10 +28,10 @@ Real operators already share flight plans before take-off (ASTM F3548; in DFW, W
 ## Glossary
 - **Planned conflict:** planned paths of two different companies within 30 m horizontally and less than 10 m vertically at the same moment (checked 4 times a second). **Tight conflict:** within 15 m and 5 m. Not a collision or a near-miss: the model has no avoidance and no coordination.
 - **Omaha profile:** Amazon at 61 m out and 105 m back, the profile in the FAA's Omaha noise analysis (typical 200 ft out / 345 ft back).
-- **Best-sourced heights:** Amazon at 69 m out (225 ft, its stated Richardson average) and back anywhere in its filed 85–115 m band.
+- **Best-sourced heights:** Amazon at 69 m out (225 ft, its stated Richardson average) and back anywhere in 85–115 m (the return band in its Florida, Detroit and Kansas City filings; its Texas filing gives one 55–115 m band for both legs).
 - **High-return case:** Amazon at 69 m out and 122 m (400 ft) back; source is a secondhand staff remark only.
 - **Shared out:** Wing 46–71 m, Amazon 81 m out and 115 m back, Zipline 101 m, all inside each company's filed band.
-- **Build-out:** sites opening from today's few to the full counts in the FAA filings (Houston: 75 Wing, 65 Zipline, 6 Amazon).
+- **Build-out:** sites opening from today's few to the full counts in the FAA filings (Houston: 75 Wing, 65 Zipline, 6 Amazon, of which 5 could be geocoded and are used; Zipline's Houston filing is a draft EA, Sep 2026).
 - **Cap:** the filed maximum flights per site per day. Filed caps on overlapping service areas are **not** applied, so busy overlap areas fly above them.
 
 ## How results are kept honest
@@ -60,4 +60,4 @@ FAA environmental assessments (Wing, Zipline, Amazon); FAA UAS facility maps; US
 Not affiliated with, endorsed by or reviewed by Wing, Zipline, Amazon or the FAA. Not flight data, a forecast or safety advice.
 
 ## Licence
-Not yet chosen (until one is, all rights are reserved by default). Data in `data/` keeps its own licences.
+Code: AGPL-3.0-or-later. Text and results: CC BY 4.0. Details in [LICENSING.md](LICENSING.md). Data in `data/` keeps its own licences.

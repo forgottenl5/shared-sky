@@ -42,14 +42,14 @@
   function sites(cfg, d, seed, ratio) { ratio = ratio || RATIO; const r = rng(seed + 7919), L = 2 * cfg.half / 1000, out = [];
     for (const op of ['wing', 'zipline', 'amazon']) { const n = Math.round(L * L / (d * d) * ratio[op]); for (let k = 0; k < n; k++) out.push({ op, c: [(r() - 0.5) * 2 * cfg.half, (r() - 0.5) * 2 * cfg.half] }); } return out; }
   // ---- flights (valloc.flights)
-  function flights(cfg, siteList, seed, A, opt) { const NB = opt && opt.boxes ? opt.boxes.n : 20, BR = opt && opt.boxes ? opt.boxes.r : 5000; const r = rng(seed), r2 = rng(seed + 104729), END = cfg.warm + cfg.meas, fl = [], pick = v => Array.isArray(v) ? v[0] + (v[1] - v[0]) * r2() : v;
+  function flights(cfg, siteList, seed, A, opt) { const NB = opt && opt.boxes ? opt.boxes.n : 20, BR = opt && opt.boxes ? opt.boxes.r : 5000; const r = rng(seed), r2 = rng(seed + 104729), END = cfg.warm + cfg.meas, fl = [], pick0 = v => Array.isArray(v) ? v[0] + (v[1] - v[0]) * r2() : v, snap = h => A.layers ? A.layers.reduce((b, L) => Math.abs(L - h) < Math.abs(b - h) ? L : b) : h, pick = v => snap(pick0(v));   // VSTRAT (21 Nov 2026): optional A.layers snaps every cruise height to the nearest shared layer; absent = unchanged
     for (const S of siteList) { const o = OP[S.op], c = S.c, rate = S.rate || o.rate, boxes = [];
       if (S.op === 'zipline') for (let k = 0; k < NB; k++) { const rr = BR * Math.sqrt(r()), th = 2 * Math.PI * r(); boxes.push([c[0] + rr * Math.cos(th), c[1] + rr * Math.sin(th)]); }
       let t = -Math.log(1 - r()) * 3600 / rate;
       while (t < END) { let cust = opt && opt.cust ? opt.cust(S, r) : null; if (!cust) for (;;) { const rr = o.radius * Math.sqrt(r()), th = 2 * Math.PI * r(); if (rr < MIN_R) continue; cust = [c[0] + rr * Math.cos(th), c[1] + rr * Math.sin(th)]; break; }
         if (opt && opt.keep && !opt.keep(S, cust, r)) { t += -Math.log(1 - r()) * 3600 / rate; continue; }   // CAPS1 (28 Oct 2026): optional thinning; absent = unchanged
         const PS = opt && opt.padSpread ? opt.padSpread : 30, pad = [c[0] + (r() - 0.5) * PS, c[1] + (r() - 0.5) * PS], t0 = Math.round(t); let sg;
-        if (S.op === 'wing') sg = wingFlight(t0, pad, cust, A.wing[0] + (A.wing[1] - A.wing[0]) * r(), opt && opt.viaAll ? opt.viaAll(S, cust) : null); else if (S.op === 'amazon') sg = amazonFlight(t0, pad, cust, pick(A.aOut), pick(A.aIn), opt && opt.via ? opt.via(S, cust) : opt && opt.viaAll ? opt.viaAll(S, cust) : null); else { const bx = boxes[Math.floor(r() * boxes.length)]; sg = ziplineFlight(t0, pad, bx, cust, A.zip, opt && opt.viaAll ? opt.viaAll(S, cust) : null); }
+        if (S.op === 'wing') sg = wingFlight(t0, pad, cust, snap(A.wing[0] + (A.wing[1] - A.wing[0]) * r()), opt && opt.viaAll ? opt.viaAll(S, cust) : null); else if (S.op === 'amazon') sg = amazonFlight(t0, pad, cust, pick(A.aOut), pick(A.aIn), opt && opt.via ? opt.via(S, cust) : opt && opt.viaAll ? opt.viaAll(S, cust) : null); else { const bx = boxes[Math.floor(r() * boxes.length)]; sg = ziplineFlight(t0, pad, bx, cust, pick(A.zip), opt && opt.viaAll ? opt.viaAll(S, cust) : null); }
         fl.push({ id: fl.length, op: S.op, t0, sg, end: sg[sg.length - 1][0] + sg[sg.length - 1][1] }); t += -Math.log(1 - r()) * 3600 / rate; } }
     return fl; }
   // ---- zone helpers (proc.js)

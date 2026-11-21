@@ -81,7 +81,7 @@ for city, c3 in CITY.items():
         F = v["flights"] or (lazy_flights(os.path.join(ROOT, "docs/data", f"{c3}_{k}.js"), f"{c3}_{k}") if k != "filed" else filed)
         dl = v.get("delays") or {}
         scen.append({"metro": city, "scenario": k, "label": LABEL[k], "description": desc.get(k, ""),
-                     "conflicts_10m": v["wide"], "tight_15m_5m": v["close"], "conflicts_10m_whole_area": v["all_wide"],
+                     "conflicts_10m": v["wide"], "tight_15m_5m": v["close"], "conflicts_10m_unbounded": v["all_wide"],
                      "holds": v["holds"], "flights": len(F), "plan_check_delayed": dl.get("delayed"), "plan_check_cancelled": dl.get("cancelled")})
         for e in v["events"]:
             conf.append({"metro": city, "scenario": k, "kind": "tight" if e[0] else "conflict", "t_s": e[1],
