@@ -2,6 +2,11 @@
 
 *Formerly Sky-Grid (renamed 5 Nov 2026: "SkyGrid" is the name of an unrelated airspace-management company). Dated records written before the rename, including the fingerprinted registrations, keep the old name, because editing them would break their fingerprints.*
 
+<p align="center">
+  <a href="https://forgottenl5.github.io/shared-sky/houston.html"><img src="docs/img/demo.webp" width="300" alt="Houston delivery drones over two simulated hours: 92 planned conflicts with each company at its filed heights, 33 with heights shared out"></a><br>
+  <sub>Same Houston flights, two height rules (the site's demo patch: 92 → 33 planned conflicts). <a href="https://forgottenl5.github.io/shared-sky/houston.html">Fly it in 3D</a></sub>
+</p>
+
 A simulation of Wing, Zipline and Amazon delivery drones sharing the sky over Houston and Dallas–Fort Worth, built from the companies' FAA environmental filings. It flies their planned operations together **with no coordination between the companies**, counts **planned conflicts** (two companies' planned paths within 30 m sideways and less than 10 m in height at the same moment), and tests simple fixes: sharing out heights inside each company's filed band, a pre-flight plan check, landing pads.
 
 Real operators already share flight plans before take-off (ASTM F3548; in DFW, Wing and Flytrex report thousands of coordinated flights with no plan conflicts). So the "no coordination" baseline is a reference point for how much each fix removes, not a picture of today's risk.
