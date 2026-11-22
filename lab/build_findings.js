@@ -118,10 +118,12 @@ ${OG("Shared Sky findings", "What a pre-registered simulation of delivery drones
 <link rel="stylesheet" href="vendor/fonts/fonts.css">
 <style>${css}</style></head><body><main>
 <nav><a href="index.html">Shared Sky</a><a href="lab.html">Lab</a><a href="houston.html">Houston</a><a href="dfw.html">Dallas–Fort Worth</a><a href="airtaxi.html">Air taxis</a><a href="about.html">About</a></nav>
-<div class="kick">Findings, updated 6 November 2026</div>
+<div class="kick">Findings, updated 22 November 2026</div>
 <h1>What the simulation found, and what it got wrong</h1>
 <p class="lede">Shared Sky is a scenario model of delivery drones (Wing, Zipline, Amazon) and of air taxis between Texas airports and vertiports, built from FAA filings, company announcements and Census data. It is not a forecast and nobody has endorsed it. No person outside the project has reviewed it yet; the reviews so far were done by AI reviewers. Predictions are written down and fingerprinted before the runs; this page shows the ones that came true and the ones that did not.</p>
 <div class="cav"><p><b>Read this first.</b> Every result here comes from a simulation, not from real flights, and none has been checked against real operations: the companies do not publish flight-level data, and the air-taxi networks are scenarios built from announced sites. Read each percentage as “what happens in this model under these assumptions”, not as what operators will see. Being reproducible and pre-registered makes the work checkable, not accurate. The assumptions that move the numbers most are <a href="#drivers">listed at the end</a>.</p></div>
+
+<div class="cav"><p><b>Being re-checked (22 November 2026).</b> A review of the engine found three counting problems. Drones that change their plan in flight (stops, return-home, outages) are undercounted; the random errors given to neighbouring flights were correlated; and some studies counted meetings after the measured window ended. The headline result (72 % / 73 %) is not affected. Results from ERRORS1, ERRORS2, PRELAUNCH, RECOUNT1 and the bad-day and return-home studies are provisional until they are re-run with the fixed engine, with the re-runs pre-registered and any changed verdicts reported here.</p></div>
 
 <h2>Guess first</h2>
 <p>Before you read the results, try four of the questions this project asked. Each answer also shows what I predicted, in writing, before the simulation ran. Your guesses stay in your browser; nothing is sent anywhere.</p>
@@ -147,6 +149,7 @@ ${f1}
 <div class="cav"><p><b>Not shown:</b> that 5 m blocks are safe. The simulated conflict counts are 0 to 3 per arm, too few to show a difference. GPS-level errors are tested in the next section.</p></div>
 
 <h2>1b. The height-sharing cut shrinks with GPS error, mostly because of height error</h2>
+<p><i>Provisional: ERRORS1 and ERRORS2 used correlated random errors between neighbouring flights and are being re-run (see the note at the top).</i></p>
 <p>The headline runs fly every drone exactly on its plan. ERRORS1 (276 runs, both metros) gives each flight a random sideways error, height error and late start, sized to published figures: near the best monitored GPS sites (L1), the GPS standard’s committed average (L2), its committed worst site (L3), and the size the FAA Remote ID rule allows (L4). This study compares the shared-out heights with the heights the companies filed (not with Amazon’s best-sourced heights, which give the 72 % / 73 % headline and were not rerun here). Without errors that cut is 80 % in Houston and 81 % in DFW on these six seeds; with them it is <b>76 % / 79 % at L1, 63 % / 59 % at L2, 30 % / 26 % at L3 and 20 % / 23 % at L4</b>. Height error alone does nearly all of this; sideways error or late starts alone change the cut by 3 points or less. I predicted the cut would fall further at L2–L4 (3 of 13 predictions failed).</p>
 <p>The plan-sharing check is affected too: the minimal reservation (30 m wide, ±10 m high) removes 83 % / 77 % of flown conflicts at L2 but only 18 % / 22 % at L4, while a block taller than the height error (±46 m) removes almost all, at the cost of roughly twice as many flights waiting (37 % / 47 % in windy hours against 18 % / 17 %).</p>
 <div class="cav"><p><b>Read with care:</b> errors here are independent between flights, but real GPS and barometer errors are partly shared by nearby drones, so L2–L4 probably overstate the damage. The late-start size is my assumption, and I found no published figure for the height accuracy of delivery drones, so none of these levels is a measurement of any company’s aircraft. Six seeds; intervals are wide (for example DFW at L4: 12–32 %).</p></div>
@@ -281,7 +284,7 @@ ${OG('About Shared Sky', 'What Shared Sky is, how it was built, what data it use
 <h2>Code, data and contact</h2>
 <p>The code, registrations and results are in a repository that is private for now; they are available on request. A contact address is being set up. Everything the pages need is served from this site: three.js (MIT licence) and the fonts (SIL Open Font License) are copied in, so the pages make no requests to other servers.</p>
 <h2>How to cite</h2>
-<p class="src">forgottenl5 (2026). Shared Sky: a pre-registered simulation of delivery drones and air taxis over Houston and Dallas–Fort Worth. ${BASE}, version of 28 October 2026.</p>
+<p class="src">forgottenl5 (2026). Shared Sky: a pre-registered simulation of delivery drones and air taxis over Houston and Dallas–Fort Worth. ${BASE}, version of 21 November 2026.</p>
 <footer>Shared Sky · <a href="index.html">Home</a> · <a href="findings.html">Findings</a></footer>
 </main></body></html>`;
 fs.writeFileSync(path.join(__dirname, '..', 'docs', 'about.html'), about); console.log('wrote docs/about.html', about.length, 'bytes');

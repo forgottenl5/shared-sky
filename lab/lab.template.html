@@ -119,6 +119,7 @@ footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border
       <fieldset><legend>When something goes wrong</legend>
         <label>Off-plan event<select id="cont"><option value="none" selected>None</option><option value="hold">20 % of drones stop for 2 min</option><option value="rth-own">20 % return home at own height</option><option value="rth-120">20 % return home at 120 m</option><option value="outage">6 area outages (2 km, 2 min)</option></select></label>
         <p class="sub" id="conthint" style="font-size:.82rem" hidden>Turn on the plan check to isolate conflicts caused by the off-plan event; without it, conflicts in the plans themselves are counted too.</p>
+        <p class="sub" style="font-size:.82rem"><i>Being re-checked (22 Nov 2026): the engine undercounts conflicts for drones that change their plan in flight, so off-plan results are provisional.</i></p>
       </fieldset>
       <div class="actions"><button class="btn" type="submit" id="run">Run</button><button class="btn ghost" type="button" id="runboth">Run filed vs allocation</button></div>
       <div class="bar"><i id="prog"></i></div>

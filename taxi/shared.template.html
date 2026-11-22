@@ -75,7 +75,7 @@ html, body { touch-action:none; overscroll-behavior:none; } .drawer, #drawer, .d
   <ul>
     <li><b>Drones:</b> the Shared Sky delivery engine with each company's FAA-filed heights and speeds, at full build-out of the filed sites. Wing and Zipline site positions are random (their site lists are not public); Amazon's are its filed sites. Customers are random. Only flights that come within 3 km of the pad are drawn.</li>
     <li><b>Air taxis:</b> 12 take-offs and landings an hour at an 8:1 climb (the shallowest slope the FAA's vertiport obstacle surface allows), each in a random direction, because no Texas air-taxi routes or pad positions are public except the hospital helipad. Nothing steers around anything.</li>
-    <li><b>Volumes:</b> "well clear" is 2,000 ft (609.6 m) across and 250 ft (76.2 m) up or down, the figure used for drone detect-and-avoid (ASTM F3442, read secondhand); near-midair is 500 ft (152.4 m) and 100 ft (30.5 m), my definition. They are yardsticks, not a collision risk.</li>
+    <li><b>Volumes:</b> "well clear" is 2,000 ft (609.6 m) across and 250 ft (76.2 m) up or down, the figure used for drone detect-and-avoid (ASTM F3442, read secondhand); near-midair is 500 ft (152.4 m) and 100 ft (30.5 m), the standard near mid-air collision (NMAC) volume. They are yardsticks, not a collision risk.</li>
     <li><b>"Drones wait for air taxis":</b> each drone flight checks the booked air-taxi movements before take-off and waits (or is cancelled) until its path stays out of those volumes, the reservation rule tested in AIRTAXI1.</li>
     <li>This page replays the study's own seed-1 run; its counts were checked to match the study's record exactly. Code and records are available on request.</li>
   </ul>

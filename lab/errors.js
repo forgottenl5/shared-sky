@@ -8,10 +8,11 @@ const LEVELS = { L0: { h95: 0, v95: 0, slip: 0 }, L1: { h95: 3, v95: 4, slip: 5 
   H4: { h95: 30.48, v95: 0, slip: 0 }, Z4: { h95: 0, v95: 45.72, slip: 0 }, T4: { h95: 0, v95: 0, slip: 60 } };
 function gauss(g) { const u = Math.max(1e-12, g()), v = g(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
 // personal (per-flight, constant) errors; f scales the sizes (ERRORS2: sqrt(1 - rho))
-function personal(e, seed, f = 1) { const sh = f * e.h95 / K_RAD, sz = f * e.v95 / K_VER;
-  return { zerr: sz ? (id => sz * gauss(L.rng(seed * 7919 + id * 31 + 101))) : null,
-    herr: sh ? (id => { const g = L.rng(seed * 104729 + id * 37 + 7); return [sh * gauss(g), sh * gauss(g)]; }) : null,
-    slip: e.slip ? (id => Math.round(Math.abs(e.slip * gauss(L.rng(seed * 15485863 + id * 41 + 3))))) : null }; }
+// opt.hashRng (22 Nov 2026, review FIX2): independent streams per (seed, flight, purpose) via L.hrng; default unchanged (correlated LCG seeds)
+function personal(e, seed, f = 1, opt = {}) { const sh = f * e.h95 / K_RAD, sz = f * e.v95 / K_VER, H = !!opt.hashRng, R = (a, b, c, k) => H ? L.hrng(seed, b, k) : L.rng(a);
+  return { zerr: sz ? (id => sz * gauss(R(seed * 7919 + id * 31 + 101, id, 0, 101))) : null,
+    herr: sh ? (id => { const g = R(seed * 104729 + id * 37 + 7, id, 0, 7); return [sh * gauss(g), sh * gauss(g)]; }) : null,
+    slip: e.slip ? (id => Math.round(Math.abs(e.slip * gauss(R(seed * 15485863 + id * 41 + 3, id, 0, 3))))) : null }; }
 // shared field (ERRORS2): sum of random cosines, Gaussian correlation (length LC m, time TC s), tabulated on a GX m x GT s grid
 function field(seed, sx, sz, o = {}) { const LC = o.LC || 20000, TC = o.TC || 1800, N = o.modes || 24, GX = o.GX || 500, GT = o.GT || 150, XMAX = o.XMAX || 41000, TMAX = o.TMAX || 10800;
   if (!sx && !sz) return null; const g = L.rng(seed * 2654435 + 977), M = [];
@@ -27,5 +28,5 @@ function field(seed, sx, sz, o = {}) { const LC = o.LC || 20000, TC = o.TC || 18
   f.exact = exact; return f; }
 // one error spec -> {zerr, herr, slip, field}; spec: {level, rho (shared share of variance, default 0), shared (field on/off, default rho > 0)}
 function build(spec, seed) { const e = typeof spec.level === 'string' ? LEVELS[spec.level] : spec.level, rho = spec.rho || 0, sh = spec.shared === undefined ? rho > 0 : !!spec.shared;
-  const P = personal(e, seed, Math.sqrt(1 - rho)); P.field = sh ? field(seed, Math.sqrt(rho) * e.h95 / K_RAD, Math.sqrt(rho) * e.v95 / K_VER, spec.fieldOpts) : null; return P; }
+  const P = personal(e, seed, Math.sqrt(1 - rho), { hashRng: !!spec.hashRng }); P.field = sh ? field(seed, Math.sqrt(rho) * e.h95 / K_RAD, Math.sqrt(rho) * e.v95 / K_VER, spec.fieldOpts) : null; return P; }
 module.exports = { K_RAD, K_VER, LEVELS, gauss, personal, field, build };

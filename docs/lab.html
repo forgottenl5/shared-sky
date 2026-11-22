@@ -119,6 +119,7 @@ footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border
       <fieldset><legend>When something goes wrong</legend>
         <label>Off-plan event<select id="cont"><option value="none" selected>None</option><option value="hold">20 % of drones stop for 2 min</option><option value="rth-own">20 % return home at own height</option><option value="rth-120">20 % return home at 120 m</option><option value="outage">6 area outages (2 km, 2 min)</option></select></label>
         <p class="sub" id="conthint" style="font-size:.82rem" hidden>Turn on the plan check to isolate conflicts caused by the off-plan event; without it, conflicts in the plans themselves are counted too.</p>
+        <p class="sub" style="font-size:.82rem"><i>Being re-checked (22 Nov 2026): the engine undercounts conflicts for drones that change their plan in flight, so off-plan results are provisional.</i></p>
       </fieldset>
       <div class="actions"><button class="btn" type="submit" id="run">Run</button><button class="btn ghost" type="button" id="runboth">Run filed vs allocation</button></div>
       <div class="bar"><i id="prog"></i></div>
@@ -168,6 +169,12 @@ footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border
   const HEIGHTS = { filed: { wing: [46, 91], aOut: 61, zip: 101, aIn: 105 }, allocation: { wing: [46, 71], aOut: 81, zip: 101, aIn: 115 }, reported: { wing: [46, 91], aOut: 69, zip: 101, aIn: 122 } };   // reported: Amazon per local Richardson reports (PRELAUNCH)
   const VZ = 5, MIN_R = 300, MARGIN = 1000, STEP = 30, TRIES = 40;
   function rng(seed) { let s = (seed * 2654435761) >>> 0; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
+  // FIX2 (22 Nov 2026, review): hrng(...keys) hashes every key (murmur3 finaliser) into a 128-bit sfc32 state, so streams for neighbouring
+  // flight ids, seeds and purposes are independent (sfc32, 128-bit state). rng() is unchanged; only callers that opt in use hrng.
+  const mix32 = h => { h ^= h >>> 16; h = Math.imul(h, 0x85ebca6b); h ^= h >>> 13; h = Math.imul(h, 0xc2b2ae35); h ^= h >>> 16; return h >>> 0; };
+  function hrng(...keys) { const w = [0x9e3779b9, 0x85ebca6b, 0xc2b2ae35, 0x27d4eb2f].map(c => { let h = c; for (const k of keys) h = mix32(h ^ mix32((k | 0) + c) ^ Math.imul(Math.floor(k / 4294967296) | 0, 0x165667b1)); return h; });
+    let [a, b, c, d] = w; const next = () => { a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0; let t = (a + b) | 0; a = b ^ (b >>> 9); b = (c + (c << 3)) | 0; c = (c << 21) | (c >>> 11); d = (d + 1) | 0; t = (t + d) | 0; c = (c + t) | 0; return (t >>> 0) / 4294967296; };
+    for (let i = 0; i < 12; i++) next(); return next; }   // sfc32 (128-bit state), seeded from four independent hashes of the keys
   const posAt = (sg, t) => { const f = (t - sg[0] + 0.5) / sg[1]; return [sg[2] + (sg[5] - sg[2]) * f, sg[3] + (sg[6] - sg[3]) * f, sg[4] + (sg[7] - sg[4]) * f]; };
   const toward = (a, b, d) => { const L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1; return [a[0] + (b[0] - a[0]) / L * d, a[1] + (b[1] - a[1]) / L * d]; };
 
@@ -203,14 +210,14 @@ footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border
   function sites(cfg, d, seed, ratio) { ratio = ratio || RATIO; const r = rng(seed + 7919), L = 2 * cfg.half / 1000, out = [];
     for (const op of ['wing', 'zipline', 'amazon']) { const n = Math.round(L * L / (d * d) * ratio[op]); for (let k = 0; k < n; k++) out.push({ op, c: [(r() - 0.5) * 2 * cfg.half, (r() - 0.5) * 2 * cfg.half] }); } return out; }
   // ---- flights (valloc.flights)
-  function flights(cfg, siteList, seed, A, opt) { const NB = opt && opt.boxes ? opt.boxes.n : 20, BR = opt && opt.boxes ? opt.boxes.r : 5000; const r = rng(seed), r2 = rng(seed + 104729), END = cfg.warm + cfg.meas, fl = [], pick = v => Array.isArray(v) ? v[0] + (v[1] - v[0]) * r2() : v;
+  function flights(cfg, siteList, seed, A, opt) { const NB = opt && opt.boxes ? opt.boxes.n : 20, BR = opt && opt.boxes ? opt.boxes.r : 5000; const r = rng(seed), r2 = rng(seed + 104729), END = cfg.warm + cfg.meas, fl = [], pick0 = v => Array.isArray(v) ? v[0] + (v[1] - v[0]) * r2() : v, snap = h => A.layers ? A.layers.reduce((b, L) => Math.abs(L - h) < Math.abs(b - h) ? L : b) : h, pick = v => snap(pick0(v));   // VSTRAT (21 Nov 2026): optional A.layers snaps every cruise height to the nearest shared layer; absent = unchanged
     for (const S of siteList) { const o = OP[S.op], c = S.c, rate = S.rate || o.rate, boxes = [];
       if (S.op === 'zipline') for (let k = 0; k < NB; k++) { const rr = BR * Math.sqrt(r()), th = 2 * Math.PI * r(); boxes.push([c[0] + rr * Math.cos(th), c[1] + rr * Math.sin(th)]); }
       let t = -Math.log(1 - r()) * 3600 / rate;
       while (t < END) { let cust = opt && opt.cust ? opt.cust(S, r) : null; if (!cust) for (;;) { const rr = o.radius * Math.sqrt(r()), th = 2 * Math.PI * r(); if (rr < MIN_R) continue; cust = [c[0] + rr * Math.cos(th), c[1] + rr * Math.sin(th)]; break; }
         if (opt && opt.keep && !opt.keep(S, cust, r)) { t += -Math.log(1 - r()) * 3600 / rate; continue; }   // CAPS1 (28 Oct 2026): optional thinning; absent = unchanged
         const PS = opt && opt.padSpread ? opt.padSpread : 30, pad = [c[0] + (r() - 0.5) * PS, c[1] + (r() - 0.5) * PS], t0 = Math.round(t); let sg;
-        if (S.op === 'wing') sg = wingFlight(t0, pad, cust, A.wing[0] + (A.wing[1] - A.wing[0]) * r(), opt && opt.viaAll ? opt.viaAll(S, cust) : null); else if (S.op === 'amazon') sg = amazonFlight(t0, pad, cust, pick(A.aOut), pick(A.aIn), opt && opt.via ? opt.via(S, cust) : opt && opt.viaAll ? opt.viaAll(S, cust) : null); else { const bx = boxes[Math.floor(r() * boxes.length)]; sg = ziplineFlight(t0, pad, bx, cust, A.zip, opt && opt.viaAll ? opt.viaAll(S, cust) : null); }
+        if (S.op === 'wing') sg = wingFlight(t0, pad, cust, snap(A.wing[0] + (A.wing[1] - A.wing[0]) * r()), opt && opt.viaAll ? opt.viaAll(S, cust) : null); else if (S.op === 'amazon') sg = amazonFlight(t0, pad, cust, pick(A.aOut), pick(A.aIn), opt && opt.via ? opt.via(S, cust) : opt && opt.viaAll ? opt.viaAll(S, cust) : null); else { const bx = boxes[Math.floor(r() * boxes.length)]; sg = ziplineFlight(t0, pad, bx, cust, pick(A.zip), opt && opt.viaAll ? opt.viaAll(S, cust) : null); }
         fl.push({ id: fl.length, op: S.op, t0, sg, end: sg[sg.length - 1][0] + sg[sg.length - 1][1] }); t += -Math.log(1 - r()) * 3600 / rate; } }
     return fl; }
   // ---- zone helpers (proc.js)
@@ -236,8 +243,20 @@ footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border
   // ---- contingencies (deviate.js, rth.js, countfix.drawsInZone, outage.js)
   const expand = f => { const o = []; for (const s of f.sg) for (let q = 0; q < s[1]; q++) { const p = posAt(s, s[0] + q); o.push([s[0] + q, p[0], p[1], p[2], s[8]]); } return o; };
   const toFlight = (f, smp) => ({ id: f.id, op: f.op, t0: f.t0, sg: smp.map(p => [p[0], 1, p[1], p[2], p[3], p[1], p[2], p[3], p[4], 'dev']), end: smp[smp.length - 1][0] + 1, dev: true });
-  function hold(f, T, secs) { const smp = expand(f), k = smp.findIndex(p => p[0] === T); if (k < 0) return f; const p = smp[k], out = smp.slice(0, k); for (let i = 0; i < secs; i++) out.push([T + i, p[1], p[2], p[3], 'hover']); for (const q of smp.slice(k)) out.push([q[0] + secs, q[1], q[2], q[3], q[4]]); return toFlight(f, out); }
-  function rth(f, off, H) { const SPD = { wing: 26.4, zipline: 31.3, amazon: 30 }, smp = expand(f), td = f.t0 + off, k = smp.findIndex(p => p[0] === td), out = smp.slice(0, k), p = smp[k], pad = [f.sg[0][2], f.sg[0][3]]; let t = td, z = p[3];
+  // FIX1 (22 Nov 2026, review): exact deviations. The original hold/rth re-sample a flight into 1 s stationary steps (toFlight), which
+  // a 4-per-second counter sees as jumps (undercount). With opt {exact: true} the flight's own segments are split at T and the new legs
+  // are added as segments; hold(f, T, 0, {exact: true}) is the flight itself. Default (no opt) unchanged.
+  const splitAt = (f, T) => { const pre = [], post = []; for (const s of f.sg) { if (s[0] + s[1] <= T) pre.push(s); else if (s[0] >= T) post.push(s); else { const a = T - s[0], u = a / s[1],
+      m = [s[2] + (s[5] - s[2]) * u, s[3] + (s[6] - s[3]) * u, s[4] + (s[7] - s[4]) * u]; pre.push([s[0], a, s[2], s[3], s[4], m[0], m[1], m[2], s[8], s[9]]); post.push([T, s[1] - a, m[0], m[1], m[2], s[5], s[6], s[7], s[8], s[9]]); } } return { pre, post }; };
+  const hereAt = (f, T) => { const s = f.sg.find(q => T >= q[0] && T < q[0] + q[1]) || f.sg[f.sg.length - 1]; const u = Math.min(1, Math.max(0, (T - s[0]) / s[1])); return [s[2] + (s[5] - s[2]) * u, s[3] + (s[6] - s[3]) * u, s[4] + (s[7] - s[4]) * u]; };
+  function holdExact(f, T, secs) { if (T < f.t0 || T >= f.end) return f; const { pre, post } = splitAt(f, T); if (!secs) return { id: f.id, op: f.op, t0: f.t0, sg: pre.concat(post), end: f.end, dev: true };
+    const p = hereAt(f, T); return { id: f.id, op: f.op, t0: f.t0, sg: pre.concat([[T, secs, p[0], p[1], p[2], p[0], p[1], p[2], 'hover', 'dev']], post.map(s => [s[0] + secs, ...s.slice(1)])), end: f.end + secs, dev: true }; }
+  function rthExact(f, off, H) { const SPD = { wing: 26.4, zipline: 31.3, amazon: 30 }, td = f.t0 + off; if (td < f.t0 || td >= f.end) return f; const { pre } = splitAt(f, td), p = hereAt(f, td), pad = [f.sg[0][2], f.sg[0][3]], sg = pre.slice(); let t = td, z = p[2];
+    const tgt = H === null ? z : H; if (Math.abs(tgt - z) > 1e-9) { const n = Math.ceil(Math.abs(tgt - z) / 3); sg.push([t, n, p[0], p[1], z, p[0], p[1], tgt, 'vertical', 'dev']); t += n; z = tgt; }
+    const L = Math.hypot(pad[0] - p[0], pad[1] - p[1]), n = Math.max(1, Math.round(L / SPD[f.op])); sg.push([t, 1, p[0], p[1], z, p[0], p[1], z, 'cruise', 'dev']); t += 1; sg.push([t, n, p[0], p[1], z, pad[0], pad[1], z, 'cruise', 'dev']); t += n;
+    const nd = Math.max(1, Math.ceil(z / 3)); sg.push([t, nd, pad[0], pad[1], z, pad[0], pad[1], 0, 'vertical', 'dev']); t += nd; return { id: f.id, op: f.op, t0: f.t0, sg, end: t, dev: true }; }
+  function hold(f, T, secs, opt) { if (opt && opt.exact) return holdExact(f, T, secs); const smp = expand(f), k = smp.findIndex(p => p[0] === T); if (k < 0) return f; const p = smp[k], out = smp.slice(0, k); for (let i = 0; i < secs; i++) out.push([T + i, p[1], p[2], p[3], 'hover']); for (const q of smp.slice(k)) out.push([q[0] + secs, q[1], q[2], q[3], q[4]]); return toFlight(f, out); }
+  function rth(f, off, H, opt) { if (opt && opt.exact) return rthExact(f, off, H); const SPD = { wing: 26.4, zipline: 31.3, amazon: 30 }, smp = expand(f), td = f.t0 + off, k = smp.findIndex(p => p[0] === td), out = smp.slice(0, k), p = smp[k], pad = [f.sg[0][2], f.sg[0][3]]; let t = td, z = p[3];
     const tgt = H === null ? z : H; while (Math.abs(z - tgt) > 1e-9) { out.push([t++, p[1], p[2], z, 'vertical']); z = Math.abs(tgt - z) <= 3 ? tgt : z + Math.sign(tgt - z) * 3; }
     const L = Math.hypot(pad[0] - p[1], pad[1] - p[2]), n = Math.max(1, Math.round(L / SPD[f.op])); out.push([t++, p[1], p[2], z, 'cruise']);
     for (let i = 1; i <= n; i++) out.push([t++, p[1] + (pad[0] - p[1]) * i / n, p[2] + (pad[1] - p[2]) * i / n, z, 'cruise']);
@@ -247,9 +266,9 @@ footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border
       for (const s of f.sg) { if (s[8] !== 'cruise') continue; for (let q = 0; q < s[1]; q++) { const t = s[0] + q; if (t < cfg.warm) continue; const p = posAt(s, t); if (Math.abs(p[0]) <= cfg.zone && Math.abs(p[1]) <= cfg.zone) ok.push(t - f.t0); } }
       if (ok.length) out.set(f.id, ok[Math.floor(u2 * ok.length)]); }
     return out; }
-  function outages(cfg, acc, seed, n, radius, secs) { const r = rng(seed + 90000), ev = []; for (let i = 0; i < n; i++) ev.push({ T: Math.floor(cfg.warm + r() * cfg.meas * 0.9), c: [(r() - 0.5) * cfg.zone * 1.4, (r() - 0.5) * cfg.zone * 1.4] }); ev.sort((a, b) => a.T - b.T);
+  function outages(cfg, acc, seed, n, radius, secs, opt) { const r = rng(seed + 90000), ev = []; for (let i = 0; i < n; i++) ev.push({ T: Math.floor(cfg.warm + r() * cfg.meas * 0.9), c: [(r() - 0.5) * cfg.zone * 1.4, (r() - 0.5) * cfg.zone * 1.4] }); ev.sort((a, b) => a.T - b.T);
     const fin = acc.slice(); let held = 0;
-    for (const e of ev) for (let i = 0; i < fin.length; i++) { const f = fin[i]; if (e.T < f.t0 || e.T >= f.end) continue; const sg = f.sg.find(s => e.T >= s[0] && e.T < s[0] + s[1]); if (!sg) continue; const p = posAt(sg, e.T); if (p[2] <= 0.5 || Math.hypot(p[0] - e.c[0], p[1] - e.c[1]) > radius) continue; fin[i] = hold(f, e.T, secs); held++; }
+    for (const e of ev) for (let i = 0; i < fin.length; i++) { const f = fin[i]; if (e.T < f.t0 || e.T >= f.end) continue; const sg = f.sg.find(s => e.T >= s[0] && e.T < s[0] + s[1]); if (!sg) continue; const p = posAt(sg, e.T); if (p[2] <= 0.5 || Math.hypot(p[0] - e.c[0], p[1] - e.c[1]) > radius) continue; fin[i] = hold(f, e.T, secs, opt); held++; }
     return { fin, held, events: ev }; }
   // ---- meeting counter (houston2.count, exposure parts removed)
   // opts.field (4 Nov 2026, ERRORS2): (x, y, t) -> [dx, dy, dz] error shared by every aircraft at that place and time, added to the flown position (dz only when airborne); default unchanged
@@ -282,7 +301,9 @@ footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border
     return res; }
   // ---- one lab scenario
   // p: { d, seed, heights: 'filed'|'allocation'|{wing:[lo,hi],aOut,zip,aIn}, wingFixed: null|m, fleet: 'filed'|'equal', check: bool, cell, tb, vsep, contingency: 'none'|'hold'|'rth-own'|'rth-120'|'outage', frac, sub }
+  // p.fix (22 Nov 2026, review): {exact: exact hold/rth/outage legs, hashRng: independent per-flight height errors, bounded: count stops at the end of the measured window}. Absent = unchanged.
   function run(cfg, p, progress) {
+    const FX = p.fix || {};
     const H = typeof p.heights === 'string' ? Object.assign({}, HEIGHTS[p.heights]) : Object.assign({}, p.heights);
     if (p.wingFixed) { const w = Math.min(p.wingFixed, H.wing[1]); H.wing = [w, w]; }
     const ratio = p.ratio ? p.ratio : p.fleet === 'equal' ? { wing: 1, zipline: 65 / 75 * 0.32, amazon: 6 / 75 * 5.4 } : RATIO;   // p.ratio (24 Oct, DFW page): metro site mix; default unchanged
@@ -293,17 +314,17 @@ footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border
     else if (p.check) { ic = intentCheck(cfg, fl, p.cell, p.tb, p.vsep); acc = fl.map(f => { if (!ic.delays.has(f.id)) return f; const D = ic.delays.get(f.id); return D === null ? null : shift(f, D); }).filter(Boolean); delays = ic.delays; }
     let fin = acc, nEvents = 0;
     if (p.contingency === 'hold' || p.contingency === 'rth-own' || p.contingency === 'rth-120') { const dv = drawsInZone(cfg, acc, p.seed, p.frac); nEvents = dv.size;
-      fin = acc.map(f => !dv.has(f.id) ? f : p.contingency === 'hold' ? hold(f, f.t0 + dv.get(f.id), 120) : rth(f, dv.get(f.id), p.contingency === 'rth-120' ? 120 : null)); }
-    else if (p.contingency === 'outage') { const o = outages(cfg, acc, p.seed, p.outages || 6, 2000, 120); fin = o.fin; nEvents = o.held; }
-    const events = []; const zerr = p.zsig ? (id => { const g = rng(p.seed * 7919 + id * 31 + 17), u = Math.max(1e-12, g()), v = g(); return p.zsig * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }) : null;
-    const c = count(cfg, fin, { sub: p.sub || 4, th: p.th, zerr: zerr, progress: progress && (x => progress('count', x)), onMeet: (nm, A, B, t) => { if (A[1] !== B[1]) events.push([nm === 'close' ? 1 : 0, t, Math.round(A[2]), Math.round(A[3]), Math.round((A[4] + B[4]) / 2), A[1][0] + B[1][0]]); } });
+      fin = acc.map(f => !dv.has(f.id) ? f : p.contingency === 'hold' ? hold(f, f.t0 + dv.get(f.id), 120, FX) : rth(f, dv.get(f.id), p.contingency === 'rth-120' ? 120 : null, FX)); }
+    else if (p.contingency === 'outage') { const o = outages(cfg, acc, p.seed, p.outages || 6, 2000, 120, FX); fin = o.fin; nEvents = o.held; }
+    const events = []; const zerr = p.zsig ? (id => { const g = FX.hashRng ? hrng(p.seed, id, 17) : rng(p.seed * 7919 + id * 31 + 17), u = Math.max(1e-12, g()), v = g(); return p.zsig * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }) : null;
+    const c = count(cfg, fin, { sub: p.sub || 4, th: p.th, zerr: zerr, tEnd: FX.bounded ? cfg.warm + cfg.meas : undefined, progress: progress && (x => progress('count', x)), onMeet: (nm, A, B, t) => { if (A[1] !== B[1]) events.push([nm === 'close' ? 1 : 0, t, Math.round(A[2]), Math.round(A[3]), Math.round((A[4] + B[4]) / 2), A[1][0] + B[1][0]]); } });
     const ops = {}; for (const f of fl) if (f.t0 >= cfg.warm && reachesZone(cfg, f, 0)) ops[f.op] = (ops[f.op] || 0) + 1;
     const dstat = { checked: 0, delayed: 0, total_s: 0, cancelled: 0, byOp: {} };
     if (delays) { const opOf = new Map(fl.map(f => [f.id, f.op])); for (const [id, D] of delays) { const o = opOf.get(id), b = dstat.byOp[o] || (dstat.byOp[o] = { n: 0, delayed: 0 }); dstat.checked++; b.n++; if (D === null) { dstat.cancelled++; continue; } if (D > 0) { dstat.delayed++; b.delayed++; dstat.total_s += D; } } }
     const pairs = {}; for (const k in c) { const m = k.match(/^wide\|pair\|(.+)$/); if (m && m[1].split('-')[0] !== m[1].split('-')[1]) pairs[m[1]] = c[k]; }
     return { cross_wide: c['wide|cross'] || 0, cross_close: c['close|cross'] || 0, same_wide: c['wide|same'] || 0, pairs, delays: dstat, contingencyEvents: nEvents, flightsMeasured: ops, sites: S.length, heights: H, events, fin };
   }
-  const api = { OP, RATIO, HEIGHTS, rng, posAt, sites, flights, intentCheck, count, drawsInZone, hold, rth, outages, expand, reachesZone, samples, run };
+  const api = { OP, RATIO, HEIGHTS, rng, hrng, posAt, sites, flights, intentCheck, count, drawsInZone, hold, rth, outages, expand, reachesZone, samples, run };
   if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.SkyLab = api;
 })(typeof self !== 'undefined' ? self : this);
 </script>
