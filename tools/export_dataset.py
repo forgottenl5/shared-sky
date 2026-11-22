@@ -78,6 +78,8 @@ for city, c3 in CITY.items():
     o, src = page_data(city); desc = page_desc(src); meta = o["meta"]
     filed = o["sc"]["filed"]["flights"]
     for k, v in o["sc"].items():
+        if k.startswith("hold"):  # left out of v1.0: hold flights are rebuilt by toFlight, which undercounts (review 21 Nov 2026)
+            continue
         F = v["flights"] or (lazy_flights(os.path.join(ROOT, "docs/data", f"{c3}_{k}.js"), f"{c3}_{k}") if k != "filed" else filed)
         dl = v.get("delays") or {}
         scen.append({"metro": city, "scenario": k, "label": LABEL[k], "description": desc.get(k, ""),

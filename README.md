@@ -42,6 +42,9 @@ Every study is written down and fingerprinted (sha256) **before** its code or ru
 - Each runner has a fast check: `node planned/<study>_run.js checks`. Runs: `node planned/<study>_run.js <shard> <n>`; outputs go to `out/` (not committed); then `python3 planned/<study>_analyze.py`.
 - Build the site: `node planned/export_city.js out/hou.json` and `METRO=dfw node planned/export_city.js out/dfw.json` (about 4 minutes each), then `city/build_site.sh out/hou.json out/dfw.json`. This reproduces `docs/` byte for byte.
 
+## Data tables
+The headline study's 80 run records and the website's demo patch as Parquet/CSV tables, with a data dictionary and a notebook that recomputes the headline (CC BY 4.0): [huggingface.co/datasets/forgottenl5/shared-sky](https://huggingface.co/datasets/forgottenl5/shared-sky) and [kaggle.com/datasets/forgottenl5/shared-sky](https://www.kaggle.com/datasets/forgottenl5/shared-sky). Rebuild them with `python3 tools/export_dataset.py OUTDIR`.
+
 ## Layout
 - `lab/lab_engine.js`: the planned-operations engine (flights, plan check, planned-conflict counter).
 - `planned/`: study registrations, runners, analyses and results (from 22 Oct 2026).
