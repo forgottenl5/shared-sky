@@ -13,16 +13,19 @@ const SRC = { wing: [46, 91], aOut: 69, zip: 101, aIn: [85, 115] };   // best-so
 // 28 Oct 2026: 'checked' is now the realistic reserved-block plan check (COORD1 volumes V2, planned/coord.js) in still air, and 'layered' adds
 // LAYER2's fix (Zipline on top, 5 m blocks). The bad-day scenarios keep the minimal +-5 s check, as the BAD-day studies used.
 const C = require('./coord.js'), WAZ = { wing: [46, 71], aOut: 83, aIn: 95, zip: 107 }, V2v5 = { w: 30, v: 5, h0: 10, g: 0.05 };   // as planned/layer2_run.js
+// 23 Nov 2026 (RECHECK_A1): the bad-day scenarios use the engine's exact holds (fix.exact). The old 1 s stationary steps, counted 4 times
+// per second, miscount meetings of hovering drones (RECHECK_A1_RESULTS_2026-11-22.md). Displayed events are already limited to the window.
+const EX = { exact: true };
 const SC = { filed: { heights: 'filed' }, shared: { heights: 'allocation' }, checked: { heights: 'allocation', vcheck: (c, f) => C.check(c, f, C.VOL.V2) },
   layered: { heights: WAZ, vcheck: (c, f) => C.check(c, f, V2v5) },
-  holdFiled: { heights: 'filed', check: true, contingency: 'hold' }, holdShared: { heights: 'allocation', check: true, contingency: 'hold' },
-  reported: { heights: REP }, holdReported: { heights: REP, check: true, contingency: 'hold' }, sourced: { heights: SRC } };
+  holdFiled: { heights: 'filed', check: true, contingency: 'hold', fix: EX }, holdShared: { heights: 'allocation', check: true, contingency: 'hold', fix: EX },
+  reported: { heights: REP }, holdReported: { heights: REP, check: true, contingency: 'hold', fix: EX }, sourced: { heights: SRC } };
 const T0 = +(process.argv[3] || 3600), T1 = +(process.argv[4] || 10800), near = (x, y) => Math.abs(x) <= Z + MG && Math.abs(y) <= Z + MG;
 const S = L.sites(cfg, base.d, base.seed, MIX.ratio), out = { meta: { metro: METRO, d_km: 3, seed: 1, zone_m: 2 * Z, t0: T0, t1: T1 }, sites: S.filter(s => near(s.c[0], s.c[1])).map(s => [OPS[s.op], Math.round(s.c[0]), Math.round(s.c[1])]), sc: {} };
 let broken = 0;
 for (const k in SC) { const r = L.run(cfg, Object.assign({}, base, SC[k])), F = [];
   for (const f of r.fin) { const sg = f.sg; if (f.end < T0 || f.t0 > T1 || !sg.some(s => near(s[2], s[3]) || near(s[5], s[6]))) continue;
-    const K = f.dev ? sg.map(s => [s[0], s[2], s[3], s[4]]) : [[sg[0][0], sg[0][2], sg[0][3], sg[0][4]]].concat(sg.map(s => [s[0] + s[1], s[5], s[6], s[7]]));
+    const K = f.dev && !SC[k].fix ? sg.map(s => [s[0], s[2], s[3], s[4]]) : [[sg[0][0], sg[0][2], sg[0][3], sg[0][4]]].concat(sg.map(s => [s[0] + s[1], s[5], s[6], s[7]]));
     const Q = [K[0]]; for (let i = 1; i < K.length - 1; i++) { const A = Q[Q.length - 1], B = K[i + 1], w = (K[i][0] - A[0]) / Math.max(1e-9, B[0] - A[0]);
       if ([1, 2, 3].some(j => Math.abs(A[j] + (B[j] - A[j]) * w - K[i][j]) > 1)) Q.push(K[i]); else broken++; } Q.push(K[K.length - 1]);
     const a = [OPS[f.op], Q[0][0] - T0, Math.round(Q[0][1]), Math.round(Q[0][2]), Math.round(Q[0][3])];

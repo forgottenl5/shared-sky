@@ -95,14 +95,14 @@
 {
 "name": "Off-plan drones (filed heights)",
 "q": "Does the allocation help when drones go off-plan?",
-"r": "Yes against filed heights (9.4× fewer per stop); in the high-return case (staff remark) only 1.4× [0.8–2.4].",
+"r": "Yes against filed heights (8.3× fewer per stop); in the high-return case (staff remark) only 1.2× [0.7–2.1]. Re-checked 23 Nov 2026 with exact hovering (originally 9.4× and 1.4×).",
 "pass": 2,
 "n": 2
 },
 {
 "name": "Return-to-home and outage",
 "q": "Does a common return height matter?",
-"r": "Return at 120 m is about 10.7× riskier than at own height (corrected).",
+"r": "Return at 120 m is about 8.5× riskier than at own height (re-checked 23 Nov 2026 with exact return flights; originally 10.7×).",
 "pass": 2,
 "n": 3
 },
@@ -137,7 +137,7 @@
 {
 "name": "Bad days, high-return case",
 "q": "Do the bad-day and delay benefits hold against Amazon's reported heights?",
-"r": "Mostly not: holds 1.4× [0.8–2.4], delay 1.3×. Nearly all came from the 4 m Amazon–Zipline gap.",
+"r": "Mostly not: holds 1.2× [0.7–2.1] (re-checked 23 Nov 2026; originally 1.4×), delay 1.3×. Nearly all came from the 4 m Amazon–Zipline gap.",
 "pass": 4,
 "n": 4
 },
@@ -221,8 +221,8 @@
 {
 "name": "DFW bad days and plan-check cost",
 "q": "Bad-day tests and check cost with the DFW mix",
-"r": "Hover sharing 7.6x; common return height 5.9x worse; 1-2 % of flights delayed shared out.",
-"pass": 9,
+"r": "Hover sharing 7.1x; common return height 4.2x worse, below the 5x predicted (re-checked 23 Nov 2026 with exact hovering and return flights; originally 7.6x and 5.9x, and this prediction passed); 1-2 % of flights delayed shared out.",
+"pass": 8,
 "n": 11
 },
 {
@@ -340,7 +340,7 @@
 {
 "name": "Common return height, Amazon high return (RTHREP)",
 "q": "Does the common-return-height result depend on where Amazon flies?",
-"r": "No: a common 120 m return is 8.6× worse than each drone's own height (10.7× under the allocation). One prediction failed: the rate was slightly lower than under the allocation.",
+"r": "No: a common 120 m return is 9.1× worse than each drone's own height (8.5× under the allocation). Re-checked 23 Nov 2026 with exact return flights (originally 8.6× and 10.7×). One prediction failed: the rate was slightly lower than under the allocation, and still is.",
 "pass": 1,
 "n": 2
 },
@@ -459,7 +459,7 @@
 {
 "name": "Houston area outage recounted at 4 checks per second (RECOUNT1)",
 "q": "Does the area-outage result (7.0x fewer planned conflicts with shared heights, counted once per second) hold with the finer counting used since 23 Oct?",
-"r": "Yes: 6.5x fewer (95% interval 4.9-8.8) over 10 runs at 4 checks per second; the original 3 runs give 5.3x at 4 per second. Finer counting finds more short crossings in both arms. The old count was reproduced exactly first.",
+"r": "Yes: 6.7x fewer (95% interval 4.9-9.3) over 10 runs at 4 checks per second; the original 3 runs give 6.8x. Re-checked 23 Nov 2026 with exact hovering (originally 6.5x and 5.3x). Finer counting finds only slightly more short crossings once hovering is exact (the original rise was partly the old method overcounting). The old count was reproduced exactly first.",
 "pass": 3,
 "n": 3
 },

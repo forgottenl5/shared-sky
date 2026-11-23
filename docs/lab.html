@@ -119,7 +119,7 @@ footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border
       <fieldset><legend>When something goes wrong</legend>
         <label>Off-plan event<select id="cont"><option value="none" selected>None</option><option value="hold">20 % of drones stop for 2 min</option><option value="rth-own">20 % return home at own height</option><option value="rth-120">20 % return home at 120 m</option><option value="outage">6 area outages (2 km, 2 min)</option></select></label>
         <p class="sub" id="conthint" style="font-size:.82rem" hidden>Turn on the plan check to isolate conflicts caused by the off-plan event; without it, conflicts in the plans themselves are counted too.</p>
-        <p class="sub" style="font-size:.82rem"><i>Being re-checked (22 Nov 2026): the engine undercounts conflicts for drones that change their plan in flight, so off-plan results are provisional.</i></p>
+        <p class="sub" style="font-size:.82rem"><i>Note (23 Nov 2026): off-plan events here (stops, return home, outages) use the original method, which miscounts meetings of those drones (mostly too many). The re-checked figures are on the findings page.</i></p>
       </fieldset>
       <div class="actions"><button class="btn" type="submit" id="run">Run</button><button class="btn ghost" type="button" id="runboth">Run filed vs allocation</button></div>
       <div class="bar"><i id="prog"></i></div>
@@ -426,14 +426,14 @@ footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border
 {
 "name": "Off-plan drones (filed heights)",
 "q": "Does the allocation help when drones go off-plan?",
-"r": "Yes against filed heights (9.4× fewer per stop); in the high-return case (staff remark) only 1.4× [0.8–2.4].",
+"r": "Yes against filed heights (8.3× fewer per stop); in the high-return case (staff remark) only 1.2× [0.7–2.1]. Re-checked 23 Nov 2026 with exact hovering (originally 9.4× and 1.4×).",
 "pass": 2,
 "n": 2
 },
 {
 "name": "Return-to-home and outage",
 "q": "Does a common return height matter?",
-"r": "Return at 120 m is about 10.7× riskier than at own height (corrected).",
+"r": "Return at 120 m is about 8.5× riskier than at own height (re-checked 23 Nov 2026 with exact return flights; originally 10.7×).",
 "pass": 2,
 "n": 3
 },
@@ -468,7 +468,7 @@ footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border
 {
 "name": "Bad days, high-return case",
 "q": "Do the bad-day and delay benefits hold against Amazon's reported heights?",
-"r": "Mostly not: holds 1.4× [0.8–2.4], delay 1.3×. Nearly all came from the 4 m Amazon–Zipline gap.",
+"r": "Mostly not: holds 1.2× [0.7–2.1] (re-checked 23 Nov 2026; originally 1.4×), delay 1.3×. Nearly all came from the 4 m Amazon–Zipline gap.",
 "pass": 4,
 "n": 4
 },
@@ -552,8 +552,8 @@ footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border
 {
 "name": "DFW bad days and plan-check cost",
 "q": "Bad-day tests and check cost with the DFW mix",
-"r": "Hover sharing 7.6x; common return height 5.9x worse; 1-2 % of flights delayed shared out.",
-"pass": 9,
+"r": "Hover sharing 7.1x; common return height 4.2x worse, below the 5x predicted (re-checked 23 Nov 2026 with exact hovering and return flights; originally 7.6x and 5.9x, and this prediction passed); 1-2 % of flights delayed shared out.",
+"pass": 8,
 "n": 11
 },
 {
@@ -671,7 +671,7 @@ footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border
 {
 "name": "Common return height, Amazon high return (RTHREP)",
 "q": "Does the common-return-height result depend on where Amazon flies?",
-"r": "No: a common 120 m return is 8.6× worse than each drone's own height (10.7× under the allocation). One prediction failed: the rate was slightly lower than under the allocation.",
+"r": "No: a common 120 m return is 9.1× worse than each drone's own height (8.5× under the allocation). Re-checked 23 Nov 2026 with exact return flights (originally 8.6× and 10.7×). One prediction failed: the rate was slightly lower than under the allocation, and still is.",
 "pass": 1,
 "n": 2
 },
@@ -790,7 +790,7 @@ footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border
 {
 "name": "Houston area outage recounted at 4 checks per second (RECOUNT1)",
 "q": "Does the area-outage result (7.0x fewer planned conflicts with shared heights, counted once per second) hold with the finer counting used since 23 Oct?",
-"r": "Yes: 6.5x fewer (95% interval 4.9-8.8) over 10 runs at 4 checks per second; the original 3 runs give 5.3x at 4 per second. Finer counting finds more short crossings in both arms. The old count was reproduced exactly first.",
+"r": "Yes: 6.7x fewer (95% interval 4.9-9.3) over 10 runs at 4 checks per second; the original 3 runs give 6.8x. Re-checked 23 Nov 2026 with exact hovering (originally 6.5x and 5.3x). Finer counting finds only slightly more short crossings once hovering is exact (the original rise was partly the old method overcounting). The old count was reproduced exactly first.",
 "pass": 3,
 "n": 3
 },
@@ -811,7 +811,7 @@ footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border
 {
 "name": "Does height sharing survive GPS-level errors? (ERRORS1)",
 "q": "If every drone has the published GPS-level sideways, height and late-start errors, how much of the height-sharing cut and of the plan-check benefit is left?",
-"r": "Most of the cut at best-site and average GPS (against the filed heights: 76-79 % at L1, 59-63 % at L2, from 80-81 % without errors; the 72/73 % headline case was not rerun), but only 20-30 % at the worst committed site and at the Remote ID rule size; height error alone does nearly all the damage, sideways error and late start almost none. The minimal plan check removes 77-83 % of flown conflicts at average GPS and 18-22 % at the Remote ID size; a block taller than the error holds at nearly twice the waiting flights. I predicted a lower cut at L2-L4 (3 misses). Errors are independent between flights, which likely overstates the damage; late-start size is assumed.",
+"r": "Re-checked 23 Nov 2026 with independent errors (RECHECK_B2; the originals had correlated errors between neighbouring flights; verdicts unchanged). Most of the cut at best-site and average GPS (against the filed heights: 79-80 % at L1, 59-63 % at L2, from 80-81 % without errors; the 72/73 % headline case was not rerun), but only 27-32 % at the worst committed site and 19 % (Houston) and 9 % (DFW; originally 23 %) at the Remote ID rule size; height error alone does most of the damage, sideways error and late start little. The minimal plan check removes 77-80 % of flown conflicts at average GPS and 22 % at the Remote ID size; a block taller than the error holds at nearly twice the waiting flights. I predicted a lower cut at L2-L4 (3 misses). Errors are independent between flights, which likely overstates the damage; late-start size is assumed.",
 "pass": 10,
 "n": 13
 },
@@ -832,8 +832,8 @@ footer { display: grid; gap: 6px; font-size: .88rem; color: var(--muted); border
 {
 "name": "The headline case under errors, and errors shared by nearby drones (ERRORS2)",
 "q": "Does the 72-73 % headline cut survive GPS-level errors, and what if most of the error is shared by nearby drones, as GPS and barometer physics suggests?",
-"r": "Independent errors shrink the headline cut as in ERRORS1 (71-73 % at best-site GPS, 54-60 % at average GPS, 22-23 % at the Remote ID size). If 80-95 % of the error is shared by nearby drones, the average-GPS cut is 66-75 %, close to the no-error 72-74 %: only each drone's personal error matters (shared plus personal gives the same cut as personal alone). All 10 predictions held, some with wide bands. How much is shared on real drones is not measured.",
-"pass": 10,
+"r": "Re-checked 23 Nov 2026 with independent errors (RECHECK_B2; the originals had correlated errors between neighbouring flights). Independent errors shrink the headline cut as in ERRORS1 (74 % at best-site GPS, 54-62 % at average GPS, 20 % in Houston and 11 % in DFW at the Remote ID size; originally 22-23 %). If 80-95 % of the error is shared by nearby drones, the average-GPS cut is 62-73 % (originally 66-75 %), against 72-74 % with no error: only each drone's personal error matters (shared plus personal gives the same cut as personal alone). Originally all 10 predictions held; in the re-check C4 fails in DFW (62 % at average GPS with 80 % shared vs 74 % at best-site GPS, more than the 10 points allowed), so 9 of 10. How much is shared on real drones is not measured.",
+"pass": 9,
 "n": 10
 },
 {
