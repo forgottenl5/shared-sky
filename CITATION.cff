@@ -4,7 +4,7 @@ title: "Shared Sky: a pre-registered simulation of delivery drones and air taxis
 type: software
 authors:
   - alias: forgottenl5
-version: 1.0.0
+version: 1.1.0
 date-released: 2026-11-23
 doi: 10.5281/zenodo.24482589
 license: AGPL-3.0-or-later
