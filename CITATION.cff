@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use Shared Sky, please cite it as below."
+title: "Shared Sky: a pre-registered simulation of delivery drones and air taxis over Houston and Dallas-Fort Worth"
+type: software
+authors:
+  - alias: forgottenl5
+version: 1.0.0
+date-released: 2026-11-23
+license: AGPL-3.0-or-later
+repository-code: "https://github.com/forgottenl5/shared-sky"
+url: "https://forgottenl5.github.io/shared-sky"
+abstract: >-
+  Pre-registered simulation of Wing, Zipline and Amazon delivery drones flying
+  their FAA-filed operations over Houston and Dallas-Fort Worth. Giving each
+  company its own height cuts planned conflicts between companies by about 72 %
+  (Houston) and 73 % (Dallas-Fort Worth). 77 registered studies; failed
+  predictions are reported as failures.
+keywords:
+  - drones
+  - delivery drones
+  - airspace
+  - UTM
+  - simulation
+  - pre-registration
