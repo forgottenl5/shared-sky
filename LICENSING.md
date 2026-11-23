@@ -17,4 +17,4 @@
 Most of the code was written with an AI assistant. Whether and how far AI-assisted code is protected by copyright is unsettled
 (US Copyright Office, Copyright and Artificial Intelligence, Part 2, January 2025); the licences above state how the project wants it used.
 
-Release built from commit c242dc9 of the private working repository (history not included).
+Release built from commit f778a57 of the private working repository (history not included).

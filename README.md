@@ -7,14 +7,17 @@
   <sub>Same Houston flights, two height rules (the site's demo patch: 92 → 33 planned conflicts). <a href="https://forgottenl5.github.io/shared-sky/houston.html">Fly it in 3D</a></sub>
 </p>
 
-A simulation of Wing, Zipline and Amazon delivery drones sharing the sky over Houston and Dallas–Fort Worth, built from the companies' FAA environmental filings. It flies their planned operations together **with no coordination between the companies**, counts **planned conflicts** (two companies' planned paths within 30 m sideways and less than 10 m in height at the same moment), and tests simple fixes: sharing out heights inside each company's filed band, a pre-flight plan check, landing pads.
+A simulation of Wing, Zipline and Amazon delivery drones sharing the sky over Houston and Dallas–Fort Worth, built from the companies' FAA environmental filings. It flies their planned operations together and tests one simple rule: **each company keeps to its own height inside the band it already filed**.
 
-Real operators already share flight plans before take-off (ASTM F3548; in DFW, Wing and Flytrex report thousands of coordinated flights with no plan conflicts). So the "no coordination" baseline is a reference point for how much each fix removes, not a picture of today's risk.
+**With plan sharing** (as operators already do: ASTM F3548; in DFW, Wing and Flytrex report thousands of coordinated flights with no plan conflicts), the rule **halves how many flights have to wait** for another company's plan: 19 % instead of 39 % in Houston, 17.5 % instead of 36.5 % in DFW, about 6 minutes each, in a modelled pre-flight check flown in real 2025 wind over 10 windy hours (`planned/SEEDS2_RESULTS_2026-10-28.md`). The check removes 99–99.6 % of planned conflicts with or without the rule.
+
+**Without plan sharing**, as a reference point for how far plans overlap on their own, the model counts **planned conflicts** (two companies' planned paths within 30 m sideways and less than 10 m in height at the same moment): the rule cuts them by about 72 % (Houston) and 73 % (DFW).
 
 **Live pages:** `docs/` (GitHub Pages): `index.html`, `houston.html`, `dfw.html`, `lab.html` (run your own scenario in the browser).
 
 ## Main results
-- **Sharing out heights cuts planned conflicts by 72 % in Houston (95 % interval 67–76 %) and 73 % in DFW (66–80 %)**, with Amazon at its best-sourced heights, on the real filed layouts (Amazon's geocoded sites; Wing and Zipline placed at random), 10 runs each (`planned/HEADLINE2_RESULTS_2026-10-25.md`).
+- **With plans shared before take-off, own heights halve how many flights wait:** 18.9 % vs 38.8 % (Houston) and 17.5 % vs 36.5 % (DFW) of flights held, mean 6.2–6.6 minutes, against today's filed heights with Amazon at its Omaha noise profile (10 windy hours per metro, daytime hours between the 85th and 95th percentile of wind; calm hours would hold fewer). The modelled check is not any operator's real system. Catch: Amazon's outbound and Zipline's shared-out heights sit exactly 20 m apart, the edge of what the modelled check sees, so with average GPS error the shared-out heights keep slightly more residual collision risk than the best-sourced ones (`planned/RISK2_*`); layer gaps need a margin.
+- **Without coordination, sharing out heights cuts planned conflicts by 72 % in Houston (95 % interval 67–76 %) and 73 % in DFW (66–80 %)**, with Amazon at its best-sourced heights, on the real filed layouts (Amazon's geocoded sites; Wing and Zipline placed at random), 10 runs each (`planned/HEADLINE2_RESULTS_2026-10-25.md`).
 - **Two things decide that number.**
   - *Amazon's return height* is not public. FAA filings give a typical return of 345 ft. One secondhand homeowners' association summary quotes Amazon staff saying "400 ft". If 400 ft is true, the cut is 29 % (Houston) or 35 % (DFW).
   - *How much room companies need.* The shared-out layers are 10–20 m apart. If 15 m between companies were required, the cut would be 55 % (Houston) or 45 % (DFW); at 20 m, 67 % and 60 % (stricter rules count more conflicts in every arm).
