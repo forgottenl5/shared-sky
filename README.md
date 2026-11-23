@@ -64,3 +64,7 @@ Not affiliated with, endorsed by or reviewed by Wing, Zipline, Amazon or the FAA
 
 ## Licence
 Code: AGPL-3.0-or-later. Text and results: CC BY 4.0. Details in [LICENSING.md](LICENSING.md). Data in `data/` keeps its own licences.
+
+## Cite
+
+Archived on Zenodo: [doi:10.5281/zenodo.24482589](https://doi.org/10.5281/zenodo.24482589) (all versions; v1.0.0 is [10.5281/zenodo.24482590](https://doi.org/10.5281/zenodo.24482590)). GitHub's "Cite this repository" button uses `CITATION.cff`.
