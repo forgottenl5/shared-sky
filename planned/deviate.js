@@ -2,6 +2,7 @@
 // DEVIATE_PREREG.md: off-plan drones (HOLD 120 s or LAND at 3 m/s) on plan-checked traffic; contingency shared (S) or not (N).
 // usage: node planned/deviate.js ARM D_KM SEED   ARM in BASE N-HOLD S-HOLD N-LAND S-LAND
 const fs = require('fs'), path = require('path'), H2 = require('./houston2.js'), VR = require('./vrate.js'), P = require('./proc.js'), VO = require('./vol.js');
+const EX = require('./exact_dev.js');   // RECHECK_A2: exact deviations when SKY_EXACT_DEV=1 (default unchanged)
 const FRAC = 0.05, HOLD_S = 120, LAND_V = 3, CELL = 30, TB = 5, VSEP = 10, STEP = 30, TRIES = 40, OPI = { wing: 0, amazon: 1, zipline: 2 };
 function rng(seed) { let s = (seed * 2654435761) >>> 0; return () => (s = (s * 1664525 + 1013904223) >>> 0) / 4294967296; }
 // deviation draws: independent of arm; offset = seconds after the flight's (accepted) launch
@@ -12,6 +13,7 @@ function draws(fl, seed) { const r = rng(seed + 70000), out = new Map();
   return out; }
 const expand = f => { const o = []; for (const s of f.sg) for (let q = 0; q < s[1]; q++) { const p = P.posAt(s, s[0] + q); o.push([s[0] + q, p[0], p[1], p[2], s[8]]); } return o; };
 function deviated(f, off, type) {   // f: accepted (shifted) flight; returns new flight built from 1-s segments
+  if (EX.ON()) { const g = type === 'HOLD' ? EX.hold(f, f.t0 + off, HOLD_S) : EX.land(f, off, LAND_V); return Object.assign(g, { dev: type, td: f.t0 + off }); }
   const smp = expand(f), td = f.t0 + off, k = smp.findIndex(p => p[0] === td), out = smp.slice(0, k), pd = smp[k];
   if (type === 'HOLD') { for (let i = 0; i < HOLD_S; i++) out.push([td + i, pd[1], pd[2], pd[3], 'hover']); for (const p of smp.slice(k)) out.push([p[0] + HOLD_S, p[1], p[2], p[3], p[4]]); }
   else { for (let i = 0; ; i++) { const z = pd[3] - LAND_V * i; if (z <= 0) { out.push([td + i, pd[1], pd[2], 0, 'vertical']); break; } out.push([td + i, pd[1], pd[2], z, 'vertical']); } }

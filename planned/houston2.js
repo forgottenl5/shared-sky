@@ -42,7 +42,8 @@ function count(fl, opts) {
   opts = opts || {}; const warm = opts.warm === undefined ? WARM : opts.warm, zone = opts.zone === undefined ? ZONE : opts.zone, inZ = (x, y) => Math.abs(x) <= zone && Math.abs(y) <= zone;
   // keep flights whose path can reach the zone (+30 m)
   const keep = fl.filter(f => { let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity; for (const s of f.sg) { x0 = Math.min(x0, s[2], s[5]); x1 = Math.max(x1, s[2], s[5]); y0 = Math.min(y0, s[3], s[6]); y1 = Math.max(y1, s[3], s[6]); } return x1 >= -zone - 30 && x0 <= zone + 30 && y1 >= -zone - 30 && y0 <= zone + 30; });
-  keep.sort((a, b) => a.t0 - b.t0); const tmax = Math.max(...keep.map(f => f.end)), res = {}, add = k => { res[k] = (res[k] || 0) + 1; }, TH = opts.th || [['wide', 30, 10], ['close', 15, 5]];   // opts.th: ROBUST_PREREG.md
+  keep.sort((a, b) => a.t0 - b.t0); const tEnd = opts.tEnd !== undefined ? opts.tEnd : process.env.SKY_BOUND === '1' ? warm + (opts.meas || MEAS) : Infinity, tmax = Math.min(tEnd, Math.max(...keep.map(f => f.end))),   // RECHECK_A2 (22 Nov 2026): opts.tEnd or SKY_BOUND=1 stops counting at the end of the measured window; default unchanged
+     res = {}, add = k => { res[k] = (res[k] || 0) + 1; }, TH = opts.th || [['wide', 30, 10], ['close', 15, 5]];   // opts.th: ROBUST_PREREG.md
   let prev = Object.fromEntries(TH.map(x => [x[0], new Set()])), nx = 0; const act = [], over = new Map(), cellsBy = new Map(), measured = {};
   const SUB = opts.sub || 1, pAt = SUB === 1 ? posAt : (sg, t) => { const f = Math.min(1, Math.max(0, (t - sg[0] + 0.5) / sg[1])); return [sg[2] + (sg[5] - sg[2]) * f, sg[3] + (sg[6] - sg[3]) * f, sg[4] + (sg[7] - sg[4]) * f]; };   // COUNTFIX: opts.sub checks per second
   for (let it = 0; it <= tmax * SUB; it++) { const t = it / SUB; while (nx < keep.length && keep[nx].t0 <= t) { const f = keep[nx++]; f.k = 0; act.push(f); }

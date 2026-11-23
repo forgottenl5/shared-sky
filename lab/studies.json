@@ -480,7 +480,7 @@
 {
 "name": "Does height sharing survive GPS-level errors? (ERRORS1)",
 "q": "If every drone has the published GPS-level sideways, height and late-start errors, how much of the height-sharing cut and of the plan-check benefit is left?",
-"r": "Most of the cut at best-site and average GPS (against the filed heights: 76-79 % at L1, 59-63 % at L2, from 80-81 % without errors; the 72/73 % headline case was not rerun), but only 20-30 % at the worst committed site and at the Remote ID rule size; height error alone does nearly all the damage, sideways error and late start almost none. The minimal plan check removes 77-83 % of flown conflicts at average GPS and 18-22 % at the Remote ID size; a block taller than the error holds at nearly twice the waiting flights. I predicted a lower cut at L2-L4 (3 misses). Errors are independent between flights, which likely overstates the damage; late-start size is assumed.",
+"r": "Re-checked 23 Nov 2026 with independent errors (RECHECK_B2; the originals had correlated errors between neighbouring flights; verdicts unchanged). Most of the cut at best-site and average GPS (against the filed heights: 79-80 % at L1, 59-63 % at L2, from 80-81 % without errors; the 72/73 % headline case was not rerun), but only 27-32 % at the worst committed site and 19 % (Houston) and 9 % (DFW; originally 23 %) at the Remote ID rule size; height error alone does most of the damage, sideways error and late start little. The minimal plan check removes 77-80 % of flown conflicts at average GPS and 22 % at the Remote ID size; a block taller than the error holds at nearly twice the waiting flights. I predicted a lower cut at L2-L4 (3 misses). Errors are independent between flights, which likely overstates the damage; late-start size is assumed.",
 "pass": 10,
 "n": 13
 },
@@ -501,8 +501,8 @@
 {
 "name": "The headline case under errors, and errors shared by nearby drones (ERRORS2)",
 "q": "Does the 72-73 % headline cut survive GPS-level errors, and what if most of the error is shared by nearby drones, as GPS and barometer physics suggests?",
-"r": "Independent errors shrink the headline cut as in ERRORS1 (71-73 % at best-site GPS, 54-60 % at average GPS, 22-23 % at the Remote ID size). If 80-95 % of the error is shared by nearby drones, the average-GPS cut is 66-75 %, close to the no-error 72-74 %: only each drone's personal error matters (shared plus personal gives the same cut as personal alone). All 10 predictions held, some with wide bands. How much is shared on real drones is not measured.",
-"pass": 10,
+"r": "Re-checked 23 Nov 2026 with independent errors (RECHECK_B2; the originals had correlated errors between neighbouring flights). Independent errors shrink the headline cut as in ERRORS1 (74 % at best-site GPS, 54-62 % at average GPS, 20 % in Houston and 11 % in DFW at the Remote ID size; originally 22-23 %). If 80-95 % of the error is shared by nearby drones, the average-GPS cut is 62-73 % (originally 66-75 %), against 72-74 % with no error: only each drone's personal error matters (shared plus personal gives the same cut as personal alone). Originally all 10 predictions held; in the re-check C4 fails in DFW (62 % at average GPS with 80 % shared vs 74 % at best-site GPS, more than the 10 points allowed), so 9 of 10. How much is shared on real drones is not measured.",
+"pass": 9,
 "n": 10
 },
 {

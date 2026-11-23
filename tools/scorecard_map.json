@@ -938,14 +938,15 @@
   "code": "ERRORS1",
   "results": [
    "planned/ERRORS1_RESULTS_2026-11-03.md",
-   "planned/errors1_results_table.md"
+   "planned/errors1_results_table.md",
+   "planned/RECHECK_B2_RESULTS_2026-11-23.md"
   ],
   "pass_record": 10,
   "n_record": 13,
   "pass_scorecard": 10,
   "n_scorecard": 13,
   "match": true,
-  "note": "E1, E5-E11 PASS; E2, E3, E4 FAIL."
+  "note": "E1, E5-E11 PASS; E2, E3, E4 FAIL. Unchanged in the RECHECK_B2 re-run (23 Nov 2026)."
  },
  {
   "name": "Collision risk per flight hour (RISK1)",
@@ -980,14 +981,15 @@
   "code": "ERRORS2",
   "results": [
    "planned/ERRORS2_RESULTS_2026-11-04.md",
-   "planned/errors2_results_table.md"
+   "planned/errors2_results_table.md",
+   "planned/RECHECK_B2_RESULTS_2026-11-23.md"
   ],
-  "pass_record": 10,
+  "pass_record": 9,
   "n_record": 10,
-  "pass_scorecard": 10,
+  "pass_scorecard": 9,
   "n_scorecard": 10,
   "match": true,
-  "note": "D1-D5, C1-C5 PASS."
+  "note": "D1-D5, C1-C3, C5 PASS; C4 FAIL in the RECHECK_B2 re-run (23 Nov 2026, independent errors). Originally 10/10."
  },
  {
   "name": "Collision risk with the plan check on (RISK2)",
