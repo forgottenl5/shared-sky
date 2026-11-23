@@ -206,7 +206,7 @@
   "pass_scorecard": 2,
   "n_scorecard": 3,
   "match": true,
-  "note": "G1, G2 PASS; G3 FAIL. The 'corrected' 10.7x figure in studies.json comes from COUNTFIX; RTH verdicts unchanged."
+  "note": "G1, G2 PASS; G3 FAIL. The return-height figure in studies.json (8.5x after the 23 Nov 2026 re-check; originally 10.7x) comes from COUNTFIX; RTH verdicts unchanged."
  },
  {
   "name": "Area outages",
