@@ -1067,5 +1067,33 @@
   "n_scorecard": 5,
   "match": true,
   "note": "H4, H5 PASS; H1-H3 FAIL."
+ },
+ {
+  "name": "Plan-sharing cost on real Walmart site layouts (REALCOORD)",
+  "code": "REALCOORD",
+  "results": [
+   "planned/REALCOORD_RESULTS_2026-11-23.md",
+   "planned/realcoord_results_table.md"
+  ],
+  "pass_record": 4,
+  "n_record": 4,
+  "pass_scorecard": 4,
+  "n_scorecard": 4,
+  "match": true,
+  "note": "W1-W4 PASS."
+ },
+ {
+  "name": "The cut as a curve over the separation rule (CURVE1)",
+  "code": "CURVE1",
+  "results": [
+   "planned/CURVE1_RESULTS_2026-11-23.md",
+   "planned/curve1_results_table.md"
+  ],
+  "pass_record": 3,
+  "n_record": 4,
+  "pass_scorecard": 3,
+  "n_scorecard": 4,
+  "match": true,
+  "note": "T2-T4 PASS; T1 FAIL."
  }
 ]

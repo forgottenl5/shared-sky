@@ -539,5 +539,19 @@
 "r": "Across 14 days of 2025 tracks, 30 % (Houston) and 46 % (DFW) of helicopter time in the counted areas is below 150 m above ground and 14-17 % is inside the drone height band, far more than I predicted (under 15 % and under 8 %); the shares depend a lot on the assumed ground elevation (roughly 20-60 %). On average a low-flying helicopter has 0.03 (Houston) or 0.009 (DFW) drones in a 450 x 450 x 60 m box around it, and height sharing does not change that. Volunteer receivers miss low flights, so these are floors. 3 of 5 predictions failed.",
 "pass": 2,
 "n": 5
+},
+{
+"name": "Plan-sharing cost on real Walmart site layouts (REALCOORD)",
+"q": "Does the plan-sharing cost of the headline (own heights halve how many flights the pre-flight check holds) hold when Wing and Zipline sit on real Walmart stores instead of random spots?",
+"r": "Yes. Held flights fall from 34 % to 16 % in Houston and from 28 % to 15 % in DFW (ratio 2.16 and 1.85), fewer than on the random layouts in both height plans, and the check removes 98.6-100 % of flown planned conflicts. Amazon bears most of the waiting either way (71-84 % of its flights held), because its depot climbs and descents cross every other layer; the halving comes from Wing and Zipline. All 4 predictions held.",
+"pass": 4,
+"n": 4
+},
+{
+"name": "The cut as a curve over the separation rule (CURVE1)",
+"q": "Does the 10 m vertical rule flatter the height-sharing cut? How does the cut change across vertical rules of 5-20 m and horizontal rules of 20-50 m?",
+"r": "No: the cut stays between 45 % and 84 % across the grid and peaks at 12.5 m (80-84 %). It is low only at 15 m (55 % Houston, 45-48 % DFW), where Amazon's return (115 m) and Zipline (101 m), 14 m apart, start to count against each other; the horizontal rule matters little (69-74 % at 10 m). One prediction failed: at 5 m the cut is 62-74 %, not at least 80 %, because shared-out drones still cross other layers while climbing and descending.",
+"pass": 3,
+"n": 4
 }
 ]

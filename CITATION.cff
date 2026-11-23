@@ -14,7 +14,7 @@ abstract: >-
   Pre-registered simulation of Wing, Zipline and Amazon delivery drones flying
   their FAA-filed operations over Houston and Dallas-Fort Worth. Giving each
   company its own height cuts planned conflicts between companies by about 72 %
-  (Houston) and 73 % (Dallas-Fort Worth). 77 registered studies; failed
+  (Houston) and 73 % (Dallas-Fort Worth). 79 registered studies; failed
   predictions are reported as failures.
 keywords:
   - drones
