@@ -1109,5 +1109,19 @@
   "n_scorecard": 7,
   "match": true,
   "note": "C1, C2, R1 PASS; U1, U2, C3, R2 FAIL."
+ },
+ {
+  "name": "Bigger flight-plan volumes and flexible heights (INTENT1)",
+  "code": "INTENT1",
+  "results": [
+   "planned/INTENT1_RESULTS_2026-11-24.md",
+   "planned/intent1_results_table.md"
+  ],
+  "pass_record": 4,
+  "n_record": 8,
+  "pass_scorecard": 4,
+  "n_scorecard": 8,
+  "match": true,
+  "note": "I1, I3, I4, I5 PASS; I2, I6, I7, I8 FAIL (I6-I7 uninformative, deviation D1)."
  }
 ]

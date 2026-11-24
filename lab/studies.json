@@ -560,5 +560,12 @@
 "r": "Mostly yes. Wing 46-52 m, Amazon 76 m both ways, Zipline 101 m (gaps 24 and 25 m) cuts the flights the check holds to about 4 % (shared-out heights: 18-19 %; today's: 37-39 %), Amazon's held share to 18-26 % (from 81-84 %), keeps the uncoordinated cut at 75-92 % under every rule, and leaves less residual risk than the shared-out heights. Putting Amazon lowest instead looks even better on waiting but carries 3-8 times the residual risk, because Wing and Zipline end up 21 m apart, just outside the check. Costs not measured: Wing's band shrinks to 6 m and Amazon flies both ways at one height. 4 of 7 predictions failed.",
 "pass": 3,
 "n": 7
+},
+{
+"name": "Bigger flight-plan volumes and flexible heights (INTENT1)",
+"q": "Do the plan-sharing results survive if the shared flight plans (operational-intent volumes) are bigger than assumed, and would letting the coordination service move flights to other heights inside each company's band do better than fixed company layers?",
+"r": "The best plan depends on the volume size, which is not known. With small volumes (+-30 m / +-10 m) the wider-gap layout holds about 4 % of flights; with +-75 m / +-15 m it is no better than the shared-out heights (21-22 %); with +-150 m / +-25 m flexible heights hold 25-28 %, against 38-39 % for the wider-gap layout and 64-73 % for today's or the shared-out heights. Flexible heights are the only plan that stays near 20-28 % at every size. At today's Houston volume about 1 % of flights are held and there are no conflicts, as in real operations. The part that checked each company's own flights was not informative (a design error: no exclusion around a company's own sites). 4 of 8 predictions failed.",
+"pass": 4,
+"n": 8
 }
 ]
