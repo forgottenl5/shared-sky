@@ -574,5 +574,12 @@
 "r": "At average GPS today's heights hold 47-51 % of flights and every height-sharing plan 17-22 %, so the headline gets stronger. Waiting no longer separates them; risk does: the wider-gap layout leaves 0.005-0.006 expected collisions per 100,000 flight hours, the shared-out heights 0.04-0.06, flexible heights 0.18-0.41. INTENT1's suggestion that flexible heights are the safer bet is withdrawn. Best-site GPS cuts holds 3-12 times and risk by orders of magnitude. 3 of 6 predictions failed.",
 "pass": 3,
 "n": 6
+},
+{
+"name": "Heights by direction or trip length (DIRECT1)",
+"q": "Would giving every drone a height by its direction of travel (as crewed aviation and chip wiring do) or by trip length beat giving each company its own height?",
+"r": "No. With plans sized by the standard's 95 % rule at average GPS, two direction layers hold 62-72 % of flights, four layers 39-49 % and trip-length layers 55-57 %, against 17-18 % for the shared-out company heights; Wing is hit hardest because it now shares layers with Amazon. Direction layers leave very little residual risk (0.0005 per 100,000 flight hours), but mainly because most flights wait on the ground. Without plan sharing they do better than the shared-out heights only if companies need 15-20 m of vertical room. 1 of 5 predictions failed (four layers held fewer flights than two, not more).",
+"pass": 4,
+"n": 5
 }
 ]

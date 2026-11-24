@@ -1137,5 +1137,19 @@
   "n_scorecard": 6,
   "match": true,
   "note": "J1, J2, J4 PASS; J3, J5, J6 FAIL."
+ },
+ {
+  "name": "Heights by direction or trip length (DIRECT1)",
+  "code": "DIRECT1",
+  "results": [
+   "planned/DIRECT1_RESULTS_2026-11-24.md",
+   "planned/direct1_results_table.md"
+  ],
+  "pass_record": 4,
+  "n_record": 5,
+  "pass_scorecard": 4,
+  "n_scorecard": 5,
+  "match": true,
+  "note": "E1, E3, E4, E5 PASS; E2 FAIL."
  }
 ]

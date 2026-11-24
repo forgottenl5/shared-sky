@@ -1,0 +1,15 @@
+'use strict';
+const D = require('./direct.js'); let bad = 0; const ok = (n, c) => { console.log((c ? 'ok  ' : 'FAIL') + ' ' + n); if (!c) bad++; };
+const wing = { id: 1, op: 'wing', t0: 0, end: 400, sg: [[0, 1, 0, 0, 0, 0, 0, 7, 'vertical'], [1, 30, 0, 0, 7, 0, 0, 7, 'hover'], [31, 12, 0, 0, 7, 0, 0, 65, 'vertical'], [43, 157, 0, 0, 65, 4000, 0, 65, 'cruise'], [200, 12, 4000, 0, 65, 4000, 0, 7, 'vertical'], [212, 30, 4000, 0, 7, 4000, 0, 7, 'hover'], [242, 12, 4000, 0, 7, 4000, 0, 65, 'vertical'], [254, 157, 4000, 0, 65, 0, 0, 65, 'cruise'], [411, 13, 0, 0, 65, 0, 0, 0, 'vertical']] };
+const g = D.relayer(wing, D.LAYOUTS.D2, 3000);
+ok('D2: eastbound leg 56 m, westbound 76 m', g.sg[3][4] === 56 && g.sg[3][7] === 56 && g.sg[7][4] === 76 && g.sg[7][7] === 76);
+ok('D2: climbs and descents follow their leg', g.sg[2][7] === 56 && g.sg[4][4] === 56 && g.sg[6][7] === 76 && g.sg[8][4] === 76);
+ok('D2: hovers and ground untouched', g.sg[1][4] === 7 && g.sg[5][4] === 7 && g.sg[8][7] === 0 && g.sg[0][4] === 0);
+const amz = { id: 2, op: 'amazon', t0: 0, end: 500, sg: [[0, 15, 0, 0, 0, 0, 0, 35, 'vertical'], [15, 40, 0, 0, 35, 0, 600, 81, 'vertical'], [55, 138, 0, 600, 81, 0, 4745, 81, 'cruise'], [193, 30, 0, 4745, 81, 0, 5195, 43, 'vertical']] };
+const a = D.relayer(amz, D.LAYOUTS.D4, 3000);
+ok('D4: northbound leg 64 m, transition endpoints follow, intermediate 35 / 43 kept', a.sg[2][4] === 64 && a.sg[1][7] === 64 && a.sg[3][4] === 64 && a.sg[1][4] === 35 && a.sg[3][7] === 43);
+const d = D.relayer(wing, D.LAYOUTS.DD, 3000); ok('DD: 4 km legs above the 3 km split go to 80 m', d.sg[3][4] === 80 && d.sg[7][4] === 80);
+ok('DD: below the split 56 m', D.relayer(wing, D.LAYOUTS.DD, 5000).sg[3][4] === 56);
+const z = { id: 3, op: 'zipline', t0: 0, end: 10, sg: [[0, 10, 0, 0, 101, 5000, 0, 101, 'cruise']] }; ok('Zipline untouched', D.relayer(z, D.LAYOUTS.D2, 3000) === z);
+const all = [56, 64, 72, 76, 80]; ok('all layers inside both filed bands (Wing 46-91, Amazon 55-115)', all.every(h => h >= 55 && h <= 91));
+process.exit(bad ? 1 : 0);
