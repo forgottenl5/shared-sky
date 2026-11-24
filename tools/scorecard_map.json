@@ -1095,5 +1095,19 @@
   "n_scorecard": 4,
   "match": true,
   "note": "T2-T4 PASS; T1 FAIL."
+ },
+ {
+  "name": "Wider gaps inside the filed bands (LAYOUT1)",
+  "code": "LAYOUT1",
+  "results": [
+   "planned/LAYOUT1_RESULTS_2026-11-24.md",
+   "planned/layout1_results_table.md"
+  ],
+  "pass_record": 3,
+  "n_record": 7,
+  "pass_scorecard": 3,
+  "n_scorecard": 7,
+  "match": true,
+  "note": "C1, C2, R1 PASS; U1, U2, C3, R2 FAIL."
  }
 ]

@@ -553,5 +553,12 @@
 "r": "No: the cut stays between 45 % and 84 % across the grid and peaks at 12.5 m (80-84 %). It is low only at 15 m (55 % Houston, 45-48 % DFW), where Amazon's return (115 m) and Zipline (101 m), 14 m apart, start to count against each other; the horizontal rule matters little (69-74 % at 10 m). One prediction failed: at 5 m the cut is 62-74 %, not at least 80 %, because shared-out drones still cross other layers while climbing and descending.",
 "pass": 3,
 "n": 4
+},
+{
+"name": "Wider gaps inside the filed bands (LAYOUT1)",
+"q": "Can a different set of company heights, still inside every company's filed band, fix the weak spots of the shared-out heights (the 15 m dip, Amazon's waiting, the 20 m gap at the edge of the plan check)?",
+"r": "Mostly yes. Wing 46-52 m, Amazon 76 m both ways, Zipline 101 m (gaps 24 and 25 m) cuts the flights the check holds to about 4 % (shared-out heights: 18-19 %; today's: 37-39 %), Amazon's held share to 18-26 % (from 81-84 %), keeps the uncoordinated cut at 75-92 % under every rule, and leaves less residual risk than the shared-out heights. Putting Amazon lowest instead looks even better on waiting but carries 3-8 times the residual risk, because Wing and Zipline end up 21 m apart, just outside the check. Costs not measured: Wing's band shrinks to 6 m and Amazon flies both ways at one height. 4 of 7 predictions failed.",
+"pass": 3,
+"n": 7
 }
 ]
