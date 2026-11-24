@@ -1123,5 +1123,19 @@
   "n_scorecard": 8,
   "match": true,
   "note": "I1, I3, I4, I5 PASS; I2, I6, I7, I8 FAIL (I6-I7 uninformative, deviation D1)."
+ },
+ {
+  "name": "Plan sizes from the standard's 95 % rule (INTENT2)",
+  "code": "INTENT2",
+  "results": [
+   "planned/INTENT2_RESULTS_2026-11-24.md",
+   "planned/intent2_results_table.md"
+  ],
+  "pass_record": 3,
+  "n_record": 6,
+  "pass_scorecard": 3,
+  "n_scorecard": 6,
+  "match": true,
+  "note": "J1, J2, J4 PASS; J3, J5, J6 FAIL."
  }
 ]

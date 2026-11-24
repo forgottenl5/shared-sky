@@ -4,7 +4,7 @@ title: "Shared Sky: a pre-registered simulation of delivery drones and air taxis
 type: software
 authors:
   - alias: forgottenl5
-version: 1.3.0
+version: 1.4.0
 date-released: 2026-11-24
 doi: 10.5281/zenodo.24482589
 license: AGPL-3.0-or-later
@@ -14,7 +14,7 @@ abstract: >-
   Pre-registered simulation of Wing, Zipline and Amazon delivery drones flying
   their FAA-filed operations over Houston and Dallas-Fort Worth. Giving each
   company its own height cuts planned conflicts between companies by about 72 %
-  (Houston) and 73 % (Dallas-Fort Worth). 81 registered studies; failed
+  (Houston) and 73 % (Dallas-Fort Worth). 82 registered studies; failed
   predictions are reported as failures.
 keywords:
   - drones
