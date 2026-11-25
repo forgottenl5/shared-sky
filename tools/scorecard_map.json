@@ -1151,5 +1151,19 @@
   "n_scorecard": 5,
   "match": true,
   "note": "E1, E3, E4, E5 PASS; E2 FAIL."
+ },
+ {
+  "name": "Gap between company heights vs plan size (GAP1)",
+  "code": "GAP1",
+  "results": [
+   "planned/GAP1_RESULTS_2026-11-24.md",
+   "planned/gap1_results_table.md"
+  ],
+  "pass_record": 6,
+  "n_record": 7,
+  "pass_scorecard": 6,
+  "n_scorecard": 7,
+  "match": true,
+  "note": "G1, G2, G3, G4, G6, G7 PASS; G5 FAIL (DFW)."
  }
 ]

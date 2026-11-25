@@ -581,5 +581,12 @@
 "r": "No. With plans sized by the standard's 95 % rule at average GPS, two direction layers hold 62-72 % of flights, four layers 39-49 % and trip-length layers 55-57 %, against 17-18 % for the shared-out company heights; Wing is hit hardest because it now shares layers with Amazon. Direction layers leave very little residual risk (0.0005 per 100,000 flight hours), but mainly because most flights wait on the ground. Without plan sharing they do better than the shared-out heights only if companies need 15-20 m of vertical room. 1 of 5 predictions failed (four layers held fewer flights than two, not more).",
 "pass": 4,
 "n": 5
+},
+{
+"name": "Gap between company heights vs plan size (GAP1)",
+"q": "Amazon is held in most of its flights under every height plan. Is that because the gaps between company heights are smaller than the shared flight plans' height allowance, and what spacing fixes it?",
+"r": "Yes. Company layers stop clashing once they are more than twice the plan's height allowance apart. The widest even spacing the filed bands allow (Wing 46 m, Amazon 73.5 m, Zipline 101 m; 27.5 m gaps) still clashes with plans of +-14 m (the 95 % rule at average GPS): 19-20 % of flights held, 91-96 % of Amazon's. At +-13.5 m only 2.3-2.7 % of flights are held (Amazon 12-21 %); the earlier best layout (24-25 m gaps) needs +-11.5 m for that. The new spacing also leaves 190-270 times less residual collision risk at average GPS and keeps the cut without plan sharing at 82-84 %. The exact half-metre edge comes from the modelled check's hard overlap test. 1 of 7 predictions failed (DFW Amazon fell further than predicted).",
+"pass": 6,
+"n": 7
 }
 ]
