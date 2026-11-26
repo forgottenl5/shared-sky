@@ -1,9 +1,10 @@
+# 26 Nov 2026: labels corrected to the PHYS1 figures; the raw renders were not kept, so docs/img was relabelled in place by painting over the old label.
 # Adds a city name and headline to each home-page thumbnail (also used as the link-preview image). Source images are the committed raw renders.
 from PIL import Image, ImageDraw, ImageFont
 S='<scratchpad>/'
 B='/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'; R='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
-items={'houston':('HOUSTON','72% fewer planned conflicts','in the model, with shared heights'),
-       'dfw':('DALLAS–FORT WORTH','73% fewer planned conflicts','in the model, with shared heights'),
+items={'houston':('HOUSTON','61% fewer planned conflicts','realistic flights, shared heights (corrected 26 Nov)'),
+       'dfw':('DALLAS–FORT WORTH','72% fewer planned conflicts','realistic flights, shared heights (corrected 26 Nov)'),
        'airtaxi':('AIR TAXIS · DFW + HOUSTON','Simulated networks in 3D','pads, parking, batteries, noise')}
 for k,(kick,big,sm) in items.items():
     im=Image.open(S+f'raw_{k}.jpg').convert('RGBA'); w,h=im.size

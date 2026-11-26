@@ -4,18 +4,20 @@ title: "Shared Sky: a pre-registered simulation of delivery drones and air taxis
 type: software
 authors:
   - alias: forgottenl5
-version: 1.6.0
-date-released: 2026-11-24
+version: 1.7.0
+date-released: 2026-11-26
 doi: 10.5281/zenodo.24482589
 license: AGPL-3.0-or-later
 repository-code: "https://github.com/forgottenl5/shared-sky"
 url: "https://forgottenl5.github.io/shared-sky"
 abstract: >-
   Pre-registered simulation of Wing, Zipline and Amazon delivery drones flying
-  their FAA-filed operations over Houston and Dallas-Fort Worth. Giving each
-  company its own height cuts planned conflicts between companies by about 72 %
-  (Houston) and 73 % (Dallas-Fort Worth). 84 registered studies; failed
-  predictions are reported as failures.
+  their FAA-filed operations over Houston and Dallas-Fort Worth. With realistic
+  flights (corrected 26 Nov 2026), giving each company its own height cuts
+  planned conflicts between companies by 61 % (Houston) and 72 % (Dallas-Fort
+  Worth); with plans shared before take-off it cuts waiting for Wing and Zipline
+  but not for Amazon. 85 registered studies; failed predictions are reported as
+  failures.
 keywords:
   - drones
   - delivery drones

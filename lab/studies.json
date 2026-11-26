@@ -588,5 +588,12 @@
 "r": "Yes. Company layers stop clashing once they are more than twice the plan's height allowance apart. The widest even spacing the filed bands allow (Wing 46 m, Amazon 73.5 m, Zipline 101 m; 27.5 m gaps) still clashes with plans of +-14 m (the 95 % rule at average GPS): 19-20 % of flights held, 91-96 % of Amazon's. At +-13.5 m only 2.3-2.7 % of flights are held (Amazon 12-21 %); the earlier best layout (24-25 m gaps) needs +-11.5 m for that. The new spacing also leaves 190-270 times less residual collision risk at average GPS and keeps the cut without plan sharing at 82-84 %. The exact half-metre edge comes from the modelled check's hard overlap test. 1 of 7 predictions failed (DFW Amazon fell further than predicted).",
 "pass": 6,
 "n": 7
+},
+{
+"name": "Realistic flights and operations (PHYS1)",
+"q": "Do the rankings and the headline survive realistic flights: measured climb, descent and speed-change profiles, 30-degree turns, DFW Zipline as filed, customers where people live, airport detours, a lunch peak and Amazon's 15-hour day?",
+"r": "Every ranking holds, but the benefit shrinks. Without plan sharing, sharing out heights cuts planned conflicts between companies by 61 % in Houston and 72 % in DFW (72 % and 73 % on the earlier engine; Houston falls below its earlier 95 % interval). GAP1's spacing gives 67 % / 75 %, below the 70 % predicted for Houston (the one failure). With plans shared, the shared-out heights hold 12-14 % of flights against 44-46 % under today's heights, but 97-99 % of Amazon's flights are still held, mostly cancelled in the model (73-78 %); the gain is Wing's and Zipline's. Only GAP1's spacing with +-13.5 m plans helps all three (Amazon held 42 % Houston, 21 % DFW). Between-company meetings rise 6-8 times, mostly from the assumed lunch peak.",
+"pass": 6,
+"n": 7
 }
 ]

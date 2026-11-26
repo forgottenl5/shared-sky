@@ -6,6 +6,7 @@
 | `openmeteo_*_2025.json` | Open-Meteo historical weather API, https://open-meteo.com/ | CC BY 4.0 (attribution: Open-Meteo.com) |
 | `CenPop2020_Mean_BG48.csv` | US Census Bureau, 2020 centers of population by block group | US government work, public domain |
 | `uasfm_houston.geojson` | FAA UAS Facility Maps data service | US government work, public domain |
+| `uasfm_dfw.geojson` | FAA UAS Facility Maps data service, queried 25 Nov 2026 for the DFW box (cells with ceilings below 400 ft only) | US government work, public domain |
 
 `vienna_inner_osm.json` is used only by the legacy engine tests (`tests/`), not by any Houston or DFW result.
 The OSM extracts contain all tags returned by Overpass, including business contact details that OSM contributors entered; only geometry and height tags are used here.
