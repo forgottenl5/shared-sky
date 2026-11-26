@@ -602,5 +602,12 @@
 "r": "Barely. All four rules leave the overall held share within about 1 point of first-come-first-served, and Amazon stays the most-held company under every rule (87-95 % with the shared-out heights). Most-held company first shares the waiting slightly more evenly (gap narrows 1-3 points). Height spacing matters about ten times more: GAP1's spacing takes Amazon from 90-95 % held to 10-23 % under any rule. Earlier engine; no pre-emption of accepted plans tested.",
 "pass": 2,
 "n": 5
+},
+{
+"name": "How much traffic plan sharing can take (CAPACITY1)",
+"q": "On the realistic engine (PHYS1), scaling traffic from a tenth of the filed volumes to one and a half times them: when do flights held by the shared pre-flight check take off, for each height layout?",
+"r": "With today's plan sizes (+-14 m in height, average GPS) no layout keeps overall held at 10 % or less with every company at 25 % or less, at any traffic level tested, not even 10 % of filed volume: Amazon is the limit from the start. Only GAP1's spacing with +-13.5 m plans passes (up to half the filed volume in Houston, all of it in DFW). Held share peaks at a quarter to half of filed volume and then falls, because Amazon is increasingly cancelled (78-89 % at 1.5x with the shared-out heights) and stops blocking others: overall held share can hide one company being shut out. The same traffic from fewer busy sites holds 2.5-11 points fewer flights than from all sites at lower rates. The busiest Wing nest has 28-29 aircraft in the air at once at filed volume against 24 filed (zero turnaround; assumed lunch peak). 6 of 8 predictions failed.",
+"pass": 2,
+"n": 8
 }
 ]
