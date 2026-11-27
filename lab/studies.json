@@ -609,5 +609,12 @@
 "r": "With today's plan sizes (+-14 m in height, average GPS) no layout keeps overall held at 10 % or less with every company at 25 % or less, at any traffic level tested, not even 10 % of filed volume: Amazon is the limit from the start. Only GAP1's spacing with +-13.5 m plans passes (up to half the filed volume in Houston, all of it in DFW). Held share peaks at a quarter to half of filed volume and then falls, because Amazon is increasingly cancelled (78-89 % at 1.5x with the shared-out heights) and stops blocking others: overall held share can hide one company being shut out. The same traffic from fewer busy sites holds 2.5-11 points fewer flights than from all sites at lower rates. The busiest Wing nest has 28-29 aircraft in the air at once at filed volume against 24 filed (zero turnaround; assumed lunch peak). 6 of 8 predictions failed.",
 "pass": 2,
 "n": 8
+},
+{
+"name": "Combined drone noise from all three companies (CUMNOISE1)",
+"q": "Adding up Wing, Zipline and Amazon over Houston and DFW at full build-out on real sites, at filed volumes and at the FAA's national cap (1,150 deliveries a day per hub), with each filing's own en route noise level: how do overflights and noise compare with the FAA national review's thresholds?",
+"r": "Under direct routing no spot more than 200 m from a site gets the 2,300 overflights a day the review calls highly unlikely, and none gets 1,150 at filed volumes; the busiest spots (about 650-1,000 a day) are next to one company's site where airport avoidance funnels its flights. The loudest combined en route day-night level is about 51 dB (Houston) and 47 dB (DFW), 59-60 dB if every drone were the loudest assessed, against the 65 dB significance line. The review's combined-operations trigger has two readings: per spot it is never reached; per area of overlapping hubs, 99.6-100 % of residents live above it. About half of overflown spots are overflown by two or more companies every day. Failed: Houston's loudest level was 51 dB (predicted under 50); in DFW 44 % of overflown spots had two or more companies (predicted at least half).",
+"pass": 4,
+"n": 6
 }
 ]
